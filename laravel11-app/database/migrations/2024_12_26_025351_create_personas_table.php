@@ -13,6 +13,18 @@ return new class extends Migration
     {
         Schema::create('personas', function (Blueprint $table) {
             $table->id();
+            $table->integer('idUsuario')->unsigned();
+            $table->integer('idRole')->unsigned();
+            $table->integer('idCargo')->unsigned();
+            $table->string('rut');
+            $table->string('telefono')->nullable();
+            $table->string('direccion')->nullable();
+            $table->date('fechaNacimiento')->nullable();
+            $table->string('sexo')->nullable();
+            $table->string('estadoCivil')->nullable();
+            $table->string('ocupacion')->nullable();
+            $table->boolean('activo');
+
             $table->timestamps();
         });
     }
