@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\EstadosResource\Pages;
 use App\Filament\Resources\EstadosResource\RelationManagers;
 use App\Models\Estados;
+use App\Models\PersonaEstado;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -15,15 +16,18 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class EstadosResource extends Resource
 {
-    protected static ?string $model = Estados::class;
+    protected static ?string $model = PersonaEstado::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
+    protected static ?string $navigationIcon = 'heroicon-s-user-group';
+    protected static ?string $navigationGroup = 'Administracion';
+    protected static ?string $navigationLabel = 'Estados Personas';
+    protected static ?string $label = 'Estado';
+    protected static ?string $pluralLabel = 'Estados';
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                //
+
             ]);
     }
 

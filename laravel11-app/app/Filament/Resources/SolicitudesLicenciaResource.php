@@ -2,10 +2,10 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\TesoreriaResource\Pages;
-use App\Filament\Resources\TesoreriaResource\RelationManagers;
-use App\Models\Cuota;
-use App\Models\Tesoreria;
+use App\Filament\Resources\SolicitudesLicenciaResource\Pages;
+use App\Filament\Resources\SolicitudesLicenciaResource\RelationManagers;
+use App\Models\Solicitud;
+use App\Models\SolicitudesLicencia;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -14,12 +14,16 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class TesoreriaResource extends Resource
+class SolicitudesLicenciaResource extends Resource
 {
-    protected static ?string $model = Cuota::class;
+    protected static ?string $model = Solicitud::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationLabel = 'Tesoreria';
+    protected static ?string $navigationIcon = 'heroicon-s-exclamation-triangle';
+    protected static ?string $navigationGroup = 'Solicitudes';
+    protected static ?string $navigationLabel = 'Solicitudes Licencia';
+
+    protected static ?string $label = 'Solicitud Licencia';
+    protected static ?string $pluralLabel = 'Solicitudes Licencias';
 
     public static function form(Form $form): Form
     {
@@ -58,9 +62,9 @@ class TesoreriaResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListTesorerias::route('/'),
-            'create' => Pages\CreateTesoreria::route('/create'),
-            'edit' => Pages\EditTesoreria::route('/{record}/edit'),
+            'index' => Pages\ListSolicitudesLicencias::route('/'),
+            'create' => Pages\CreateSolicitudesLicencia::route('/create'),
+            'edit' => Pages\EditSolicitudesLicencia::route('/{record}/edit'),
         ];
     }
 }

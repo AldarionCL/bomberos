@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\RolesResource\Pages;
 use App\Filament\Resources\RolesResource\RelationManagers;
+use App\Models\PersonaRole;
 use App\Models\Roles;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -15,9 +16,10 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class RolesResource extends Resource
 {
-    protected static ?string $model = Roles::class;
+    protected static ?string $model = PersonaRole::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-user-group';
+    protected static ?string $navigationGroup = 'Administracion';
 
     public static function form(Form $form): Form
     {

@@ -16,14 +16,15 @@ return new class extends Migration
             $table->integer('idUsuario')->unsigned();
             $table->integer('idRole')->unsigned();
             $table->integer('idCargo')->unsigned();
-            $table->string('rut');
-            $table->string('telefono')->nullable();
-            $table->string('direccion')->nullable();
-            $table->date('fechaNacimiento')->nullable();
-            $table->string('sexo')->nullable();
-            $table->string('estadoCivil')->nullable();
-            $table->string('ocupacion')->nullable();
-            $table->boolean('activo');
+            $table->integer('idEstado')->unsigned();
+            $table->string('Rut');
+            $table->string('Telefono')->nullable();
+            $table->string('Direccion')->nullable();
+            $table->date('FechaNacimiento')->nullable();
+            $table->string('Sexo')->nullable();
+            $table->string('EstadoCivil')->nullable();
+            $table->string('Ocupacion')->nullable();
+            $table->boolean('Activo');
 
             $table->timestamps();
         });

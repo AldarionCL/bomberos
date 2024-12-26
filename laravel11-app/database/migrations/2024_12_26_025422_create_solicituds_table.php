@@ -11,23 +11,23 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('solicituds', function (Blueprint $table) {
+        Schema::create('solicitudes', function (Blueprint $table) {
             $table->id();
-            $table->integer('tipoSolicitud');
-            $table->integer('estado')->default(1);
-            $table->dateTime('fecha_registro');
-            $table->integer('solicitadoPor');
+            $table->integer('TipoSolicitud');
+            $table->integer('Estado')->default(1);
+            $table->dateTime('Fecha_registro');
+            $table->integer('SolicitadoPor');
 
-            $table->string('nombrePostulante');
-            $table->string('telefonoPostulante');
-            $table->string('correoPostulante');
-            $table->string('direccionPostulante');
-            $table->string('observaciones');
-            $table->string('nivelEstudioPostulante');
-            $table->date('fechaNacimientoPostulante');
-            $table->string('sexoPostulante');
-            $table->string('estadoCivilPostulante');
-            $table->string('ocupacionPostulante');
+            $table->string('NombrePostulante');
+            $table->string('TelefonoPostulante');
+            $table->string('CorreoPostulante');
+            $table->string('DireccionPostulante');
+            $table->string('Observaciones');
+            $table->string('NivelEstudioPostulante');
+            $table->date('FechaNacimientoPostulante');
+            $table->string('SexoPostulante');
+            $table->string('EstadoCivilPostulante');
+            $table->string('OcupacionPostulante');
             $table->timestamps();
         });
     }
@@ -37,6 +37,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('solicituds');
+        Schema::dropIfExists('solicitudes');
     }
 };

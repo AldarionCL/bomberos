@@ -14,12 +14,12 @@ return new class extends Migration
         Schema::create('cuotas', function (Blueprint $table) {
             $table->id();
             $table->integer('idUser')->unsigned();
-            $table->dateTime('fechaPeriodo')->nullable();
-            $table->dateTime('fechaVencimiento')->nullable();
-            $table->dateTime('fechaPago')->nullable();
-            $table->integer('estado');
-            $table->string('documento')->nullable();
-            $table->string('documentoArchivo')->nullable();
+            $table->dateTime('FechaPeriodo')->nullable();
+            $table->dateTime('FechaVencimiento')->nullable();
+            $table->dateTime('FechaPago')->nullable();
+            $table->integer('Estado');
+            $table->string('Documento')->nullable();
+            $table->string('DocumentoArchivo')->nullable();
             $table->timestamps();
         });
     }

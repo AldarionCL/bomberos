@@ -3,9 +3,11 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Couchbase\Role;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Auth;
 
 class User extends Authenticatable
 {
@@ -45,4 +47,27 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function persona()
+    {
+        return $this->hasOne(Persona::class, 'id', 'id');
+    }
+
+    public function isRole($role):bool
+    {
+        if(Auth::user()->persona) {
+            if (is_array($role)) {
+                foreach ($role as $k => $r) {
+                    if (Auth::user()->persona->role->rol === $r) {
+                        return true;
+                    }
+                }
+                return false;
+            } else {
+                return Auth::user()->persona->role->rol === $role;
+            }
+        } else return false;
+    }
+
+
 }

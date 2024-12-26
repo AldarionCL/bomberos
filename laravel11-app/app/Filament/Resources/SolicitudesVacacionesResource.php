@@ -2,10 +2,10 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\TesoreriaResource\Pages;
-use App\Filament\Resources\TesoreriaResource\RelationManagers;
-use App\Models\Cuota;
-use App\Models\Tesoreria;
+use App\Filament\Resources\SolicitudesVacacionesResource\Pages;
+use App\Filament\Resources\SolicitudesVacacionesResource\RelationManagers;
+use App\Models\Solicitud;
+use App\Models\SolicitudesVacaciones;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -14,12 +14,16 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class TesoreriaResource extends Resource
+class SolicitudesVacacionesResource extends Resource
 {
-    protected static ?string $model = Cuota::class;
+    protected static ?string $model = Solicitud::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationLabel = 'Tesoreria';
+    protected static ?string $navigationIcon = 'heroicon-s-globe-americas';
+    protected static ?string $navigationGroup = 'Solicitudes';
+    protected static ?string $navigationLabel = 'Solicitudes Vacaciones';
+
+    protected static ?string $label = 'Solicitud Vacaciones';
+    protected static ?string $pluralLabel = 'Solicitudes Vacaciones';
 
     public static function form(Form $form): Form
     {
@@ -58,9 +62,9 @@ class TesoreriaResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListTesorerias::route('/'),
-            'create' => Pages\CreateTesoreria::route('/create'),
-            'edit' => Pages\EditTesoreria::route('/{record}/edit'),
+            'index' => Pages\ListSolicitudesVacaciones::route('/'),
+            'create' => Pages\CreateSolicitudesVacaciones::route('/create'),
+            'edit' => Pages\EditSolicitudesVacaciones::route('/{record}/edit'),
         ];
     }
 }
