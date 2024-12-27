@@ -15,14 +15,14 @@ class Persona extends Model
         'idRole',
         'idCargo',
         'idEstado',
-        'rut',
-        'telefono',
-        'direccion',
-        'fechaNacimiento',
-        'sexo',
-        'estadoCivil',
-        'ocupacion',
-        'activo',
+        'Rut',
+        'Telefono',
+        'Direccion',
+        'FechaNacimiento',
+        'Sexo',
+        'EstadoCivil',
+        'Ocupacion',
+        'Activo',
     ];
 
     public function user()

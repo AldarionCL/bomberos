@@ -11,12 +11,18 @@ class Cuota extends Model
     protected $primaryKey = 'id';
     protected $fillable = [
         'idUser',
-        'fechaPeriodo',
-        'fechaVencimiento',
-        'fechaPago',
-        'estado',
-        'documento',
-        'documentoArchivo',
+        'FechaPeriodo',
+        'FechaVencimiento',
+        'FechaPago',
+        'Estado',
+        'Documento',
+        'DocumentoArchivo',
+    ];
+
+    protected $dates = [
+        'FechaPeriodo',
+        'FechaVencimiento',
+        'FechaPago',
     ];
 
     public function user(){

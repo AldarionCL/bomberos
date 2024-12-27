@@ -41,8 +41,8 @@ class PersonasResource extends Resource
                 Tables\Columns\TextColumn::make('email')
                 ->searchable()
                 ->sortable(),
-                Tables\Columns\TextColumn::make('persona.cargo.cargo'),
-                Tables\Columns\TextColumn::make('persona.estado.estado'),
+                Tables\Columns\TextColumn::make('persona.cargo.Cargo'),
+                Tables\Columns\TextColumn::make('persona.estado.Estado'),
                 Tables\Columns\TextColumn::make('created_at')->label('Creado'),
 
             ])

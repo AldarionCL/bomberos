@@ -8,6 +8,7 @@ export default {
         './resources/**/*.blade.php',
         './resources/**/*.js',
         './resources/**/*.vue',
+        './vendor/savannabits/filament-flatpickr/**/*.blade.php',
     ],
     theme: {
         extend: {
