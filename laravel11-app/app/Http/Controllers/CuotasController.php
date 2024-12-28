@@ -71,7 +71,7 @@ class CuotasController extends Controller
                     'idRole' => 1,
                     'idCargo' => 1,
                     'idEstado' => 1,
-                    'FechaReclutamiento' => Carbon::now()->format('Y-m-d'),
+                    'FechaReclutamiento' => Carbon::today()->subDays(rand(0,350))->format('Y-m-d'),
                     'Rut' => rand(11111111, 99999999) . "-". rand(1,9),
                     'Activo' => 1,
                 ]);
