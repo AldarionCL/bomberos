@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Http\Controllers\CuotasController;
 use App\Models\CuotasEstados;
 use App\Models\Persona;
 use App\Models\PersonaCargo;
@@ -49,5 +50,9 @@ class DatabaseSeeder extends Seeder
         PersonaCargo::create([
             'Cargo' => 'Administrador',
         ]);
+
+        $controlador = CuotasController::class;
+        $controlador->sincronizarUserPersona();
+        $controlador->sincronizarCuotas();
     }
 }
