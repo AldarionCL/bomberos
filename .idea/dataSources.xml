@@ -8,5 +8,12 @@
       <jdbc-url>jdbc:mysql://localhost:33067/bomberos</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="bomberos@bomberos.neologik.cl" uuid="537c0028-49df-4d1b-8d7e-92244fbfabb1">
+      <driver-ref>mysql.8</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://bomberos.neologik.cl:3306/bomberos</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>

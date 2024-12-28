@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\CuotasEstados;
 use App\Models\Persona;
 use App\Models\PersonaCargo;
+use App\Models\PersonaEstado;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\UserRole;
@@ -21,7 +22,7 @@ class DatabaseSeeder extends Seeder
 
         User::create([
             'name' => 'Admin',
-            'email' => 'rurik.neologik@gmail.com',
+            'email' => 'admin@gmail.com',
             'password' => bcrypt('123456'),
         ]);
 
@@ -40,6 +41,9 @@ class DatabaseSeeder extends Seeder
         CuotasEstados::create(['Estado'=>'Cancelado']);
 
         UserRole::firstOrCreate(['Rol'=>'Administrador']);
+        PersonaEstado::create([
+            'Estado'=>'Activo',
+        ]);
 
         PersonaCargo::create([
             'Cargo' => 'Administrador',
