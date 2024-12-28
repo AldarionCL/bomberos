@@ -5,10 +5,13 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\NoticiasResource\Pages;
 use App\Filament\Resources\NoticiasResource\RelationManagers;
 use App\Models\Noticias;
+use Coolsam\FilamentFlatpickr\Forms\Components\Flatpickr;
+use Faker\Provider\Text;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -25,7 +28,29 @@ class NoticiasResource extends Resource
     {
         return $form
             ->schema([
-                //
+                Forms\Components\Section::make()
+                    ->schema([
+                        Forms\Components\TextInput::make('titulo')
+                            ->required()
+                            ->maxLength(255)
+                        ->columnSpan(2),
+                        Forms\Components\TextInput::make('subtitulo')
+                        ->columnSpan(2),
+                        Forms\Components\MarkdownEditor::make('contenido')
+                            ->required()
+                        ->columnSpan(2),
+                        Flatpickr::make('FechaPublicacion')->required(),
+                        Flatpickr::make('FechaExpiracion'),
+                        Forms\Components\Select::make('estado')
+                        ->options([
+                            1 => 'Publicado',
+                            2 => 'Agendado',
+                            3 => 'Expirado',
+                        ]),
+                        Forms\Components\FileUpload::make('imagen'),
+
+                    ])->columns(),
+
             ]);
     }
 
@@ -33,7 +58,13 @@ class NoticiasResource extends Resource
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\TextColumn::make('titulo'),
+                TextColumn::make('descripcion'),
+                Tables\Columns\TextColumn::make('Estado'),
+                Tables\Columns\TextColumn::make('FechaPublicacion')
+                    ->date(),
+                Tables\Columns\TextColumn::make('FechaExpiracion')
+                    ->date(),
             ])
             ->filters([
                 //

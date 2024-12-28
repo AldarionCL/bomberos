@@ -5,6 +5,7 @@
       <sourceFolder url="file://$MODULE_DIR$/laravel11-app/app" isTestSource="false" packagePrefix="App\" />
       <sourceFolder url="file://$MODULE_DIR$/laravel11-app/database/factories" isTestSource="false" packagePrefix="Database\Factories\" />
       <sourceFolder url="file://$MODULE_DIR$/laravel11-app/database/seeders" isTestSource="false" packagePrefix="Database\Seeders\" />
+      <sourceFolder url="file://$MODULE_DIR$/laravel11-app/tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/laravel11-app/tests" isTestSource="true" packagePrefix="Tests\" />
       <excludeFolder url="file://$MODULE_DIR$/laravel11-app/vendor/brick/math" />
       <excludeFolder url="file://$MODULE_DIR$/laravel11-app/vendor/carbonphp/carbon-doctrine-types" />
@@ -172,6 +173,7 @@
       <excludeFolder url="file://$MODULE_DIR$/laravel11-app/vendor/laravel-lang/routes" />
       <excludeFolder url="file://$MODULE_DIR$/laravel11-app/vendor/laravel/ui" />
       <excludeFolder url="file://$MODULE_DIR$/laravel11-app/vendor/symfony/polyfill-php81" />
+      <excludeFolder url="file://$MODULE_DIR$/laravel11-app/vendor/savannabits/filament-flatpickr" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

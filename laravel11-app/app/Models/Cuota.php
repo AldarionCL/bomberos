@@ -17,6 +17,9 @@ class Cuota extends Model
         'Estado',
         'Documento',
         'DocumentoArchivo',
+        'Monto',
+        'Pendiente',
+        'Recaudado',
     ];
 
     protected $dates = [
@@ -27,5 +30,9 @@ class Cuota extends Model
 
     public function user(){
         return $this->belongsTo(User::class, 'idUser');
+    }
+
+    public function estadocuota(){
+        return $this->hasOne(CuotasEstados::class, 'id', 'Estado');
     }
 }

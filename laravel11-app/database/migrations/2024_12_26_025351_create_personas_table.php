@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('Telefono')->nullable();
             $table->string('Direccion')->nullable();
             $table->date('FechaNacimiento')->nullable();
+            $table->date('FechaReclutamiento')->nullable();
             $table->string('Sexo')->nullable();
             $table->string('EstadoCivil')->nullable();
             $table->string('Ocupacion')->nullable();

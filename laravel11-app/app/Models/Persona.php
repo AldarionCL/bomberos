@@ -19,10 +19,16 @@ class Persona extends Model
         'Telefono',
         'Direccion',
         'FechaNacimiento',
+        'FechaReclutamiento',
         'Sexo',
         'EstadoCivil',
         'Ocupacion',
         'Activo',
+    ];
+
+    protected $dates = [
+        'FechaNacimiento',
+        'FechaReclutamiento'
     ];
 
     public function user()

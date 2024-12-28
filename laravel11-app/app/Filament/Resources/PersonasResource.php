@@ -23,6 +23,7 @@ class PersonasResource extends Resource
     protected static ?string $navigationLabel = 'Personal';
     protected static ?string $label = 'Personal';
     protected static ?string $pluralLabel = 'Personal';
+
     public static function form(Form $form): Form
     {
         return $form
@@ -35,12 +36,16 @@ class PersonasResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('persona.Rut')
+                    ->label('Rut')
+                    ->searchable(),
+
                 Tables\Columns\TextColumn::make('name')
-                ->searchable()
-                ->sortable(),
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('email')
-                ->searchable()
-                ->sortable(),
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('persona.cargo.Cargo'),
                 Tables\Columns\TextColumn::make('persona.estado.Estado'),
                 Tables\Columns\TextColumn::make('created_at')->label('Creado'),

@@ -6,6 +6,7 @@ use App\Filament\Resources\TesoreriaResource\Pages;
 use App\Filament\Resources\TesoreriaResource\RelationManagers;
 use App\Models\Cuota;
 use Coolsam\FilamentFlatpickr\Forms\Components\Flatpickr;
+use Faker\Provider\Text;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
@@ -29,26 +30,40 @@ class TesoreriaResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Section::make()
-                ->schema([
-                    Select::make('idUser')
-                    ->relationship('user', 'name')->label('Persona'),
-//                    DatePicker::make('fechaPeriodo')->label('Fecha de Periodo'),
-                    Flatpickr::make('FechaPeriodo')
-                        ->label('Periodo Desde'),
-                    Flatpickr::make('FechaVencimiento')
-                        ->label('Fecha de Vencimiento'),
-                    Select::make('Estado')
-                        ->options([
-                            1 => 'Pendiente',
-                            2 => 'Aprobado',
-                            3 => 'Rechazado',
-                            4 => 'Cancelado',
-                        ])->default(1)->label('Estado'),
-                    Flatpickr::make('FechaPago')->label('Fecha de Pago'),
-                    Forms\Components\TextInput::make('Documento')->label('N° Documento'),
-                    Forms\Components\FileUpload::make('DocumentoArchivo')->label('Archivo'),
+                    ->schema([
+                        Select::make('idUser')
+                            ->relationship('user', 'name')
+                            ->label('Persona')
+                            ->required(),
 
-                ])->columns()
+                        Forms\Components\TextInput::make('Monto')
+                            ->numeric()
+                            ->prefix('$')
+                            ->required(),
+
+//                    DatePicker::make('fechaPeriodo')->label('Fecha de Periodo'),
+                        Flatpickr::make('FechaPeriodo')
+                            ->label('Periodo Desde')
+                            ->required(),
+
+                        Flatpickr::make('FechaVencimiento')
+                            ->label('Fecha de Vencimiento')
+                            ->required(),
+
+                        Select::make('Estado')
+                            ->relationship('estadocuota', 'Estado')
+                            ->default(1)
+                            ->label('Estado'),
+
+                        Flatpickr::make('FechaPago')->label('Fecha de Pago'),
+
+                        Forms\Components\TextInput::make('Documento')
+                            ->label('N° Documento'),
+
+                        Forms\Components\FileUpload::make('DocumentoArchivo')
+                            ->label('Archivo'),
+
+                    ])->columns()
             ]);
     }
 
@@ -56,13 +71,64 @@ class TesoreriaResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('user.persona.Rut')->label('Rut')->searchable(),
-                TextColumn::make('user.name')->label('Persona')->searchable(),
-                TextColumn::make('FechaPeriodo')->label('Periodo')->date('m-Y'),
-                Tables\Columns\BadgeColumn::make('Estado')->label('Estado')
+                TextColumn::make('user.persona.Rut')
+                    ->label('Rut')
+                    ->searchable()
+                    ->sortable(),
+                TextColumn::make('user.name')->label('Persona')
+                    ->label('Nombre')
+                    ->searchable(),
+                TextColumn::make('FechaPeriodo')
+                    ->label('Periodo')
+                    ->date('m/Y')
+                    ->sortable(),
+                TextColumn::make('FechaVencimiento')
+                    ->label('Fecha Vencimiento')
+                    ->date('d/m/Y'),
+
+                Tables\Columns\TextColumn::make('estadocuota.Estado')
+                    ->badge()
+                    ->color(fn(string $state): string => match ($state) {
+                        'Pendiente' => 'warning',
+                        'Aprobado' => 'success',
+                        'Rechazado' => 'danger',
+                        'Cancelado' => 'danger',
+                        default => 'gray',
+                    })
+                    ->label('Estado'),
+                /*TextColumn::make('Monto')
+                    ->label('Monto')
+                    ->prefix("$")
+                    ->money('CLP')
+                    ->summarize([
+                        Tables\Columns\Summarizers\Sum::make()
+                            ->prefix('$')
+                            ->money('CLP')
+                            ->label('Total')
+                    ]),*/
+                TextColumn::make('Pendiente')
+                    ->prefix("$")
+                    ->money('CLP')
+                    ->summarize([
+                        Tables\Columns\Summarizers\Sum::make()
+                            ->prefix('$')
+                            ->money('CLP')
+                            ->label('Total')
+                    ]),
+                TextColumn::make('Recaudado')
+                    ->prefix("$")
+                    ->money('CLP')
+                    ->summarize([
+                        Tables\Columns\Summarizers\Sum::make()
+                            ->prefix('$')
+                            ->money('CLP')
+                            ->label('Total')
+                    ]),
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('idUsuario')
+                    ->relationship('user', 'name')
+                    ->searchable()
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -71,7 +137,16 @@ class TesoreriaResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->groups([
+                Tables\Grouping\Group::make('user.name')
+                ->label('Nombre'),
+                Tables\Grouping\Group::make('estadocuota.Estado')
+                ->label('Estado')
+            ])
+            ->defaultGroup('user.name')
+            ->defaultSort(fn($query) => $query->orderBy('idUser', 'desc')->orderBy('FechaPeriodo', 'asc'))
+            ->paginated(25);
     }
 
     public static function getRelations(): array

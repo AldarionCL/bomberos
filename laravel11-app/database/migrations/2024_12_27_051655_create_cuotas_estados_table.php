@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('cuotas_estados', function (Blueprint $table) {
             $table->id();
-
+            $table->string('Estado');
+            $table->string('Descripcion')->nullable();
             $table->timestamps();
         });
     }

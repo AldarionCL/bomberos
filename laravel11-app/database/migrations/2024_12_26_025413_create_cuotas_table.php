@@ -18,6 +18,9 @@ return new class extends Migration
             $table->dateTime('FechaVencimiento')->nullable();
             $table->dateTime('FechaPago')->nullable();
             $table->integer('Estado');
+            $table->integer('Monto');
+            $table->integer('Pendiente')->nullable();
+            $table->integer('Recaudado')->nullable();
             $table->string('Documento')->nullable();
             $table->string('DocumentoArchivo')->nullable();
             $table->timestamps();

@@ -50,7 +50,7 @@ class User extends Authenticatable
 
     public function persona()
     {
-        return $this->hasOne(Persona::class, 'id', 'id');
+        return $this->hasOne(Persona::class, 'idUsuario', 'id');
     }
 
     public function isRole($role):bool

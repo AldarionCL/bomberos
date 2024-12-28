@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('persona_cargos', function (Blueprint $table) {
             $table->id();
             $table->string('Cargo');
-            $table->string('Descripcion');
+            $table->string('Descripcion')->nullable();
             $table->timestamps();
         });
     }
