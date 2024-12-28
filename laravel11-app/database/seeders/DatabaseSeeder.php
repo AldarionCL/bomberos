@@ -18,7 +18,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
 
         User::create([
             'name' => 'Admin',
@@ -35,6 +34,8 @@ class DatabaseSeeder extends Seeder
             'Activo' => 1
         ]);
 
+        User::factory(20)->create();
+
         CuotasEstados::create(['Estado'=>'Pendiente']);
         CuotasEstados::create(['Estado'=>'Aprobado']);
         CuotasEstados::create(['Estado'=>'Rechazado']);
@@ -48,7 +49,5 @@ class DatabaseSeeder extends Seeder
         PersonaCargo::create([
             'Cargo' => 'Administrador',
         ]);
-
-//        User::factory(20)->create();
     }
 }
