@@ -27,6 +27,7 @@ class ListTesorerias extends ListRecords
                 ->modifyQueryUsing(fn(Builder $query) => $query->whereHas('estadocuota', function ($query) {
                     $query->where('Estado', 'Pendiente');
                 })),
+
             'Aprobados' => Tab::make()
                 ->modifyQueryUsing(fn(Builder $query) => $query->whereHas('estadocuota', function ($query) {
                     $query->where('Estado', 'Aprobado');

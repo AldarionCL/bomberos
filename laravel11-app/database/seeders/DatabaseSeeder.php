@@ -3,8 +3,11 @@
 namespace Database\Seeders;
 
 use App\Models\CuotasEstados;
+use App\Models\Persona;
+use App\Models\PersonaCargo;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\UserRole;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -16,16 +19,32 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        /*User::factory()->create([
+        User::create([
             'name' => 'Admin',
-            'email' => 'admin@example.com',
-        ]);*/
+            'email' => 'rurik.neologik@gmail.com',
+            'password' => bcrypt('123456'),
+        ]);
 
-/*        CuotasEstados::create(['Estado'=>'Pendiente']);
+        Persona::create([
+            'idUsuario' => 1,
+            'idRole' => 1,
+            'idCargo' => 1,
+            'idEstado' => 1,
+            'Rut' => '15967365-0',
+            'Activo' => 1
+        ]);
+
+        CuotasEstados::create(['Estado'=>'Pendiente']);
         CuotasEstados::create(['Estado'=>'Aprobado']);
         CuotasEstados::create(['Estado'=>'Rechazado']);
-        CuotasEstados::create(['Estado'=>'Cancelado']);*/
+        CuotasEstados::create(['Estado'=>'Cancelado']);
 
-        User::factory(20)->create();
+        UserRole::firstOrCreate(['Rol'=>'Administrador']);
+
+        PersonaCargo::create([
+            'Cargo' => 'Administrador',
+        ]);
+
+//        User::factory(20)->create();
     }
 }

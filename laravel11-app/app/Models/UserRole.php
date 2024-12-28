@@ -10,8 +10,8 @@ class UserRole extends Model
 
     protected $table = 'user_roles';
     protected $fillable = [
-        'rol',
-        'descripcion',
-        'permisos',
+        'Rol',
+        'Rescripcion',
+        'Permisos',
     ];
 }
