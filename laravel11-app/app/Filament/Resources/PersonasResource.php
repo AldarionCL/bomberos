@@ -28,7 +28,29 @@ class PersonasResource extends Resource
     {
         return $form
             ->schema([
-                //
+                Forms\Components\Section::make('Datos de Usuario')
+                    ->schema([
+                        Forms\Components\TextInput::make('name')->required(),
+                        Forms\Components\TextInput::make('email')->required(),
+                        Forms\Components\TextInput::make('password')->password(),
+                    ])->columns(),
+                Forms\Components\Section::make('Datos Personales')
+                    ->schema([
+                        Forms\Components\TextInput::make('Rut')
+                            ->required(),
+                        Forms\Components\TextInput::make('Telefono'),
+                        Forms\Components\TextInput::make('Direccion'),
+
+                        Forms\Components\Select::make('idCargo')
+                            ->relationship('cargo', 'Cargo')
+                            ->label('Cargo')
+                            ->required(),
+
+                        Forms\Components\Select::make('idEstado')
+                            ->relationship('estado', 'Estado')
+                            ->required(),
+                    ])->relationship('persona')
+                    ->columns()
             ]);
     }
 

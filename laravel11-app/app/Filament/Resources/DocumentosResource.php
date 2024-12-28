@@ -2,10 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\SolicitudesVacacionesResource\Pages;
-use App\Filament\Resources\SolicitudesVacacionesResource\RelationManagers;
-use App\Models\Solicitud;
-use App\Models\SolicitudesVacaciones;
+use App\Filament\Resources\DocumentosResource\Pages;
+use App\Filament\Resources\DocumentosResource\RelationManagers;
+use App\Models\Documentos;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -14,16 +13,11 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class SolicitudesVacacionesResource extends Resource
+class DocumentosResource extends Resource
 {
-    protected static ?string $model = Solicitud::class;
+    protected static ?string $model = Documentos::class;
 
-    protected static ?string $navigationIcon = 'heroicon-s-globe-americas';
-    protected static ?string $navigationGroup = 'Solicitudes';
-    protected static ?string $navigationLabel = 'Solicitudes Vacaciones';
-
-    protected static ?string $label = 'Solicitud Vacaciones';
-    protected static ?string $pluralLabel = 'Solicitudes Vacaciones';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     public static function form(Form $form): Form
     {
@@ -62,9 +56,9 @@ class SolicitudesVacacionesResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListSolicitudesVacaciones::route('/'),
-            'create' => Pages\CreateSolicitudesVacaciones::route('/create'),
-            'edit' => Pages\EditSolicitudesVacaciones::route('/{record}/edit'),
+            'index' => Pages\ListDocumentos::route('/'),
+            'create' => Pages\CreateDocumentos::route('/create'),
+            'edit' => Pages\EditDocumentos::route('/{record}/edit'),
         ];
     }
 }
