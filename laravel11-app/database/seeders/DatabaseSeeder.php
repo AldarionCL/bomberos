@@ -51,7 +51,7 @@ class DatabaseSeeder extends Seeder
             'Cargo' => 'Administrador',
         ]);
 
-        $controlador = CuotasController::class;
+        $controlador = new CuotasController();
         $controlador->sincronizarUserPersona();
         $controlador->sincronizarCuotas();
     }
