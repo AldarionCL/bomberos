@@ -30,24 +30,24 @@ class NoticiasResource extends Resource
             ->schema([
                 Forms\Components\Section::make()
                     ->schema([
-                        Forms\Components\TextInput::make('titulo')
+                        Forms\Components\TextInput::make('Titulo')
                             ->required()
                             ->maxLength(255)
                         ->columnSpan(2),
-                        Forms\Components\TextInput::make('subtitulo')
+                        Forms\Components\TextInput::make('Subtitulo')
                         ->columnSpan(2),
-                        Forms\Components\MarkdownEditor::make('contenido')
+                        Forms\Components\MarkdownEditor::make('Contenido')
                             ->required()
                         ->columnSpan(2),
                         Flatpickr::make('FechaPublicacion')->required(),
                         Flatpickr::make('FechaExpiracion'),
-                        Forms\Components\Select::make('estado')
+                        Forms\Components\Select::make('Estado')
                         ->options([
                             1 => 'Publicado',
                             2 => 'Agendado',
                             3 => 'Expirado',
                         ]),
-                        Forms\Components\FileUpload::make('imagen'),
+                        Forms\Components\FileUpload::make('Imagen'),
 
                     ])->columns(),
 
@@ -58,8 +58,8 @@ class NoticiasResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('titulo'),
-                TextColumn::make('descripcion'),
+                Tables\Columns\TextColumn::make('Titulo'),
+                TextColumn::make('Subtitulo'),
                 Tables\Columns\TextColumn::make('Estado'),
                 Tables\Columns\TextColumn::make('FechaPublicacion')
                     ->date(),

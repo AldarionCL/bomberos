@@ -21,18 +21,26 @@ class CuotasPersonaResource extends Resource
     protected static ?string $model = Persona::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
+    protected static ?string $navigationGroup = 'Tesoreria';
+    protected static ?string $navigationLabel = 'Cuotas x Persona';
+    protected static ?string $label = 'Cuota';
+    protected static ?string $pluralLabel = 'Cuotas';
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\Section::make()
                     ->schema([
-                        Forms\Components\Placeholder::make('Rut'),
-                        Forms\Components\Placeholder::make('user.name'),
-                        Forms\Components\Placeholder::make('estado.Estado'),
+                        Forms\Components\Placeholder::make('Rut')
+                            ->content(fn($record) => $record->Rut),
+                        Forms\Components\Placeholder::make('name')
+                            ->content(fn($record) => $record->user->name)
+                            ->label('Nombre'),
+                        Forms\Components\Placeholder::make('Estado')
+                            ->content(fn($record) => $record->estado->Estado),
                         Forms\Components\Placeholder::make('contCuotas')
-                            ->default(fn($record) => $record->cuotas->where('Estado', 1)->count()),
+                            ->content(fn($record) => $record->cuotas->where('Estado', 1)->count())
+                        ->label('Cuotas Pendientes'),
                     ])->columns()
             ]);
     }

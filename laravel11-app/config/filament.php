@@ -86,4 +86,11 @@ return [
 
     'livewire_loading_delay' => 'default',
 
+
+
+
+    'google_fonts' => 'https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;700&display=swap',
+
+
+
 ];

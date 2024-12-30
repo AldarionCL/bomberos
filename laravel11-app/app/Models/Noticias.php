@@ -16,5 +16,10 @@ class Noticias extends Model
         'Estado',
         'FechaPublicacion',
         'FechaExpiracion',
+        'createdBy'
     ];
+
+    public function user(){
+        return $this->hasOne(User::class, 'id', 'createdBy');
+    }
 }
