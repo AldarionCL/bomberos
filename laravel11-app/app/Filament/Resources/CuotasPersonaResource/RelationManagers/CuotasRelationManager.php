@@ -44,14 +44,18 @@ class CuotasRelationManager extends RelationManager
                 Forms\Components\Section::make()
                     ->schema([
                         Forms\Components\TextInput::make('Pendiente')
-                            ->numeric()
                             ->prefix('$')
                             ->readOnly()
                             ->reactive(),
                         Forms\Components\TextInput::make('Recaudado')
-                            ->numeric()
                             ->prefix('$')
-                            ->reactive(),
+                            ->live(onBlur: true)
+                            ->afterStateUpdated(function ($state, $set, $get) {
+                                $set('Pendiente', $get('Pendiente') - $state);
+                                if($get('Pendiente') == 0){
+                                    $set('Estado', 2);
+                                }
+                            }),
 
 
                         Flatpickr::make('FechaPago')->label('Fecha de Pago'),
