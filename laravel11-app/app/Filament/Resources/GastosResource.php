@@ -22,6 +22,11 @@ class GastosResource extends Resource
     protected static ?string $navigationLabel = 'Gastos';
     protected static ?string $label = 'Gasto';
     protected static ?string $pluralLabel = 'Gastos';
+
+    public static function canViewAny(): bool
+    {
+        return false;
+    }
     public static function form(Form $form): Form
     {
         return $form

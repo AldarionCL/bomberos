@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\CuotasPersonaResource\RelationManagers;
 
+use Carbon\Carbon;
 use Coolsam\FilamentFlatpickr\Forms\Components\Flatpickr;
 use Filament\Forms;
 use Filament\Forms\Components\Select;
@@ -22,19 +23,16 @@ class CuotasRelationManager extends RelationManager
             ->schema([
                 Forms\Components\Section::make()
                     ->schema([
-                        Forms\Components\TextInput::make('Monto')
-                            ->numeric()
-                            ->prefix('$')
-                            ->readOnly(),
+                        Forms\Components\Placeholder::make('Monto')
+                            ->content(fn($record) => "$".$record->Monto),
 
 //                    DatePicker::make('fechaPeriodo')->label('Fecha de Periodo'),
-                        Forms\Components\DatePicker::make('FechaPeriodo')
-                            ->label('Periodo Desde')
-                            ->readOnly(),
+                        Forms\Components\Placeholder::make('FechaPeriodo')
+                            ->content(fn($record) => Carbon::parse($record->FechaPeriodo)->format('d/m/Y')),
 
-                        Forms\Components\DatePicker::make('FechaVencimiento')
+                        Forms\Components\Placeholder::make('FechaVencimiento')
                             ->label('Fecha de Vencimiento')
-                            ->readOnly(),
+                            ->content(fn($record) => Carbon::parse($record->FechaVencimiento)->format('d/m/Y')),
 
                         Select::make('Estado')
                             ->relationship('estadocuota', 'Estado')
