@@ -21,7 +21,9 @@ class UserRolesResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationGroup = 'Administracion';
-
+    protected static ?string $navigationLabel = 'Rol Usuarios';
+    protected static ?string $label = 'Rol';
+    protected static ?string $pluralLabel = 'Roles';
     public static function form(Form $form): Form
     {
         return $form
