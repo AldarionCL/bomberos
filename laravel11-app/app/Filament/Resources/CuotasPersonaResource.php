@@ -67,7 +67,8 @@ class CuotasPersonaResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+//                Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -89,6 +90,7 @@ class CuotasPersonaResource extends Resource
             'index' => Pages\ListCuotasPersonas::route('/'),
             'create' => Pages\CreateCuotasPersona::route('/create'),
             'edit' => Pages\EditCuotasPersona::route('/{record}/edit'),
+            'view' => Pages\ViewCuotasPersona::route('/{record}/view'),
         ];
     }
 }
