@@ -8,7 +8,8 @@ class PersonaCargo extends Model
 {
     protected $table = 'persona_cargos';
     protected $fillable = [
-        'cargo',
-        'descripcion',
+        'Cargo',
+        'Descripcion',
+        'Activo'
     ];
 }
