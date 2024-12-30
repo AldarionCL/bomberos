@@ -45,7 +45,8 @@ class DocumentosResource extends Resource
                 Forms\Components\Section::make()
                     ->schema([
                         Forms\Components\Select::make('AsociadoA')
-                            ->relationship('asociado', 'name'),
+                            ->relationship('asociado', 'name')
+                        ->hint('Si el documento esta asociado a un usuario, seleccionar del listado. De lo contrario, dejar en blanco'),
                     ]),
                 Forms\Components\Section::make()
                     ->schema([

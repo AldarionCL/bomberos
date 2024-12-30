@@ -59,7 +59,7 @@ class CuotasPersonaResource extends Resource
                 TextColumn::make('estado.Estado'),
                 TextColumn::make('contCuotas')
                     ->badge()
-                    ->color('info')
+                    ->color(fn($record)=>$record->cuotas->where('Estado', '1')->count()>0 ? 'warning' : 'success')
                     ->default(fn($record) => $record->cuotas->where('Estado', '1')->count())
                     ->label('Cuotas Pendientes'),
             ])
