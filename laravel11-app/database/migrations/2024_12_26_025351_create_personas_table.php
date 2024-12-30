@@ -13,10 +13,9 @@ return new class extends Migration
     {
         Schema::create('personas', function (Blueprint $table) {
             $table->id();
-            $table->integer('idUsuario')->unsigned();
-            $table->integer('idRole')->unsigned();
-            $table->integer('idCargo')->unsigned();
-            $table->integer('idEstado')->unsigned();
+            $table->bigInteger('idUsuario')->unsigned();
+            $table->bigInteger('idCargo')->unsigned();
+            $table->bigInteger('idEstado')->unsigned();
             $table->string('Rut');
             $table->string('Telefono')->nullable();
             $table->string('Direccion')->nullable();
@@ -26,6 +25,9 @@ return new class extends Migration
             $table->string('EstadoCivil')->nullable();
             $table->string('Ocupacion')->nullable();
             $table->boolean('Activo');
+
+            $table->unique('Rut');
+            $table->foreign('idUsuario')->references('id')->on('users');
 
             $table->timestamps();
         });

@@ -16,18 +16,21 @@ return new class extends Migration
             $table->integer('TipoSolicitud');
             $table->integer('Estado')->default(1);
             $table->dateTime('Fecha_registro');
-            $table->integer('SolicitadoPor');
+            $table->bigInteger('SolicitadoPor')->unsigned();
 
-            $table->string('NombrePostulante');
-            $table->string('TelefonoPostulante');
-            $table->string('CorreoPostulante');
-            $table->string('DireccionPostulante');
-            $table->string('Observaciones');
-            $table->string('NivelEstudioPostulante');
-            $table->date('FechaNacimientoPostulante');
-            $table->string('SexoPostulante');
-            $table->string('EstadoCivilPostulante');
-            $table->string('OcupacionPostulante');
+            $table->string('NombrePostulante')->nullable();
+            $table->string('TelefonoPostulante')->nullable();
+            $table->string('CorreoPostulante')->nullable();
+            $table->string('DireccionPostulante')->nullable();
+            $table->string('Observaciones')->nullable();
+            $table->string('NivelEstudioPostulante')->nullable();
+            $table->date('FechaNacimientoPostulante')->nullable();
+            $table->string('SexoPostulante')->nullable();
+            $table->string('EstadoCivilPostulante')->nullable();
+            $table->string('OcupacionPostulante')->nullable();
+
+            $table->foreign('SolicitadoPor')->references('id')->on('users');
+
             $table->timestamps();
         });
     }

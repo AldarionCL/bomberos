@@ -33,7 +33,7 @@ class Persona extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'id', 'idUsuario');
+        return $this->hasOne(User::class, 'id', 'idUsuario');
     }
 
     public function role(){
@@ -47,6 +47,11 @@ class Persona extends Model
     public function estado()
     {
         return $this->hasOne(PersonaEstado::class, 'id', 'idEstado');
+    }
+
+    public function cuotas()
+    {
+        return $this->hasMany(Cuota::class, 'idUser', 'idUsuario');
     }
 
 

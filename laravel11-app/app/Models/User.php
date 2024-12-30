@@ -23,6 +23,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'idRole',
     ];
 
     /**
@@ -53,18 +54,22 @@ class User extends Authenticatable
         return $this->hasOne(Persona::class, 'idUsuario', 'id');
     }
 
+    public function role(){
+        return $this->hasOne(UserRole::class, 'id', 'idRole');
+    }
+
     public function isRole($role):bool
     {
-        if(Auth::user()->persona) {
+        if(Auth::user()->role) {
             if (is_array($role)) {
                 foreach ($role as $k => $r) {
-                    if (Auth::user()->persona->role->rol === $r) {
+                    if (Auth::user()->role->rol === $r) {
                         return true;
                     }
                 }
                 return false;
             } else {
-                return Auth::user()->persona->role->rol === $role;
+                return Auth::user()->role->rol === $role;
             }
         } else return false;
     }

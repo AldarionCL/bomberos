@@ -17,6 +17,10 @@ return new class extends Migration
             $table->string('Descripcion')->nullable();
             $table->timestamps();
         });
+
+        Schema::table('cuotas', function (Blueprint $table) {
+            $table->foreign('Estado')->references('id')->on('cuotas_estados');
+        });
     }
 
     /**

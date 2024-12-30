@@ -20,6 +20,10 @@ return new class extends Migration
             $table->boolean('Estado')->default(true);
             $table->dateTime('FechaPublicacion');
             $table->dateTime('FechaExpiracion')->nullable();
+            $table->bigInteger('createdBy')->unsigned();
+
+            $table->foreign('createdBy')->references('id')->on('users');
+
             $table->timestamps();
         });
     }

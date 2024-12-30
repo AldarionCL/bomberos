@@ -11,17 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('user_roles', function (Blueprint $table) {
+        Schema::create('documentos_tipos', function (Blueprint $table) {
             $table->id();
-            $table->string('Rol');
-            $table->string('Descripcion')->nullable();
-            $table->string('Permisos')->nullable();
+            $table->string('Tipo');
+            $table->string('Descripcion');
 
             $table->timestamps();
         });
 
-        Schema::table('users', function (Blueprint $table) {
-            $table->foreign('idRole')->references('id')->on('user_roles');
+        Schema::table('documentos', function (Blueprint $table) {
+            $table->foreign('TipoDocumento')->references('id')->on('documentos_tipos');
         });
     }
 
@@ -30,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_roles');
+        Schema::dropIfExists('documentos_tipos');
     }
 };

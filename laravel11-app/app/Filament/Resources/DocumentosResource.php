@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\DocumentosResource\Pages;
 use App\Filament\Resources\DocumentosResource\RelationManagers;
 use App\Models\Documentos;
+use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -23,7 +24,35 @@ class DocumentosResource extends Resource
     {
         return $form
             ->schema([
-                //
+                Forms\Components\Section::make()
+                    ->schema([
+                        Forms\Components\TextInput::make('Nombre')
+                            ->required(),
+
+                        Forms\Components\Select::make('TipoDocumento')
+                            ->relationship('tipo', 'Tipo')
+                            ->label('Tipo de Documento')
+                            ->required(),
+
+                        Forms\Components\Textarea::make('Descripcion'),
+
+                        Forms\Components\FileUpload::make('Path')
+                            ->disk('public')
+                            ->label('Archivo')
+                            ->required(),
+                    ])->columns(),
+
+                Forms\Components\Section::make()
+                    ->schema([
+                        Forms\Components\Select::make('AsociadoA')
+                            ->relationship('asociado', 'name'),
+                    ]),
+                Forms\Components\Section::make()
+                    ->schema([
+                        Forms\Components\Toggle::make('Noticia')
+                            ->hint('Generar Noticia sobre este documento')
+                            ->default(false),
+                    ])
             ]);
     }
 
@@ -31,7 +60,14 @@ class DocumentosResource extends Resource
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\TextColumn::make('Nombre'),
+                Tables\Columns\TextColumn::make('Descripcion')
+                    ->words(100),
+                Tables\Columns\TextColumn::make('tipo.Tipo'),
+
+//                Tables\Columns\TextColumn::make('Path'),
+                Tables\Columns\TextColumn::make('asociado.name'),
+                Tables\Columns\TextColumn::make('created_at'),
             ])
             ->filters([
                 //

@@ -15,7 +15,13 @@ return new class extends Migration
             $table->id();
             $table->string('Cargo');
             $table->string('Descripcion')->nullable();
+            $table->integer('Activo');
+
             $table->timestamps();
+        });
+
+        Schema::table('personas', function (Blueprint $table) {
+            $table->foreign('idCargo')->references('id')->on('persona_cargos');
         });
     }
 

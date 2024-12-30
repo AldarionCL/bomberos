@@ -68,7 +68,6 @@ class CuotasController extends Controller
             }else{
                 $nuevo = Persona::create([
                     'idUsuario' => $user->id,
-                    'idRole' => 1,
                     'idCargo' => 1,
                     'idEstado' => 1,
                     'FechaReclutamiento' => Carbon::today()->subDays(rand(0,350))->format('Y-m-d'),

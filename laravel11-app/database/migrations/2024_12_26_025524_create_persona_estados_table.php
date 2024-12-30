@@ -15,7 +15,12 @@ return new class extends Migration
             $table->id();
             $table->string('Estado');
             $table->string('Descripcion')->nullable();
+
             $table->timestamps();
+        });
+
+        Schema::table('personas', function (Blueprint $table) {
+            $table->foreign('idEstado')->references('id')->on('persona_estados');
         });
     }
 

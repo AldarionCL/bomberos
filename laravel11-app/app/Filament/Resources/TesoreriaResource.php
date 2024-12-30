@@ -23,7 +23,10 @@ class TesoreriaResource extends Resource
     protected static ?string $model = Cuota::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationLabel = 'Tesoreria';
+    protected static ?string $navigationGroup = 'Tesoreria';
+    protected static ?string $navigationLabel = 'Cuotas';
+    protected static ?string $label = 'Cuota';
+    protected static ?string $pluralLabel = 'Cuotas';
 
     public static function form(Form $form): Form
     {
@@ -89,7 +92,7 @@ class TesoreriaResource extends Resource
                 Tables\Columns\TextColumn::make('estadocuota.Estado')
                     ->badge()
                     ->color(fn(string $state): string => match ($state) {
-                        'Pendiente' => 'warning',
+                        'Pendiente' => 'badgeAlert',
                         'Aprobado' => 'success',
                         'Rechazado' => 'danger',
                         'Cancelado' => 'danger',

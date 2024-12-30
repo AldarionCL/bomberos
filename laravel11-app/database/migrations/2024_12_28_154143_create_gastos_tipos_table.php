@@ -11,15 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('gastos_tipos', function (Blueprint $table) {
+        Schema::create('gastos_tipo', function (Blueprint $table) {
             $table->id();
             $table->string('Tipo');
-            $table->string('Proveedor');
-            $table->integer('MontoNeto');
-            $table->integer('MontoIva');
-            $table->integer('MontoTotal');
+            $table->string('Descripcion')->nullable();
+            $table->integer('Activo');
 
             $table->timestamps();
+        });
+
+        Schema::table('gastos', function (Blueprint $table) {
+            $table->foreign('TipoGasto')->references('id')->on('gastos_tipo');
         });
     }
 
@@ -28,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('gastos_tipos');
+        Schema::dropIfExists('gastos_tipo');
     }
 };

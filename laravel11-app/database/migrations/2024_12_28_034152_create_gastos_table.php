@@ -13,6 +13,14 @@ return new class extends Migration
     {
         Schema::create('gastos', function (Blueprint $table) {
             $table->id();
+            $table->string('Descripcion');
+            $table->date('FechaGasto');
+            $table->integer('MontoGasto');
+            $table->integer('MontoIva')->default(0);
+            $table->integer('MontoTotal');
+            $table->bigInteger('TipoGasto')->unsigned();
+            $table->integer('AsociadoA')->unsigned()->nullable();
+
             $table->timestamps();
         });
     }

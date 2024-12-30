@@ -13,16 +13,18 @@ return new class extends Migration
     {
         Schema::create('cuotas', function (Blueprint $table) {
             $table->id();
-            $table->integer('idUser')->unsigned();
+            $table->bigInteger('idUser')->unsigned();
             $table->dateTime('FechaPeriodo')->nullable();
             $table->dateTime('FechaVencimiento')->nullable();
             $table->dateTime('FechaPago')->nullable();
-            $table->integer('Estado');
+            $table->bigInteger('Estado')->unsigned();
             $table->integer('Monto');
             $table->integer('Pendiente')->nullable();
             $table->integer('Recaudado')->nullable();
             $table->string('Documento')->nullable();
             $table->string('DocumentoArchivo')->nullable();
+
+            $table->foreign('idUser')->references('id')->on('users');
             $table->timestamps();
         });
     }
