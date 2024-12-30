@@ -62,6 +62,10 @@ class CuotasPersonaResource extends Resource
                     ->color(fn($record)=>$record->cuotas->where('Estado', '1')->count()>0 ? 'warning' : 'success')
                     ->default(fn($record) => $record->cuotas->where('Estado', '1')->count())
                     ->label('Cuotas Pendientes'),
+                TextColumn::make('montoPendiente')
+                ->default(fn($record) => $record->cuotas->sum('Pendiente'))
+                    ->prefix('$')
+                ->money('CLP')
             ])
             ->filters([
                 //
