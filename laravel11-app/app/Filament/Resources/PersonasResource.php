@@ -13,6 +13,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Hash;
 
 class PersonasResource extends Resource
 {
@@ -32,7 +33,10 @@ class PersonasResource extends Resource
                     ->schema([
                         Forms\Components\TextInput::make('name')->required(),
                         Forms\Components\TextInput::make('email')->required(),
-                        Forms\Components\TextInput::make('password')->password(),
+                        Forms\Components\TextInput::make('password')
+                            ->password()
+                            ->dehydrateStateUsing(fn($state) => Hash::make($state))
+                            ->dehydrated(fn($state) => filled($state)),
                     ])->columns(),
                 Forms\Components\Section::make('Datos Personales')
                     ->schema([

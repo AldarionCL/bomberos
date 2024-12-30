@@ -20,7 +20,9 @@ class PersonaCargosResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationGroup = 'Administracion';
-
+    protected static ?string $navigationLabel = 'Cargos';
+    protected static ?string $label = 'Cargo';
+    protected static ?string $pluralLabel = 'Cargos';
 
     public static function form(Form $form): Form
     {
