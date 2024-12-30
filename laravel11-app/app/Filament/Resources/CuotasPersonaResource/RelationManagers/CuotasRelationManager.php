@@ -2,7 +2,9 @@
 
 namespace App\Filament\Resources\CuotasPersonaResource\RelationManagers;
 
+use Coolsam\FilamentFlatpickr\Forms\Components\Flatpickr;
 use Filament\Forms;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
@@ -18,9 +20,48 @@ class CuotasRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('Cuotas')
-                    ->required()
-                    ->maxLength(255),
+                Forms\Components\Section::make()
+                    ->schema([
+                        Forms\Components\TextInput::make('Monto')
+                            ->numeric()
+                            ->prefix('$')
+                            ->readOnly(),
+
+//                    DatePicker::make('fechaPeriodo')->label('Fecha de Periodo'),
+                        Forms\Components\DatePicker::make('FechaPeriodo')
+                            ->label('Periodo Desde')
+                            ->readOnly(),
+
+                        Forms\Components\DatePicker::make('FechaVencimiento')
+                            ->label('Fecha de Vencimiento')
+                            ->readOnly(),
+
+                        Select::make('Estado')
+                            ->relationship('estadocuota', 'Estado')
+                            ->default(1)
+                            ->label('Estado'),
+                    ])->columns(),
+                Forms\Components\Section::make()
+                    ->schema([
+                        Forms\Components\TextInput::make('Pendiente')
+                            ->numeric()
+                            ->prefix('$')
+                            ->readOnly()
+                            ->reactive(),
+                        Forms\Components\TextInput::make('Recaudado')
+                            ->numeric()
+                            ->prefix('$')
+                            ->reactive(),
+
+
+                        Flatpickr::make('FechaPago')->label('Fecha de Pago'),
+
+                        Forms\Components\TextInput::make('Documento')
+                            ->label('N° Documento'),
+
+                        Forms\Components\FileUpload::make('DocumentoArchivo')
+                            ->label('Archivo'),
+                    ])->columns()
             ]);
     }
 
@@ -51,12 +92,14 @@ class CuotasRelationManager extends RelationManager
 //                Tables\Actions\CreateAction::make(),
             ])
             ->actions([
-//                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->label('Ingresar Pago'),
 //                Tables\Actions\DeleteAction::make(),
-                Tables\Actions\Action::make('IngresarPago')
+                /*Tables\Actions\Action::make('IngresarPago')
+                    ->url(fn ($url) => route('filament.cuotas-pago', $url))
                     ->icon('heroicon-o-currency-dollar')
                     ->color('success')
-                ->label('Ingresar Pago'),
+                ->label('Ingresar Pago'),*/
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
