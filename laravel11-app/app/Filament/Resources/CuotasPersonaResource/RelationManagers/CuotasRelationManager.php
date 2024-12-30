@@ -24,7 +24,7 @@ class CuotasRelationManager extends RelationManager
                 Forms\Components\Section::make()
                     ->schema([
                         Forms\Components\Placeholder::make('Monto')
-                            ->content(fn($record) => "$".$record->Monto),
+                            ->content(fn($record) => "$" . $record->Monto),
 
 //                    DatePicker::make('fechaPeriodo')->label('Fecha de Periodo'),
                         Forms\Components\Placeholder::make('FechaPeriodo')
@@ -47,16 +47,26 @@ class CuotasRelationManager extends RelationManager
                             ->reactive(),
                         Forms\Components\TextInput::make('Recaudado')
                             ->prefix('$')
+                            ->reactive()
                             ->live(onBlur: true)
-                            ->afterStateUpdated(function ($state, $set, $get) {
-                                $set('Pendiente', $get('Pendiente') - $state);
-                                if($get('Pendiente') == 0){
+                            ->afterStateUpdated(function ($state, $set, $get, $record) {
+                                if ($state > $record->Monto) {
+                                    $state = $record->Monto;
+                                    $set('Recaudado', $record->Monto);
+                                }
+
+                                $monto = $record->Monto - $state;
+                                $set('Pendiente', $monto);
+                                if ($get('Pendiente') == 0) {
                                     $set('Estado', 2);
+                                } else {
+                                    $set('Estado', 1);
                                 }
                             }),
 
 
-                        Flatpickr::make('FechaPago')->label('Fecha de Pago'),
+                        Flatpickr::make('FechaPago')
+                            ->label('Fecha de Pago'),
 
                         Forms\Components\TextInput::make('Documento')
                             ->label('N° Documento'),
