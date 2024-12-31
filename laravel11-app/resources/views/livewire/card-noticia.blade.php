@@ -1,6 +1,6 @@
 <div class="flex flex-col">
     <div
-        class="mx-0 mt-6 rounded-md text-surface bg-gray-200 shadow-lg border border-gray-500 md:mx-3 dark:!border-gray-800 dark:bg-gray-800 bg-opacity-90 relative overflow-hidden h-full">
+        class="mx-0 mt-6 rounded-md text-surface bg-gray-100 shadow-lg border border-gray-500 md:mx-3 dark:!border-gray-800 dark:bg-gray-800 bg-opacity-90 relative overflow-hidden h-full">
 
 {{--        Objeto Ribbon--}}
         {{--<div class="absolute left-0 top-0 h-16 w-16 opacity-75">

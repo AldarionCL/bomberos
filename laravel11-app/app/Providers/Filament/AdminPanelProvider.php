@@ -29,13 +29,24 @@ class AdminPanelProvider extends PanelProvider
             ->path('/app')
             ->login()
             ->colors([
-                'primary' => Color::hex('#ccb301'),
-                'secondary' => Color::hex('#043aa7'),
-                'badgeAlert' => Color::hex('#ccb301'),
+//                'primary' => Color::hex('#ccb301'),
+//                'secondary' => Color::hex('#043aa7'),
+                'badgeAlert' => Color::hex('#cdb200'),
+                'logoYellow' => Color::hex('#cdb200'),
+                'logoBlue' => Color::hex('#023aab'),
+                'logoRed' => Color::hex('#ff0900'),
             ])
-            ->sideBarWidth(200)
-            ->sidebarCollapsibleOnDesktop()
-
+//            ->brandLogo('public/iamges/logo.png')
+//            ->font('Roboto')
+//            ->font('Nunito Sans')
+//            ->font('Source Sans Pro')
+            ->font('Roboto')
+            ->sideBarWidth(300)
+//            ->sidebarCollapsibleOnDesktop()
+//            ->viteTheme('resources/css/filament/admin/theme.css')
+            ->plugin(
+                \Hasnayeen\Themes\ThemesPlugin::make()
+            )
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
@@ -57,6 +68,7 @@ class AdminPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+                \Hasnayeen\Themes\Http\Middleware\SetTheme::class
             ])
             ->authMiddleware([
                 Authenticate::class,

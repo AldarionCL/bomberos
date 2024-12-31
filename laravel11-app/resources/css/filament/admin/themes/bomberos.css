@@ -1,0 +1,7 @@
+@import '../../../../../vendor/filament/filament/resources/css/theme.css';
+
+@config './tailwind.Bomberos.config.js';
+
+html .fi-tabs{
+    @apply bg-red-500;
+}

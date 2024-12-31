@@ -1,0 +1,46 @@
+@import '/vendor/filament/filament/resources/css/theme.css';
+
+@config 'tailwind.config.js';
+html .fi-body {
+    background-image: url("/public/img/doodle2.png") ;
+    background-attachment: fixed;
+
+    /*opacity: 0.4;*/
+}
+html.dark .fi-body {
+    background-image: url("/public/img/doodle2-dark.png");
+    background-attachment: fixed;
+
+    /*opacity: 0.4;*/
+}
+
+html .fi-sidebar{
+    @apply bg-blue-100;
+    color:#ffffff;
+}
+
+html.dark .fi-sidebar, html.dark .fi-topbar{
+    /*@apply opacity-90;*/
+    @apply bg-gray-900;
+    /*background-image: url("/public/images/stone4.png");*/
+
+}
+
+html .fi-topbar{
+    @apply bg-blue-500;
+}
+
+html .fi-sidebar-item .fi-active .fi-sidebar-item-active {
+    width: max-content;
+}
+
+.fi-ta {
+    @apply shadow-lg;
+}
+
+.fi-wi-stats-overview-stat {
+    @apply shadow-lg;
+}
+.fi-btn {
+    @apply shadow-md;
+}
