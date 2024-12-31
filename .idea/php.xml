@@ -184,6 +184,7 @@
       <path value="$PROJECT_DIR$/laravel11-app/vendor/mobiledetect/mobiledetectlib" />
       <path value="$PROJECT_DIR$/laravel11-app/vendor/laravel/jetstream" />
       <path value="$PROJECT_DIR$/laravel11-app/vendor/savannabits/filament-flatpickr" />
+      <path value="$PROJECT_DIR$/laravel11-app/vendor/hasnayeen/themes" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.2" />

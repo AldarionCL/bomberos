@@ -173,6 +173,7 @@
       <excludeFolder url="file://$MODULE_DIR$/laravel11-app/vendor/laravel-lang/routes" />
       <excludeFolder url="file://$MODULE_DIR$/laravel11-app/vendor/laravel/ui" />
       <excludeFolder url="file://$MODULE_DIR$/laravel11-app/vendor/symfony/polyfill-php81" />
+      <excludeFolder url="file://$MODULE_DIR$/laravel11-app/vendor/hasnayeen/themes" />
       <excludeFolder url="file://$MODULE_DIR$/laravel11-app/vendor/savannabits/filament-flatpickr" />
     </content>
     <orderEntry type="inheritedJdk" />
