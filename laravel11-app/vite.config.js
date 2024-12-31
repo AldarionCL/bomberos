@@ -7,7 +7,7 @@ export default defineConfig({
             input: ['resources/css/app.css',
                 'resources/js/app.js',
                 'resources/css/filament/admin/theme.css',
-                `resources/css/filament/admin/themes/bomberos.css`
+                `resources/css/filament/admin/themes/Bomberos.css`
                 ],
             refresh: true,
         }),
