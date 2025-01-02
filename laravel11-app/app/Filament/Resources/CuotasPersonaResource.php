@@ -22,7 +22,7 @@ class CuotasPersonaResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-s-rectangle-stack';
     protected static ?string $navigationGroup = 'Tesoreria';
-    protected static ?string $navigationLabel = 'Cuotas - Persona';
+    protected static ?string $navigationLabel = 'Recaudacion';
     protected static ?string $label = 'Cuota';
     protected static ?string $pluralLabel = 'Cuotas - Persona';
     public static function form(Form $form): Form
@@ -71,12 +71,12 @@ class CuotasPersonaResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()->label('Pagar'),
 //                Tables\Actions\ViewAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+//                    Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }

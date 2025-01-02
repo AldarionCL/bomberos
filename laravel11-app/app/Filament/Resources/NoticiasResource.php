@@ -24,6 +24,9 @@ class NoticiasResource extends Resource
     protected static ?string $navigationGroup = 'Administracion';
 
 
+    protected static ?string $label = 'Noticia';
+    protected static ?string $pluralLabel = 'Noticias';
+
     public static function form(Form $form): Form
     {
         return $form
@@ -61,12 +64,15 @@ class NoticiasResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('Titulo'),
+                Tables\Columns\TextColumn::make('Titulo')
+                ->searchable(),
                 TextColumn::make('Subtitulo'),
-                Tables\Columns\TextColumn::make('Estado'),
+                Tables\Columns\BooleanColumn::make('Estado'),
                 Tables\Columns\TextColumn::make('FechaPublicacion')
+                    ->sortable()
                     ->date(),
                 Tables\Columns\TextColumn::make('FechaExpiracion')
+                    ->sortable()
                     ->date(),
             ])
             ->filters([

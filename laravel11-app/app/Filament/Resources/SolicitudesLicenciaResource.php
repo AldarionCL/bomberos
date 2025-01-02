@@ -19,7 +19,7 @@ class SolicitudesLicenciaResource extends Resource
     protected static ?string $model = Solicitud::class;
 
     protected static ?string $navigationIcon = 'heroicon-s-exclamation-triangle';
-    protected static ?string $navigationGroup = 'Solicitudes';
+    protected static ?string $navigationGroup = 'Personal';
     protected static ?string $navigationLabel = 'Solicitudes Licencia';
 
     protected static ?string $label = 'Solicitud Licencia';

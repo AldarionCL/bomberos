@@ -14,6 +14,7 @@ class Solicitud extends Model
         'Estado',
         'Fecha_registro',
         'SolicitadoPor',
+        'RutPostulante',
         'NombrePostulante',
         'TelefonoPostulante',
         'CorreoPostulante',
@@ -25,4 +26,12 @@ class Solicitud extends Model
         'EstadoCivilPostulante',
         'OcupacionPostulante',
     ];
+
+    public function solicitante(){
+        return $this->hasOne(User::class, 'id', 'SolicitadoPor');
+    }
+
+    public function documentos(){
+        return $this->hasMany(Documentos::class, 'idSolicitud', 'id');
+    }
 }

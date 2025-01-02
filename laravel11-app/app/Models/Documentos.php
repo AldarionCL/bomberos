@@ -16,6 +16,7 @@ class Documentos extends Model
         'TipoDocumento',
         'Path',
         'AsociadoA',
+        'idSolicitud'
     ];
 
     public function tipo()
@@ -26,5 +27,10 @@ class Documentos extends Model
     public function asociado()
     {
         return $this->hasOne(User::class, 'id', 'AsociadoA');
+    }
+
+    public function solicitud()
+    {
+        return $this->hasOne(Solicitud::class, 'id', 'idSolicitud');
     }
 }

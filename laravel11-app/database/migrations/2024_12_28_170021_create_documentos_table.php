@@ -17,8 +17,10 @@ return new class extends Migration
             $table->string('Descripcion')->nullable();
             $table->string('TipoArchivo')->nullable();
             $table->bigInteger('TipoDocumento')->unsigned();
-            $table->string('Path');
-            $table->integer('AsociadoA')->unsigned()->nullable();
+            $table->integer('Estado')->default(0);
+            $table->string('Path')->nullable();
+            $table->bigInteger('AsociadoA')->unsigned()->nullable();
+            $table->bigInteger('idSolicitud')->unsigned()->nullable();
 
             $table->timestamps();
         });

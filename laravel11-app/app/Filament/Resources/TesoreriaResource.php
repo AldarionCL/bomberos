@@ -25,7 +25,7 @@ class TesoreriaResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-s-rectangle-stack';
     protected static ?string $navigationGroup = 'Tesoreria';
-    protected static ?string $navigationLabel = 'Cuotas';
+    protected static ?string $navigationLabel = 'Admin. Cuotas';
     protected static ?string $label = 'Cuota';
     protected static ?string $pluralLabel = 'Cuotas';
 

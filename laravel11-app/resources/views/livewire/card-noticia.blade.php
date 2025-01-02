@@ -30,7 +30,7 @@
 {{--        Contenido de noticia--}}
         <div class="p-6">
             <h5 class="mb-2 text-xl font-medium leading-tight">{{$noticia->Titulo}}</h5>
-            <small class="mb-2 text-xl font-medium leading-tight">{{$noticia->Subtitulo}}</small>
+            <small class="mb-2 leading-tight">{{$noticia->Subtitulo}}</small>
 
             <p class="pt-4 mb-4 text-base">
                 {!! $noticia->Contenido !!}

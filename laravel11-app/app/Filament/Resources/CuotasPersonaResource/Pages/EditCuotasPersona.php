@@ -9,7 +9,7 @@ use Filament\Resources\Pages\EditRecord;
 class EditCuotasPersona extends EditRecord
 {
     protected static string $resource = CuotasPersonaResource::class;
-
+    protected static ?string $title = 'Pagar Cuotas';
     protected function getHeaderActions(): array
     {
         return [

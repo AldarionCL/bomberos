@@ -20,10 +20,10 @@ class PersonasResource extends Resource
     protected static ?string $model = User::class;
 
     protected static ?string $navigationIcon = 'heroicon-s-user-group';
-    protected static ?string $navigationGroup = 'Administracion';
-    protected static ?string $navigationLabel = 'Personal';
-    protected static ?string $label = 'Personal';
-    protected static ?string $pluralLabel = 'Personal';
+    protected static ?string $navigationGroup = 'Personal';
+    protected static ?string $navigationLabel = 'Listado Voluntarios';
+    protected static ?string $label = 'Voluntario';
+    protected static ?string $pluralLabel = 'Voluntarios';
 
     public static function form(Form $form): Form
     {
