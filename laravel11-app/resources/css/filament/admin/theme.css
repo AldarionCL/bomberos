@@ -4,8 +4,8 @@
 
 html .fi-main {
     /*background-image: url("/public/img/bg0.jpg");*/
-    @apply bg-gradient-to-r from-gray-50 to-indigo-50;
-    /*@apply bg-white;*/
+    /*@apply bg-gradient-to-r from-gray-50 to-indigo-50;*/
+    @apply bg-gray-50;
     background-size: cover;
     background-attachment: fixed;
     /*@apply opacity-90;*/
