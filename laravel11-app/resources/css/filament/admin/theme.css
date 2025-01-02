@@ -67,11 +67,11 @@ html .fi-section-header-heading {
 
 html .fi-page .fi-header {
     @apply border border-0 border-red-500;
-    @apply border-dotted border-l-4 pl-3;
+    @apply  border-l-4 pl-3;
 }
 
 html .fi-page .fi-header-heading {
-    @apply text-blue-900;
+    @apply text-gray-600;
 }
 
 

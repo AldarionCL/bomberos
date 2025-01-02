@@ -31,7 +31,7 @@ class SolicitudesBajaResource extends Resource
     {
         return $form
             ->schema([
-                //
+
             ]);
     }
 
