@@ -36,13 +36,12 @@ class AdminPanelProvider extends PanelProvider
                 'logoBlue' => Color::hex('#023aab'),
                 'logoRed' => Color::hex('#ff0900'),
             ])
-//            ->brandLogo('public/iamges/logo.png')
-//            ->font('Roboto')
-//            ->font('Nunito Sans')
-//            ->font('Source Sans Pro')
+            ->brandLogo('/img/logo.png')
+            ->brandLogoHeight('60px')
+            ->brandName('App')
             ->font('Roboto')
             ->sideBarWidth(300)
-//            ->sidebarCollapsibleOnDesktop()
+            ->sidebarCollapsibleOnDesktop()
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->plugin(
                 \Hasnayeen\Themes\ThemesPlugin::make()

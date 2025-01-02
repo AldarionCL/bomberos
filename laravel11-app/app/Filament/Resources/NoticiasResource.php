@@ -20,7 +20,7 @@ class NoticiasResource extends Resource
 {
     protected static ?string $model = Noticias::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-newspaper';
+    protected static ?string $navigationIcon = 'heroicon-s-newspaper';
     protected static ?string $navigationGroup = 'Administracion';
 
 
@@ -39,14 +39,17 @@ class NoticiasResource extends Resource
                         Forms\Components\MarkdownEditor::make('Contenido')
                             ->required()
                         ->columnSpan(2),
-                        Flatpickr::make('FechaPublicacion')->required(),
+                        Flatpickr::make('FechaPublicacion')
+                            ->default(fn () => now()->format('Y-m-d'))
+                            ->required(),
                         Flatpickr::make('FechaExpiracion'),
                         Forms\Components\Select::make('Estado')
                         ->options([
                             1 => 'Publicado',
                             2 => 'Agendado',
                             3 => 'Expirado',
-                        ]),
+                        ])
+                        ->default(1),
                         Forms\Components\FileUpload::make('Imagen'),
 
                     ])->columns(),

@@ -1,34 +1,78 @@
 @import '/vendor/filament/filament/resources/css/theme.css';
 
 @config 'tailwind.config.js';
+
 html .fi-main {
-    background-image: url("/public/img/doodle2.png") !important;
+    background-image: url("/public/img/bg8l.jpg");
+    /*@apply bg-gradient-to-t from-slate-100 to-indigo-100;*/
+    background-size: cover;
     background-attachment: fixed;
-
-    /*opacity: 0.4;*/
 }
+
 html.dark .fi-main {
-    background-image: url("/public/img/doodle2-dark.png");
+    /*background-image: url("/public/img/doodle2-dark.png") ;*/
+    background-image: url("/public/img/bg3.jpg") !important;
     background-attachment: fixed;
-
-    /*opacity: 0.4;*/
+    background-size: auto;
 }
 
-html .fi-tabs{
+
+html:not(.dark) .fi-sidebar {
+    @apply bg-blue-100;
+    /*@apply shadow-lg;*/
+    @apply bg-gradient-to-r from-slate-100 bg-blue-100;
+
+}
+
+html:not(.dark) .fi-topbar nav {
+    @apply bg-blue-100 !important;
+    /*@apply shadow-lg;*/
+}
+
+html body {
+    @apply bg-blue-100 !important;
+
+}
+
+html .fi-tabs {
     @apply bg-yellow-500;
+    @apply drop-shadow;
 }
 
-html .fi-tabs-item-label{
+html .fi-tabs-item-label {
     @apply text-white;
 }
-html .fi-tabs-item-active .fi-tabs-item-label{
+
+html .fi-tabs-item-active .fi-tabs-item-label {
     @apply text-gray-500;
 }
 
-html:not(.dark) .fi-ta-header-ctn{
-    @apply bg-blue-200;
+
+html:not(.dark) .fi-ta-header-ctn {
+    @apply bg-blue-300;
+}
+html.dark .fi-ta-header-ctn {
+    @apply bg-red-800;
+}
+html .fi-ta-header-heading {
+    @apply text-white;
 }
 
+html .fi-section-header {
+    @apply bg-blue-300;
+}
+html .fi-section-header-heading {
+    @apply text-white;
+}
+
+html .fi-page .fi-header {
+    @apply border border-0 border-red-500;
+    @apply border-dotted border-l-4 pl-3;
+}
+
+html .fi-page .fi-header-heading {
+    @apply text-blue-900;
+}
 
 
 .fi-ta {
@@ -38,6 +82,7 @@ html:not(.dark) .fi-ta-header-ctn{
 .fi-wi-stats-overview-stat {
     @apply shadow-lg;
 }
-.fi-btn {
+
+html .fi-btn {
     @apply shadow-md;
 }

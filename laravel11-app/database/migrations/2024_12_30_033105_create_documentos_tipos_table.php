@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('documentos_tipos', function (Blueprint $table) {
             $table->id();
             $table->string('Tipo');
-            $table->string('Descripcion');
+            $table->string('Descripcion')->nullable();
 
             $table->timestamps();
         });

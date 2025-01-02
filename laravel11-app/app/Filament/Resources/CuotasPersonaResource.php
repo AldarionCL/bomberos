@@ -20,16 +20,16 @@ class CuotasPersonaResource extends Resource
 {
     protected static ?string $model = Persona::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-s-rectangle-stack';
     protected static ?string $navigationGroup = 'Tesoreria';
-    protected static ?string $navigationLabel = 'Cuotas x Persona';
+    protected static ?string $navigationLabel = 'Cuotas - Persona';
     protected static ?string $label = 'Cuota';
-    protected static ?string $pluralLabel = 'Cuotas';
+    protected static ?string $pluralLabel = 'Cuotas - Persona';
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\Section::make()
+                Forms\Components\Section::make('Datos Persona')
                     ->schema([
                         Forms\Components\Placeholder::make('Rut')
                             ->content(fn($record) => $record->Rut),

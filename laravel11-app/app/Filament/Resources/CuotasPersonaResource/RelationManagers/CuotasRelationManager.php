@@ -4,6 +4,7 @@ namespace App\Filament\Resources\CuotasPersonaResource\RelationManagers;
 
 use Carbon\Carbon;
 use Coolsam\FilamentFlatpickr\Forms\Components\Flatpickr;
+use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
@@ -37,12 +38,21 @@ class CuotasRelationManager extends RelationManager
                         Select::make('Estado')
                             ->relationship('estadocuota', 'Estado')
                             ->default(1)
+                            ->required()
                             ->label('Estado'),
                     ])->columns(),
                 Forms\Components\Section::make()
                     ->schema([
                         Forms\Components\TextInput::make('Pendiente')
                             ->prefix('$')
+                            ->suffixAction(Forms\Components\Actions\Action::make('aplicar')
+                                ->icon('heroicon-m-arrow-right-circle')
+                                ->action(function ($record, $set) {
+                                    $set('Recaudado', $record->Pendiente);
+                                    $set('Pendiente', 0);
+                                    $set('Estado', 2);
+                                })
+                            )
                             ->readOnly()
                             ->reactive(),
                         Forms\Components\TextInput::make('Recaudado')
@@ -66,12 +76,16 @@ class CuotasRelationManager extends RelationManager
 
 
                         Flatpickr::make('FechaPago')
-                            ->label('Fecha de Pago'),
+                            ->label('Fecha de Pago')
+                            ->default(fn () => Carbon::today()->format('Y-m-d')),
 
                         Forms\Components\TextInput::make('Documento')
                             ->label('N° Documento'),
 
                         Forms\Components\FileUpload::make('DocumentoArchivo')
+                            ->downloadable()
+                            ->previewable()
+                            ->deletable(false)
                             ->label('Archivo'),
                     ])->columns()
             ]);

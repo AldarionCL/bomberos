@@ -3,16 +3,20 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Traits\HasProfilePhoto;
 use Couchbase\Role;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Models\Contracts\HasAvatar;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Auth;
 
-class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasProfilePhoto;
 
     /**
      * The attributes that are mass assignable.
@@ -24,6 +28,7 @@ class User extends Authenticatable
         'email',
         'password',
         'idRole',
+        'profile_photo_path'
     ];
 
     /**
@@ -74,5 +79,16 @@ class User extends Authenticatable
         } else return false;
     }
 
+
+    public function canAccessPanel(Panel $admin): bool
+    {
+//        return Auth::user()->isRole('Administrador');
+        return true;
+    }
+
+    public function getFilamentAvatarUrl(): ?string
+    {
+        return $this->profile_photo_url;
+    }
 
 }

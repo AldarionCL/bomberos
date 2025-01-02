@@ -17,7 +17,7 @@ class GastosResource extends Resource
 {
     protected static ?string $model = Gastos::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-s-rectangle-stack';
     protected static ?string $navigationGroup = 'Tesoreria';
     protected static ?string $navigationLabel = 'Gastos';
     protected static ?string $label = 'Gasto';

@@ -19,7 +19,7 @@ class UserRolesResource extends Resource
 {
     protected static ?string $model = UserRole::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-s-rectangle-stack';
     protected static ?string $navigationGroup = 'Administracion';
     protected static ?string $navigationLabel = 'Rol Usuarios';
     protected static ?string $label = 'Rol';
@@ -37,7 +37,8 @@ class UserRolesResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('Rol'),
+                Tables\Columns\TextColumn::make('Rol')
+                ->searchable(),
                 Tables\Columns\TextColumn::make('Descripcion'),
             ])
             ->filters([

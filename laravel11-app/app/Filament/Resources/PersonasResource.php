@@ -78,7 +78,8 @@ class PersonasResource extends Resource
 
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('idCargo')
+                ->relationship('persona.cargo', 'Cargo')
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

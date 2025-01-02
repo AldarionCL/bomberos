@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\TesoreriaResource\Pages;
 use App\Filament\Resources\TesoreriaResource\RelationManagers;
 use App\Models\Cuota;
+use Carbon\Carbon;
 use Coolsam\FilamentFlatpickr\Forms\Components\Flatpickr;
 use Faker\Provider\Text;
 use Filament\Forms;
@@ -22,7 +23,7 @@ class TesoreriaResource extends Resource
 {
     protected static ?string $model = Cuota::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-s-rectangle-stack';
     protected static ?string $navigationGroup = 'Tesoreria';
     protected static ?string $navigationLabel = 'Cuotas';
     protected static ?string $label = 'Cuota';
@@ -58,12 +59,16 @@ class TesoreriaResource extends Resource
                             ->default(1)
                             ->label('Estado'),
 
-                        Flatpickr::make('FechaPago')->label('Fecha de Pago'),
+                        Flatpickr::make('FechaPago')->label('Fecha de Pago')
+                        ->default(fn () => Carbon::today()->format('Y-m-d')),
 
                         Forms\Components\TextInput::make('Documento')
                             ->label('N° Documento'),
 
                         Forms\Components\FileUpload::make('DocumentoArchivo')
+                            ->downloadable()
+                            ->deletable(false)
+                            ->previewable()
                             ->label('Archivo'),
 
                     ])->columns()

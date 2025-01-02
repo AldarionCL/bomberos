@@ -17,7 +17,7 @@ class DocumentosTipoResource extends Resource
 {
     protected static ?string $model = DocumentosTipo::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-s-rectangle-stack';
     protected static ?string $navigationGroup = 'Administracion';
 
     public static function form(Form $form): Form
@@ -33,7 +33,8 @@ class DocumentosTipoResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('Tipo'),
+                Tables\Columns\TextColumn::make('Tipo')
+                ->searchable(),
                 Tables\Columns\TextColumn::make('Descripcion'),
             ])
             ->filters([

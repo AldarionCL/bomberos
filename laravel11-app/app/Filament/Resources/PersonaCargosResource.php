@@ -18,7 +18,7 @@ class PersonaCargosResource extends Resource
 {
     protected static ?string $model = PersonaCargo::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-s-rectangle-stack';
     protected static ?string $navigationGroup = 'Administracion';
     protected static ?string $navigationLabel = 'Cargos';
     protected static ?string $label = 'Cargo';
@@ -38,7 +38,8 @@ class PersonaCargosResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('Cargo'),
+                Tables\Columns\TextColumn::make('Cargo')
+                ->searchable(),
                 Tables\Columns\TextColumn::make('Descripcion'),
                 Tables\Columns\BooleanColumn::make('Activo')
             ])
