@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class aprobadores extends Model
+class Aprobadores extends Model
 {
 
     protected $table = 'aprobadores';
@@ -12,7 +12,12 @@ class aprobadores extends Model
     protected $fillable = [
         'Orden',
         'idAprobador',
+        'idSolicitudTipo',
         'Activo',
     ];
+
+    public function aprobador(){
+        return $this->belongsTo(User::class, 'idAprobador', 'id');
+    }
 
 }

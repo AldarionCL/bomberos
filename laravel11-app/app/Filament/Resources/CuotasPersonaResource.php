@@ -23,8 +23,7 @@ class CuotasPersonaResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-s-rectangle-stack';
     protected static ?string $navigationGroup = 'Tesoreria';
     protected static ?string $navigationLabel = 'Recaudacion';
-    protected static ?string $label = 'Cuota';
-    protected static ?string $pluralLabel = 'Cuotas - Persona';
+    protected static ?string $label = 'Recaudacion por Persona';
     public static function form(Form $form): Form
     {
         return $form

@@ -5,9 +5,9 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\SolicitudesBajaResource\Pages;
 use App\Filament\Resources\SolicitudesBajaResource\RelationManagers;
 use App\Models\Solicitud;
-use App\Models\SolicitudesBaja;
 use Coolsam\FilamentFlatpickr\Forms\Components\Flatpickr;
 use Filament\Forms;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -29,50 +29,44 @@ class SolicitudesBajaResource extends Resource
     protected static ?string $pluralLabel = 'Solicitudes Bajas';
 
 
-
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\Section::make('Soliciud')
-                ->schema([
-                    Forms\Components\Select::make('SolicitadoPor')
-                        ->relationship('solicitante', 'name')
-                        ->disabled()
-                        ->label('Solicitado por')
-                        ->default(Auth::user()->id),
-                    Forms\Components\Select::make('Estado')
-                        ->options([
-                            0 => 'Pendiente',
-                            1 => 'Aprobado',
-                            2 => 'Cancelado',
-                        ])->default(0)
-                    ->disabled(),
-                    Forms\Components\Select::make('TipoSolicitud')
-                    ->options([
-                        1=>'Ingreso',
-                        2=>'Baja',
-                        3=>'Permiso'
-                    ])
-                    ->default(2)
-                    ->hidden(),
+                    ->schema([
+                        Forms\Components\Select::make('SolicitadoPor')
+                            ->relationship('solicitante', 'name')
+                            ->disabled()
+                            ->label('Solicitado por')
+                            ->default(Auth::user()->id),
+                        Forms\Components\Select::make('Estado')
+                            ->options([
+                                0 => 'Pendiente',
+                                1 => 'Aprobado',
+                                2 => 'Cancelado',
+                            ])->default(0)
+                            ->disabled(),
+                        Forms\Components\Select::make('TipoSolicitud')
+                            ->options([
+                                1 => 'Ingreso',
+                                2 => 'Baja',
+                                3 => 'Permiso'
+                            ])
+                            ->default(2)
+                            ->hidden(),
 
-                ])->columns(),
+                    ])->columns(),
 
                 Forms\Components\Section::make('Datos del Voluntario')
-                ->schema([
-                    Forms\Components\TextInput::make('NombrePostulante')
-                    ->required(),
-                    Forms\Components\TextInput::make('TelefonoPostulante'),
-                    Forms\Components\TextInput::make('CorreoPostulante')
-                    ->required(),
-                    Forms\Components\TextInput::make('DireccionPostulante'),
-                    Forms\Components\TextInput::make('NivelEstudioPostulante'),
-                    Flatpickr::make('FechaNacimientoPostulante')
-                    ->label('Fecha Nacimiento')
-                    ->required(),
-                    Forms\Components\TextInput::make('OcupacionPostulante')
-                ])->columns()
+                    ->schema([
+                        Forms\Components\Select::make('AsociadoA')
+                            ->relationship('asociado', 'name')
+                            ->label('Voluntario')
+                            ->hint('Seleccione un Voluntario para asociar a esta solicitud')
+                            ->required(),
+                        Forms\Components\RichEditor::make('Observaciones')
+                    ])->columns(),
 
             ]);
     }
@@ -80,10 +74,18 @@ class SolicitudesBajaResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(function ($query) {
+                return $query->where('TipoSolicitud', 1);
+            })
             ->columns([
                 TextColumn::make('id')->label('ID'),
-                TextColumn::make('NombrePostulante')->label('Nombre'),
-                Tables\Columns\TextColumn::make('Estado')->label('Estado'),
+                TextColumn::make('NombrePostulante')->label('Nombre')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('Estado')
+                    ->state(fn ($record) => ($record->Estado === 0) ? 'Pendiente' : 'Aprobado')
+                    ->badge()
+                    ->label('Estado'),
+                TextColumn::make('Fecha_registro')->label('Fecha Registro')->date('d/m/Y'),
             ])
             ->filters([
                 //
@@ -93,7 +95,7 @@ class SolicitudesBajaResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+//                    Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -101,6 +103,7 @@ class SolicitudesBajaResource extends Resource
     public static function getRelations(): array
     {
         return [
+            RelationManagers\AprobacionesRelationManager::class,
             RelationManagers\DocumentosRelationManager::class,
         ];
     }

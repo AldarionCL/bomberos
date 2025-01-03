@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->integer('Orden');
             $table->bigInteger('idAprobador')->unsigned();
+            $table->bigInteger('idSolicitudTipo')->unsigned();
             $table->string('Activo')->default(1);
 
             $table->timestamps();

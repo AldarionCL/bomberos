@@ -3,8 +3,9 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
-class aprobaciones extends Model
+class Aprobaciones extends Model
 {
     protected $table = 'aprobaciones';
     protected $primaryKey = 'id';
@@ -15,4 +16,11 @@ class aprobaciones extends Model
         'Estado',
         'FechaAprobacion',
     ];
+
+    public function aprobador()
+    {
+        return $this->hasOne(User::class, 'id', 'idAprobador');
+    }
+
+
 }

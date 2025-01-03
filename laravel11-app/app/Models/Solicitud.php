@@ -14,6 +14,7 @@ class Solicitud extends Model
         'Estado',
         'Fecha_registro',
         'SolicitadoPor',
+        'AsociadoA',
         'RutPostulante',
         'NombrePostulante',
         'TelefonoPostulante',
@@ -33,5 +34,13 @@ class Solicitud extends Model
 
     public function documentos(){
         return $this->hasMany(Documentos::class, 'idSolicitud', 'id');
+    }
+
+    public function aprobaciones(){
+        return $this->hasMany(Aprobaciones::class, 'idSolicitud', 'id');
+    }
+
+    public function asociado(){
+        return $this->hasOne(User::class, 'id', 'AsociadoA');
     }
 }

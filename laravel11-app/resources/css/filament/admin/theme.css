@@ -59,8 +59,11 @@ html .fi-ta-header-heading {
     @apply text-white;
 }
 
-html .fi-section-header {
+html .fi-section {
     @apply bg-blue-300;
+}
+.fi-section-content{
+    @apply bg-white;
 }
 html .fi-section-header-heading {
     @apply text-white;

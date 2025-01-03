@@ -17,6 +17,7 @@ return new class extends Migration
             $table->integer('Estado')->default(1);
             $table->dateTime('Fecha_registro');
             $table->bigInteger('SolicitadoPor')->unsigned();
+            $table->bigInteger('AsociadoA')->unsigned();
 
             $table->string('RutPostulante')->nullable();
             $table->string('NombrePostulante')->nullable();

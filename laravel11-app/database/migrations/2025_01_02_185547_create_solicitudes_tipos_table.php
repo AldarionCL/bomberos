@@ -11,13 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('aprobaciones', function (Blueprint $table) {
+        Schema::create('solicitudes_tipos', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('idSolicitud')->unsigned();
-            $table->bigInteger('idAprobador')->unsigned();
-            $table->integer('Orden');
-            $table->string('Estado')->default(0); // 0:Pendiente, 1:Aprobado, 3:Rechazado
-            $table->dateTime('FechaAprobacion')->nullable();
+            $table->string('Tipo');
+            $table->string('Descripcion')->nullable();
 
             $table->timestamps();
         });
@@ -28,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('aprobaciones');
+        Schema::dropIfExists('solicitudes_tipos');
     }
 };
