@@ -72,6 +72,9 @@ class SolicitudesLicenciaResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(function ($query) {
+                return $query->where('TipoSolicitud', 3);
+            })
             ->columns([
                 TextColumn::make('id')->label('ID'),
                 TextColumn::make('NombrePostulante')->label('Nombre')

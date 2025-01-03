@@ -23,7 +23,7 @@ class AprobadoresResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-s-rectangle-stack';
     protected static ?string $navigationGroup = 'Administracion';
-    protected static ?string $navigationLabel = 'Aprobadores';
+    protected static ?string $navigationLabel = 'Aprobadores solicitud';
     protected static ?string $label = 'Aprobadores';
 
     public static function form(Form $form): Form
