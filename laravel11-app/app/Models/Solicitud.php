@@ -43,4 +43,5 @@ class Solicitud extends Model
     public function asociado(){
         return $this->hasOne(User::class, 'id', 'AsociadoA');
     }
+
 }

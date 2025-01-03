@@ -9,6 +9,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 
 class DocumentosRelationManager extends RelationManager
 {
@@ -18,9 +19,16 @@ class DocumentosRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('Documentos')
+                Forms\Components\TextInput::make('Nombre')
                     ->required()
                     ->maxLength(255),
+                Forms\Components\TextInput::make('Descripcion'),
+                Forms\Components\Select::make('TipoDocumento')
+                    ->relationship('tipo', 'Tipo')
+                ->label('Tipo Documento'),
+                Forms\Components\FileUpload::make('Path')
+                    ->downloadable()
+                ->label('Documento'),
             ]);
     }
 
@@ -29,7 +37,11 @@ class DocumentosRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('Documentos')
             ->columns([
-                Tables\Columns\TextColumn::make('Documentos'),
+                Tables\Columns\TextColumn::make('tipo.Tipo'),
+                Tables\Columns\TextColumn::make('Nombre'),
+                Tables\Columns\TextColumn::make('Path')
+                    ->badge()
+                    ->url(fn ($record) => $record->path, true),
             ])
             ->filters([
                 //
@@ -39,11 +51,12 @@ class DocumentosRelationManager extends RelationManager
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\DeleteAction::make()
+                ->hidden(fn()=>Auth::user()->isRole('Administrador')),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+//                    Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }
