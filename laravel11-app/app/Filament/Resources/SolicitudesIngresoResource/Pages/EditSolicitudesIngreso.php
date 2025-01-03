@@ -16,4 +16,6 @@ class EditSolicitudesIngreso extends EditRecord
             Actions\DeleteAction::make(),
         ];
     }
+
+    
 }

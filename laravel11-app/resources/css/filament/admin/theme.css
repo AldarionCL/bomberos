@@ -26,6 +26,10 @@ html:not(.dark) .fi-sidebar {
     @apply bg-gradient-to-r from-slate-100 bg-blue-100;
 }
 
+.fi-sidebar-item-icon{
+    @apply text-yellow-500;
+}
+
 html:not(.dark) .fi-topbar nav {
     @apply bg-blue-100 !important;
     /*@apply shadow-lg;*/
