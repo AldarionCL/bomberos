@@ -19,6 +19,8 @@ class CreateSolicitudesLicencia extends CreateRecord
         $data["Fecha_registro"] = Carbon::today()->format('Y-m-d');
         $data["SolicitadoPor"] = Auth::user()->id;
         $data["Estado"] = 0;
+        $data["AsociadoA"] = 0;
+
 
         return $data;
     }
