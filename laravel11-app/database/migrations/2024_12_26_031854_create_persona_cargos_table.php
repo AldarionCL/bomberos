@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('Cargo');
             $table->string('Descripcion')->nullable();
-            $table->integer('Activo');
+            $table->integer('Activo')->default(1);
 
             $table->timestamps();
         });
