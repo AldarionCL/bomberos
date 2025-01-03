@@ -4,9 +4,11 @@ namespace Database\Seeders;
 
 use App\Http\Controllers\CuotasController;
 use App\Models\CuotasEstados;
+use App\Models\DocumentosTipo;
 use App\Models\Persona;
 use App\Models\PersonaCargo;
 use App\Models\PersonaEstado;
+use App\Models\SolicitudesTipo;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\UserRole;
@@ -73,6 +75,86 @@ class DatabaseSeeder extends Seeder
         CuotasEstados::create(['Estado'=>'Aprobado']);
         CuotasEstados::create(['Estado'=>'Rechazado']);
         CuotasEstados::create(['Estado'=>'Cancelado']);
+
+        SolicitudesTipo::create([
+            'Tipo' => 'Solicitud Baja',
+            'Descripcion' => 'Solicitud de Baja del voluntario',
+        ]);
+        SolicitudesTipo::create([
+            'Tipo' => 'Solicitud Ingreso',
+            'Descripcion' => 'Solicitud de Ingreso de nuevo voluntario',
+        ]);
+        SolicitudesTipo::create([
+            'Tipo' => 'Solicitud Licencia',
+            'Descripcion' => 'Solicitud de Licencia o Permiso especial del voluntario',
+        ]);
+
+
+        PersonaCargo::create([
+            'Cargo' => 'Director',
+        ]);
+        PersonaCargo::create([
+            'Cargo' => 'Capitán',
+        ]);
+        PersonaCargo::create([
+            'Cargo' => 'Teniente 1',
+        ]);
+        PersonaCargo::create([
+            'Cargo' => 'Teniente 2',
+        ]);
+        PersonaCargo::create([
+            'Cargo' => 'Teniente 3',
+        ]);
+        PersonaCargo::create([
+            'Cargo' => 'Secretario',
+        ]);
+        PersonaCargo::create([
+            'Cargo' => 'Tesorero',
+        ]);
+        PersonaCargo::create([
+            'Cargo' => 'Ayudante',
+        ]);
+        PersonaCargo::create([
+            'Cargo' => 'Consejero',
+        ]);
+        PersonaCargo::create([
+            'Cargo' => 'Voluntario',
+        ]);
+        PersonaCargo::create([
+            'Cargo' => 'Maquinista',
+        ]);
+
+
+        DocumentosTipo::create([
+            'Tipo' => 'Orden del día',
+        ]);
+        DocumentosTipo::create([
+            'Tipo' => 'Boletines',
+        ]);
+        DocumentosTipo::create([
+            'Tipo' => 'Cuadro de Honor',
+        ]);
+        DocumentosTipo::create([
+            'Tipo' => 'Cuotas',
+        ]);
+        DocumentosTipo::create([
+            'Tipo' => 'Acta de sesiones',
+        ]);
+        DocumentosTipo::create([
+            'Tipo' => 'Cedula Identidad',
+        ]);
+        DocumentosTipo::create([
+            'Tipo' => 'Curriculum',
+        ]);
+        DocumentosTipo::create([
+            'Tipo' => 'Chequeo Médico',
+        ]);
+        DocumentosTipo::create([
+            'Tipo' => 'Comprobante Domicilio',
+        ]);
+        DocumentosTipo::create([
+            'Tipo' => 'Otro',
+        ]);
 
 
         $controlador = new CuotasController();
