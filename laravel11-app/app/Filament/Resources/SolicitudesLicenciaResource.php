@@ -26,6 +26,7 @@ class SolicitudesLicenciaResource extends Resource
 
     protected static ?string $label = 'Solicitud Licencia';
     protected static ?string $pluralLabel = 'Solicitudes Licencias';
+    protected static ?int $navigationSort = 2;
 
     public static function form(Form $form): Form
     {

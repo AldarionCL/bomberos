@@ -10,6 +10,6 @@ class Home extends Page
 
     protected static string $view = 'filament.pages.home';
 
-    protected static ?string $title = 'Noticias';
+    protected static ?string $title = 'Home';
 
 }

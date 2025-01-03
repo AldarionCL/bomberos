@@ -24,8 +24,8 @@ class NoticiasResource extends Resource
     protected static ?string $navigationGroup = 'Administracion';
 
 
-    protected static ?string $label = 'Noticia';
-    protected static ?string $pluralLabel = 'Noticias';
+    protected static ?string $label = 'Publicación';
+    protected static ?string $pluralLabel = 'Publicaciones';
 
     public static function form(Form $form): Form
     {

@@ -27,6 +27,8 @@ class SolicitudesIngresoResource extends Resource
     protected static ?string $label = 'Solicitud Ingreso';
     protected static ?string $pluralLabel = 'Solicitudes Ingresos';
 
+    protected static ?int $navigationSort = 1;
+
     public static function form(Form $form): Form
     {
         return $form

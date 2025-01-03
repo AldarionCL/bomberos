@@ -27,7 +27,7 @@ class SolicitudesBajaResource extends Resource
 
     protected static ?string $label = 'Solicitud Baja';
     protected static ?string $pluralLabel = 'Solicitudes Bajas';
-
+    protected static ?int $navigationSort = 3;
 
     public static function form(Form $form): Form
     {

@@ -34,6 +34,8 @@ class CreateSolicitudesIngreso extends CreateRecord
                 'Orden' => $aprobador->Orden,
                 'Estado' => 0,
                 'FechaAprobacion' => null,
+                'AsociadoA' => 0,
+
             ]);
         }
     }
