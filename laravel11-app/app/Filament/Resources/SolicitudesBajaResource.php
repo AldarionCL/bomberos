@@ -7,6 +7,7 @@ use App\Filament\Resources\SolicitudesBajaResource\RelationManagers;
 use App\Models\Solicitud;
 use Coolsam\FilamentFlatpickr\Forms\Components\Flatpickr;
 use Filament\Forms;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -68,6 +69,25 @@ class SolicitudesBajaResource extends Resource
                         Forms\Components\RichEditor::make('Observaciones')
                     ])->columns(),
 
+                Forms\Components\Section::make('Documentos')
+                    ->schema([
+                        Forms\Components\Repeater::make('Documentos')
+                            ->relationship('documentos')
+                            ->schema([
+                                Select::make('TipoDocumento')
+                                    ->relationship('tipo', 'Tipo'),
+                                TextInput::make('Nombre'),
+                                Forms\Components\FileUpload::make('Path')
+                                    ->inlineLabel(true)
+                                    ->label('Archivo')
+                                    ->disk('public')
+                                    ->directory('documentos')
+                                ,
+                            ])->columns(3)
+                            ->defaultItems(0),
+
+                    ])->compact(),
+
             ]);
     }
 
@@ -79,13 +99,18 @@ class SolicitudesBajaResource extends Resource
             })
             ->columns([
                 TextColumn::make('id')->label('ID'),
-                TextColumn::make('NombrePostulante')->label('Nombre')
+                TextColumn::make('asociado.name')->label('Nombre')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('Estado')
                     ->state(fn ($record) => ($record->Estado === 0) ? 'Pendiente' : 'Aprobado')
                     ->badge()
+                    ->color(fn($state)=> $state == 'Aprobado' ? 'success' : 'danger')
+                    ->icon(fn($state)=> $state == 'Aprobado' ? 'heroicon-s-check' : 'heroicon-o-clock')
                     ->label('Estado'),
-                TextColumn::make('Fecha_registro')->label('Fecha Registro')->date('d/m/Y'),
+                TextColumn::make('solicitante.name')->label('Solicitado por:'),
+                TextColumn::make('Fecha_registro')
+                    ->label('Fecha de Solicitud')
+                    ->date('d/m/Y'),
             ])
             ->filters([
                 //
@@ -104,7 +129,7 @@ class SolicitudesBajaResource extends Resource
     {
         return [
             RelationManagers\AprobacionesRelationManager::class,
-            RelationManagers\DocumentosRelationManager::class,
+//            RelationManagers\DocumentosRelationManager::class,
         ];
     }
 

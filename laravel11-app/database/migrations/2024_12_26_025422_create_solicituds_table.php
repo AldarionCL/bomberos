@@ -19,18 +19,6 @@ return new class extends Migration
             $table->bigInteger('SolicitadoPor')->unsigned();
             $table->bigInteger('AsociadoA')->unsigned();
 
-            $table->string('RutPostulante')->nullable();
-            $table->string('NombrePostulante')->nullable();
-            $table->string('TelefonoPostulante')->nullable();
-            $table->string('CorreoPostulante')->nullable();
-            $table->string('DireccionPostulante')->nullable();
-            $table->string('Observaciones')->nullable();
-            $table->string('NivelEstudioPostulante')->nullable();
-            $table->date('FechaNacimientoPostulante')->nullable();
-            $table->string('SexoPostulante')->nullable();
-            $table->string('EstadoCivilPostulante')->nullable();
-            $table->string('OcupacionPostulante')->nullable();
-
             $table->foreign('SolicitadoPor')->references('id')->on('users');
 
             $table->timestamps();

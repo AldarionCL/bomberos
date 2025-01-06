@@ -26,21 +26,30 @@ class Solicitud extends Model
         'SexoPostulante',
         'EstadoCivilPostulante',
         'OcupacionPostulante',
+        'FotoPostulante',
+        'EdadPostulante',
+        'NacionalidadPostulante',
+        'SituacionMilitarPostulante',
+        'NivelEstudiosPostulante',
     ];
 
-    public function solicitante(){
+    public function solicitante()
+    {
         return $this->hasOne(User::class, 'id', 'SolicitadoPor');
     }
 
-    public function documentos(){
+    public function documentos()
+    {
         return $this->hasMany(Documentos::class, 'idSolicitud', 'id');
     }
 
-    public function aprobaciones(){
+    public function aprobaciones()
+    {
         return $this->hasMany(Aprobaciones::class, 'idSolicitud', 'id');
     }
 
-    public function asociado(){
+    public function asociado()
+    {
         return $this->hasOne(User::class, 'id', 'AsociadoA');
     }
 

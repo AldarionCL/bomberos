@@ -31,6 +31,6 @@ class Documentos extends Model
 
     public function solicitud()
     {
-        return $this->hasOne(Solicitud::class, 'id', 'idSolicitud');
+        return $this->belongsTo(Solicitud::class, 'idSolicitud', 'id');
     }
 }

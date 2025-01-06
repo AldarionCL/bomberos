@@ -39,6 +39,8 @@ class DocumentosResource extends Resource
                         Forms\Components\FileUpload::make('Path')
                             ->disk('public')
                             ->label('Archivo')
+                            ->downloadable()
+                            ->deletable(false)
                             ->required(),
                     ])->columns(),
 
@@ -52,6 +54,7 @@ class DocumentosResource extends Resource
                     ->schema([
                         Forms\Components\Toggle::make('Noticia')
                             ->hint('Generar Noticia sobre este documento')
+                            ->label('Publicar')
                             ->default(false),
                     ])
             ]);

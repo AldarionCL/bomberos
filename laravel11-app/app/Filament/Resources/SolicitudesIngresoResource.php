@@ -7,6 +7,8 @@ use App\Filament\Resources\SolicitudesIngresoResource\RelationManagers;
 use App\Models\Solicitud;
 use Coolsam\FilamentFlatpickr\Forms\Components\Flatpickr;
 use Filament\Forms;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -46,7 +48,8 @@ class SolicitudesIngresoResource extends Resource
                                 1 => 'Aprobado',
                                 2 => 'Cancelado',
                             ])->default(0)
-                            ->disabled(),
+                            ->live()
+                            ->disabled(fn($record) => Auth::user()->isRole('admin')),
                         Forms\Components\Select::make('TipoSolicitud')
                             ->options([
                                 1 => 'Ingreso',
@@ -58,21 +61,70 @@ class SolicitudesIngresoResource extends Resource
 
                     ])->columns(),
 
-                Forms\Components\Section::make('Datos del Voluntario')
+                Forms\Components\Group::make()
                     ->schema([
-                        Forms\Components\TextInput::make('NombrePostulante')
-                            ->required(),
-                        Forms\Components\TextInput::make('TelefonoPostulante'),
-                        Forms\Components\TextInput::make('CorreoPostulante')
-                            ->required(),
-                        Forms\Components\TextInput::make('DireccionPostulante'),
-                        Forms\Components\TextInput::make('NivelEstudioPostulante'),
-                        Flatpickr::make('FechaNacimientoPostulante')
-                            ->label('Fecha Nacimiento')
-                            ->required(),
-                        Forms\Components\TextInput::make('OcupacionPostulante')
-                    ])->columns(),
+                        Forms\Components\Section::make('Datos del Voluntario')
+                            ->schema([
+                                Forms\Components\TextInput::make('RutPostulante')
+                                    ->required(),
+                                Forms\Components\TextInput::make('NombrePostulante')
+                                    ->required(),
+                                Forms\Components\TextInput::make('TelefonoPostulante'),
+                                Forms\Components\TextInput::make('CorreoPostulante')
+                                    ->required(),
+                                Flatpickr::make('FechaNacimientoPostulante')
+                                    ->label('Fecha Nacimiento')
+                                    ->required(),
+                                TextInput::make('EdadPostulante'),
+                                TextInput::make('NacionalidadPostulante'),
+                                Forms\Components\Select::make('EstadoCivilPostulante')
+                                    ->options([
+                                        'Soltero' => 'Soltero',
+                                        'Casado' => 'Casado',
+                                        'Divorciado' => 'Divorciado',
+                                        'Viudo' => 'Viudo',
+                                    ]),
+                                TextInput::make('SituacionMilitarPostulante'),
+                                Forms\Components\TextInput::make('DireccionPostulante'),
+                                Forms\Components\TextInput::make('NivelEstudioPostulante'),
 
+                                Forms\Components\TextInput::make('OcupacionPostulante')
+                            ])->columns()
+                        ->compact(),
+                    ]),
+                Forms\Components\Group::make()
+                    ->schema([
+                        Forms\Components\Section::make('Foto')
+                            ->schema([
+                                Forms\Components\FileUpload::make('FotoPostulante')
+                                    ->disk('public')
+                                    ->directory('fotosPersonas')
+                                    ->avatar()
+                                    ->moveFiles()
+                                    ->previewable()
+                                ->deletable(true),
+                            ])
+                    ]),
+
+
+                Forms\Components\Section::make('Documentos')
+                    ->schema([
+                        Forms\Components\Repeater::make('Documentos')
+                            ->relationship('documentos')
+                            ->schema([
+                                Select::make('TipoDocumento')
+                                    ->relationship('tipo', 'Tipo'),
+                                TextInput::make('Nombre'),
+                                Forms\Components\FileUpload::make('Path')
+                                    ->inlineLabel(true)
+                                    ->label('Archivo')
+                                    ->disk('public')
+                                    ->directory('documentos')
+                                ,
+                            ])->columns(3)
+                            ->defaultItems(0),
+
+                    ])->compact(),
             ]);
     }
 
@@ -87,10 +139,14 @@ class SolicitudesIngresoResource extends Resource
                 TextColumn::make('NombrePostulante')->label('Nombre')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('Estado')
-                    ->state(fn ($record) => ($record->Estado === 0) ? 'Pendiente' : 'Aprobado')
+                    ->state(fn($record) => ($record->Estado === 0) ? 'Pendiente' : 'Aprobado')
+                    ->color(fn($state)=> $state == 'Aprobado' ? 'success' : 'danger')
+                    ->icon(fn($state)=> $state == 'Aprobado' ? 'heroicon-s-check' : 'heroicon-o-clock')
                     ->badge()
                     ->label('Estado'),
-                TextColumn::make('Fecha_registro')->label('Fecha Registro')->date('d/m/Y'),
+                TextColumn::make('Fecha_registro')
+                    ->label('Fecha Registro')
+                    ->date('d/m/Y'),
             ])
             ->filters([
                 //
@@ -109,7 +165,7 @@ class SolicitudesIngresoResource extends Resource
     {
         return [
             RelationManagers\AprobacionesRelationManager::class,
-            RelationManagers\DocumentosRelationManager::class,
+//            RelationManagers\DocumentosRelationManager::class,
         ];
     }
 
