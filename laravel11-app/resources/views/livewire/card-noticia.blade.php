@@ -13,7 +13,7 @@
 {{--        Imagen de noticia--}}
         <div>
             @if($noticia->Imagen)
-                <img class="rounded rounded-t w-full"
+                <img class="rounded rounded-t"
                      src="{{asset("/storage/".$noticia->Imagen)}}"/>
             @endif
         </div>
