@@ -23,6 +23,10 @@ class Persona extends Model
         'Sexo',
         'EstadoCivil',
         'Ocupacion',
+        'Foto',
+        'Edad',
+        'Nacionalidad',
+        'SituacionMilitar',
         'Activo',
     ];
 
@@ -36,11 +40,13 @@ class Persona extends Model
         return $this->hasOne(User::class, 'id', 'idUsuario');
     }
 
-    public function role(){
+    public function role()
+    {
         return $this->hasOne(UserRole::class, 'id', 'idRole');
     }
 
-    public function cargo(){
+    public function cargo()
+    {
         return $this->hasOne(PersonaCargo::class, 'id', 'idCargo');
     }
 
@@ -59,13 +65,13 @@ class Persona extends Model
     {
         $query->with(['role' => function ($query) use ($roles) {
             if (is_array($roles)) {
-                foreach ($roles as $k=>$r) {
+                foreach ($roles as $k => $r) {
                     if ($query->role->rol == $r) {
                         return true;
                     }
                 }
                 return false;
-            }else{
+            } else {
                 return $query->role->rol == $roles;
             }
         }]);

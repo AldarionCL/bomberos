@@ -3,7 +3,9 @@
 namespace App\Filament\Resources\SolicitudesIngresoResource\RelationManagers;
 
 use App\Models\Aprobaciones;
+use App\Models\Persona;
 use App\Models\Solicitud;
+use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
@@ -13,6 +15,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class AprobacionesRelationManager extends RelationManager
 {
@@ -78,7 +81,29 @@ class AprobacionesRelationManager extends RelationManager
                         $record->save();
 
                         if(Aprobaciones::where('idSolicitud', $record->idSolicitud)->where('Estado', 0)->count() === 0){
-                            Solicitud::find($record->idSolicitud)->update(['Estado' => 1]);
+                            $solicitud = Solicitud::find($record->idSolicitud)->first;
+                            $solicitud->Estado = 1;
+                            $solicitud->save();
+
+                            $usuario = User::create([
+                                'name' => $solicitud->NombrePostulante,
+                                'email' => $solicitud->EmailPostulante,
+                                'password' => Hash::make('password'),
+                            ]);
+
+                            Persona::create([
+                                'idUsuario' => $usuario->id,
+                                'idCargo' => 1,
+                                'idEstado' => 1,
+                                'Rut' => $solicitud->RutPostulante,
+                                'Telefono' => $solicitud->TelefonoPostulante,
+                                'Direccion' => $solicitud->DireccionPostulante,
+                                'FechaNacimiento' => $solicitud->FechaNacimientoPostulante,
+                                'Sexo' => $solicitud->SexoPostulante,
+                                'EstadoCivil' => $solicitud->EstadoCivilPostulante,
+                                'Ocupacion' => $solicitud->OcupacionPostulante,
+                                'Activo' => 1
+                            ]);
 
                             Notification::make()
                                 ->title('Solicitud Aprobada')
