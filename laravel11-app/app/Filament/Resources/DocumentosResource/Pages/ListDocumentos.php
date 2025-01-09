@@ -26,7 +26,8 @@ class ListDocumentos extends ListRecords
 
         $tipoDocs = DocumentosTipo::all()->pluck('Tipo', 'id');
         $tabs = ['Todos' => Tab::make()
-            ->badge(fn()=>Documentos::count())
+            ->badge(fn()=>Documentos::count()
+            ->active())
         ];
         if($tipoDocs) {
             foreach ($tipoDocs as $id => $tipoDoc) {
