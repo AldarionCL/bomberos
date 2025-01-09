@@ -74,7 +74,8 @@ class DocumentosResource extends Resource
                 Tables\Columns\Layout\Split::make([
                     Tables\Columns\IconColumn::make('extension')
                         ->icon('heroicon-o-document')
-                        ->default(1),
+                        ->default(1)
+                    ->grow(false),
                     Tables\Columns\TextColumn::make('Nombre')->searchable()
                         ->description(fn($record) => $record->tipo->Tipo),
 
