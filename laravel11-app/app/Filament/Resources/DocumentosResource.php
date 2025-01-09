@@ -11,6 +11,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
+use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -89,7 +90,8 @@ class DocumentosResource extends Resource
                 'xl' => 3,
             ])
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('TipoDocumento')
+                ->relationship('tipo', 'Tipo')
             ])
             ->actions([
                 Tables\Actions\EditAction::make()

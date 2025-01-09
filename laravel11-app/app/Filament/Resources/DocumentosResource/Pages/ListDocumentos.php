@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\DocumentosResource\Pages;
 
 use App\Filament\Resources\DocumentosResource;
+use App\Models\DocumentosTipo;
 use Filament\Actions;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
@@ -21,14 +22,15 @@ class ListDocumentos extends ListRecords
 
     public function getTabs(): array
     {
-        return [
-            'Libres' => Tab::make()
-                ->modifyQueryUsing(fn(Builder $query) => $query->whereNull('AsociadoA')
-                    ->whereNull('idSolicitud')),
 
-            'Asociados' => Tab::make()
-                ->modifyQueryUsing(fn(Builder $query) => $query->where('AsociadoA')),
-
-        ];
+        $tipoDocs = DocumentosTipo::all()->pluck('Tipo', 'id');
+        $tabs = ['Todos' => Tab::make()];
+        if($tipoDocs) {
+            foreach ($tipoDocs as $id => $tipoDoc) {
+                $tabs[$tipoDoc] = Tab::make()
+                    ->modifyQueryUsing(fn(Builder $query) => $query->where('TipoDocumento', $id));
+            }
+        }
+        return $tabs;
     }
 }
