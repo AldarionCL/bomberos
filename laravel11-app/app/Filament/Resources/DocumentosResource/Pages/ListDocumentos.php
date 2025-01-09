@@ -27,13 +27,15 @@ class ListDocumentos extends ListRecords
         $tipoDocs = DocumentosTipo::all()->pluck('Tipo', 'id');
         $tabs = ['Todos' => Tab::make()
             ->badge(fn() => Documentos::count())
+            ->badgeColor('info')
         ];
         if ($tipoDocs) {
             foreach ($tipoDocs as $id => $tipoDoc) {
                 $tipoDoc = str_replace(' de ', ' ', $tipoDoc);
                 $tabs[$tipoDoc] = Tab::make()
                     ->modifyQueryUsing(fn(Builder $query) => $query->where('TipoDocumento', $id))
-                    ->badge(fn() => Documentos::where('TipoDocumento', $id)->count());
+                    ->badge(fn() => Documentos::where('TipoDocumento', $id)->count())
+                ->badgeColor('info');
             }
         }
         return $tabs;
