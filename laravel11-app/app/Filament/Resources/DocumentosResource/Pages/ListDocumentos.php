@@ -27,7 +27,7 @@ class ListDocumentos extends ListRecords
         $tipoDocs = DocumentosTipo::all()->pluck('Tipo', 'id');
         $tabs = ['Todos' => Tab::make()
             ->badge(fn() => Documentos::count())
-            ->badgeColor('info')
+            ->badgeColor('warning')
         ];
         if ($tipoDocs) {
             foreach ($tipoDocs as $id => $tipoDoc) {
@@ -35,7 +35,7 @@ class ListDocumentos extends ListRecords
                 $tabs[$tipoDoc] = Tab::make()
                     ->modifyQueryUsing(fn(Builder $query) => $query->where('TipoDocumento', $id))
                     ->badge(fn() => Documentos::where('TipoDocumento', $id)->count())
-                ->badgeColor('info');
+                ->badgeColor('warning');
             }
         }
         return $tabs;
