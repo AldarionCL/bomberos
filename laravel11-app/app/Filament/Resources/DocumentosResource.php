@@ -73,17 +73,17 @@ class DocumentosResource extends Resource
             ->columns([
                 Tables\Columns\Layout\Split::make([
                     Tables\Columns\IconColumn::make('extension')
-                    ->icon('heroicon-o-document')
-                    ->default(1),
+                        ->icon('heroicon-o-document')
+                        ->default(1),
                     Tables\Columns\TextColumn::make('Nombre')->searchable()
-                    ->description(fn($record)=>$record->tipo->Tipo),
-//                    Tables\Columns\TextColumn::make('tipo.Tipo'),
+                        ->description(fn($record) => $record->tipo->Tipo),
 
-//                Tables\Columns\TextColumn::make('Path'),
-                    Tables\Columns\TextColumn::make('asociado.name'),
+                    Tables\Columns\Layout\Stack::make([
+                        Tables\Columns\TextColumn::make('asociado.name'),
 //                    Tables\Columns\TextColumn::make('solicitud.id'),
-                    Tables\Columns\TextColumn::make('created_at')
-                    ->date("d/m/Y"),
+                        Tables\Columns\TextColumn::make('created_at')
+                            ->date("d/m/Y"),
+                    ])
                 ])
             ])->contentGrid([
                 'md' => 2,
@@ -95,12 +95,12 @@ class DocumentosResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                ->button(),
+                    ->button(),
                 Tables\Actions\Action::make('descargar')
-                ->action(fn($record)=>Storage::disk('public')->download($record->Path))
+                    ->action(fn($record) => Storage::disk('public')->download($record->Path))
                     ->icon('heroicon-s-arrow-down-on-square')
                     ->color('info')
-                ->button()
+                    ->button()
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
