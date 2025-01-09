@@ -90,8 +90,8 @@ class DocumentosResource extends Resource
                 'xl' => 3,
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('TipoDocumento')
-                ->relationship('tipo', 'Tipo')
+                /*Tables\Filters\SelectFilter::make('TipoDocumento')
+                ->relationship('tipo', 'Tipo')*/
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
