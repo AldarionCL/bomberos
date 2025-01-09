@@ -82,7 +82,6 @@ class DocumentosResource extends Resource
                     Tables\Columns\TextColumn::make('asociado.name'),
                     Tables\Columns\TextColumn::make('solicitud.id'),
                     Tables\Columns\TextColumn::make('created_at')
-                        ->description(fn($record) => $record->user->name)
                     ->date("d/m/Y"),
                 ])
             ])->contentGrid([
