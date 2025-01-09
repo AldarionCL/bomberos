@@ -81,7 +81,7 @@ class DocumentosResource extends Resource
 
 //                Tables\Columns\TextColumn::make('Path'),
                     Tables\Columns\TextColumn::make('asociado.name'),
-                    Tables\Columns\TextColumn::make('solicitud.id'),
+//                    Tables\Columns\TextColumn::make('solicitud.id'),
                     Tables\Columns\TextColumn::make('created_at')
                     ->date("d/m/Y"),
                 ])
