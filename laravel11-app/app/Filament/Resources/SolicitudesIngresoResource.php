@@ -90,7 +90,7 @@ class SolicitudesIngresoResource extends Resource
 
                                 Forms\Components\TextInput::make('OcupacionPostulante')
                             ])->columns()
-                        ->compact(),
+                            ->compact(),
                     ]),
                 Forms\Components\Group::make()
                     ->schema([
@@ -100,9 +100,8 @@ class SolicitudesIngresoResource extends Resource
                                     ->disk('public')
                                     ->directory('fotosPersonas')
                                     ->avatar()
-                                    ->moveFiles()
                                     ->previewable()
-                                ->deletable(true),
+                                    ->deletable(true),
                             ])
                     ]),
 
@@ -140,8 +139,8 @@ class SolicitudesIngresoResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('Estado')
                     ->state(fn($record) => ($record->Estado === 0) ? 'Pendiente' : 'Aprobado')
-                    ->color(fn($state)=> $state == 'Aprobado' ? 'success' : 'danger')
-                    ->icon(fn($state)=> $state == 'Aprobado' ? 'heroicon-s-check' : 'heroicon-o-clock')
+                    ->color(fn($state) => $state == 'Aprobado' ? 'success' : 'danger')
+                    ->icon(fn($state) => $state == 'Aprobado' ? 'heroicon-s-check' : 'heroicon-o-clock')
                     ->badge()
                     ->label('Estado'),
                 TextColumn::make('Fecha_registro')

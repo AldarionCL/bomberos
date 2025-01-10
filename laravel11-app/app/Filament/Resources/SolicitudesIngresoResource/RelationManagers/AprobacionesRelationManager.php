@@ -106,6 +106,7 @@ class AprobacionesRelationManager extends RelationManager
                                 'Sexo' => $solicitud->SexoPostulante,
                                 'EstadoCivil' => $solicitud->EstadoCivilPostulante,
                                 'Ocupacion' => $solicitud->OcupacionPostulante,
+                                'Foto' => $solicitud->FotoPostulante,
                                 'Activo' => 1
                             ]);
 

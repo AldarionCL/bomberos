@@ -54,7 +54,13 @@ class PersonasResource extends Resource
                             ->relationship('estado', 'Estado')
                             ->required(),
                     ])->relationship('persona')
-                    ->columns()
+                    ->columns(),
+                Forms\Components\FileUpload::make('Foto')
+                    ->disk('public')
+                    ->directory('fotosPersonas')
+                    ->avatar()
+                    ->previewable()
+                    ->deletable(true),
             ]);
     }
 
