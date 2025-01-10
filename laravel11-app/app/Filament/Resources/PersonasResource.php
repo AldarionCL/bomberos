@@ -60,7 +60,7 @@ class PersonasResource extends Resource
                     ->directory('fotosPersonas')
                     ->avatar()
                     ->preserveFilenames()
-                    ->moveFile()
+                    ->moveFiles()
                     ->previewable()
                     ->deletable(true),
             ]);
