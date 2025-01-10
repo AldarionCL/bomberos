@@ -59,6 +59,8 @@ class PersonasResource extends Resource
                     ->disk('public')
                     ->directory('fotosPersonas')
                     ->avatar()
+                    ->preserveFilenames()
+                    ->moveFile()
                     ->previewable()
                     ->deletable(true),
             ]);
