@@ -14,7 +14,9 @@ html .fi-main {
 
 html.dark .fi-main {
     /*background-image: url("/public/img/doodle2-dark.png") ;*/
-    background-image: url("/public/img/bg3.jpg") !important;
+    /*background-image: url("/public/img/bg3.jpg") !important;*/
+    @apply bg-gray-800;
+
     background-attachment: fixed;
     background-size: auto;
 }
@@ -66,7 +68,7 @@ html .fi-ta-header-heading {
 html .fi-section {
     @apply bg-blue-300;
 }
-.fi-section-content{
+html:not(.dark) .fi-section-content{
     @apply bg-white;
 }
 html .fi-section-header-heading {
