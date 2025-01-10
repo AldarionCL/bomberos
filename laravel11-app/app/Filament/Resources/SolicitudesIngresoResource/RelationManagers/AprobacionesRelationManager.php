@@ -80,8 +80,8 @@ class AprobacionesRelationManager extends RelationManager
                         $record->FechaAprobacion = date('Y-m-d');
                         $record->save();
 
-                        if(Aprobaciones::where('idSolicitud', $record->idSolicitud)->where('Estado', 0)->count() === 0){
-                            $solicitud = Solicitud::find($record->idSolicitud)->first;
+                        if(Aprobaciones::where('idSolicitud', $record->idSolicitud)->where('Estado', 0)->count() == 0){
+                            $solicitud = Solicitud::where('id', $record->idSolicitud)->first();
                             $solicitud->Estado = 1;
                             $solicitud->save();
 
@@ -103,6 +103,10 @@ class AprobacionesRelationManager extends RelationManager
                                 'EstadoCivil' => $solicitud->EstadoCivilPostulante,
                                 'Ocupacion' => $solicitud->OcupacionPostulante,
                                 'Activo' => 1
+                            ]);
+
+                            $solicitud->documentos->update([
+                                'AsociadoA' => $usuario->id,
                             ]);
 
                             Notification::make()
