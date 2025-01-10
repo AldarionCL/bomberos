@@ -87,8 +87,9 @@ class AprobacionesRelationManager extends RelationManager
 
                             $usuario = User::create([
                                 'name' => $solicitud->NombrePostulante,
-                                'email' => $solicitud->EmailPostulante,
+                                'email' => $solicitud->CorreoPostulante,
                                 'password' => Hash::make('password'),
+                                'idRole' => 2
                             ]);
 
                             Persona::create([
