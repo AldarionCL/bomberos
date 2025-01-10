@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\SolicitudesIngresoResource\RelationManagers;
 
 use App\Models\Aprobaciones;
+use App\Models\Documentos;
 use App\Models\Persona;
 use App\Models\Solicitud;
 use App\Models\User;
@@ -44,7 +45,9 @@ class AprobacionesRelationManager extends RelationManager
             ->recordTitleAttribute('Aprobadores')
             ->columns([
                 Tables\Columns\TextColumn::make('Orden')
-                    ->label('Nivel de Aprobación'),
+                    ->label('Nivel')
+                    ->grow(false)
+                    ->width(100),
 
                 Tables\Columns\TextColumn::make('aprobador.name'),
                 /*Tables\Columns\ToggleColumn::make('Estado')
@@ -55,13 +58,13 @@ class AprobacionesRelationManager extends RelationManager
                 ->disabled(fn ($record) => ($record->idAprobador == Auth::user()->id) ? false : true),*/
                 Tables\Columns\TextColumn::make('EstadoSol')
                     ->default(fn($record) => $record->Estado == 1 ? 'Aprobado' : 'Pendiente')
-                    ->color(fn($state)=> $state == 'Aprobado' ? 'success' : 'danger')
-                    ->icon(fn($state)=> $state == 'Aprobado' ? 'heroicon-s-check' : 'heroicon-o-clock')
+                    ->color(fn($state) => $state == 'Aprobado' ? 'success' : 'danger')
+                    ->icon(fn($state) => $state == 'Aprobado' ? 'heroicon-s-check' : 'heroicon-o-clock')
                     ->label('Estado Aprobación')
                     ->badge(),
                 Tables\Columns\TextColumn::make('FechaAprobacion')
                     ->date('d/m/Y')
-                ->label('Fecha de Aprobación'),
+                    ->label('Fecha de Aprobación'),
 
             ])
             ->filters([
@@ -80,7 +83,7 @@ class AprobacionesRelationManager extends RelationManager
                         $record->FechaAprobacion = date('Y-m-d');
                         $record->save();
 
-                        if(Aprobaciones::where('idSolicitud', $record->idSolicitud)->where('Estado', 0)->count() == 0){
+                        if (Aprobaciones::where('idSolicitud', $record->idSolicitud)->where('Estado', 0)->count() == 0) {
                             $solicitud = Solicitud::where('id', $record->idSolicitud)->first();
                             $solicitud->Estado = 1;
                             $solicitud->save();
@@ -106,7 +109,7 @@ class AprobacionesRelationManager extends RelationManager
                                 'Activo' => 1
                             ]);
 
-                            $solicitud->documentos->update([
+                            Documentos::where('idSolicitud', $record->idSolicitud)->update([
                                 'AsociadoA' => $usuario->id,
                             ]);
 
@@ -120,11 +123,11 @@ class AprobacionesRelationManager extends RelationManager
                         }
                     })
                     ->requiresConfirmation()
-                    ->disabled(function($record) {
+                    ->disabled(function ($record) {
                         if ($record->Estado == 0) {
-                            if ($record->idAprobador == Auth::user()->id){
+                            if ($record->idAprobador == Auth::user()->id) {
                                 return false;
-                            } else{
+                            } else {
                                 return true;
                             }
                         } else {
