@@ -38,6 +38,8 @@ class PersonasResource extends Resource
                             ->autocomplete(false)
                             ->dehydrateStateUsing(fn($state) => Hash::make($state))
                             ->dehydrated(fn($state) => filled($state)),
+                        Forms\Components\Select::make('idRole')
+                            ->relationship('role', 'Rol')
                     ])->columns(),
 
                 Forms\Components\Split::make([

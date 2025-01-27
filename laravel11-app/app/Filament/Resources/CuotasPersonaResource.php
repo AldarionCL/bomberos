@@ -15,6 +15,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 
 class CuotasPersonaResource extends Resource
 {
@@ -24,6 +25,13 @@ class CuotasPersonaResource extends Resource
     protected static ?string $navigationGroup = 'Tesoreria';
     protected static ?string $navigationLabel = 'Recaudacion';
     protected static ?string $label = 'Recaudacion por Persona';
+
+    public static function canAccess(): bool{
+        return Auth::user()->isRole('Administrador') || Auth::user()->isCargo('Tesorero');
+    }
+    public static function canEdit($record): bool{
+        return Auth::user()->isRole('Administrador') || Auth::user()->isCargo('Tesorero');
+    }
     public static function form(Form $form): Form
     {
         return $form
@@ -47,6 +55,11 @@ class CuotasPersonaResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(function (Builder $query) {
+                if(!Auth::user()->isRole('Administrador') && !Auth::user()->isCargo('Tesorero')){
+                    $query->where('idUsuario', Auth::id());
+                }
+            })
             ->columns([
                 TextColumn::make('Rut')
                     ->searchable()

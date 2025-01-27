@@ -4,7 +4,7 @@ namespace App\Policies;
 
 use App\Models\User;
 
-class PersonaEstadoPolicy
+class UserPolicy
 {
     /**
      * Create a new policy instance.
@@ -17,7 +17,7 @@ class PersonaEstadoPolicy
     public function viewAny(User $user)
     {
         //
-        return $user->isRole('Administrador');
+        return $user->isRole('Administrador') || $user->isCargo(['Director', 'Capitan','Teniente 1','Teniente 2','Teniente 3','Ayudante']);
     }
 
     public function create(User $user)
@@ -29,7 +29,7 @@ class PersonaEstadoPolicy
     public function update(User $user)
     {
         //
-        return $user->isRole('Administrador');
+        return $user->isRole('Administrador') || $user->isCargo(['Director', 'Capitan','Teniente 1','Teniente 2','Teniente 3','Ayudante']);
 
     }
 }

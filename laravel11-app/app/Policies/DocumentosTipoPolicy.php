@@ -4,7 +4,7 @@ namespace App\Policies;
 
 use App\Models\User;
 
-class PersonaEstadoPolicy
+class DocumentosTipoPolicy
 {
     /**
      * Create a new policy instance.

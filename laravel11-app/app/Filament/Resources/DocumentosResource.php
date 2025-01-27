@@ -95,6 +95,7 @@ class DocumentosResource extends Resource
                 ->relationship('tipo', 'Tipo')*/
             ])
             ->actions([
+//                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make()
                     ->button(),
                 Tables\Actions\Action::make('descargar')
@@ -122,6 +123,7 @@ class DocumentosResource extends Resource
         return [
             'index' => Pages\ListDocumentos::route('/'),
             'create' => Pages\CreateDocumentos::route('/create'),
+            'view' => Pages\ViewDocumentos::route('/{record}'),
             'edit' => Pages\EditDocumentos::route('/{record}/edit'),
         ];
     }
