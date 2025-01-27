@@ -6,10 +6,12 @@ use App\Filament\Resources\EstadosResource\Pages;
 use App\Filament\Resources\EstadosResource\RelationManagers;
 use App\Models\Estados;
 use App\Models\PersonaEstado;
+use Faker\Provider\Text;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -27,7 +29,8 @@ class EstadosResource extends Resource
     {
         return $form
             ->schema([
-
+                Forms\Components\TextInput::make('Estado'),
+                Forms\Components\TextInput::make('Descripcion'),
             ]);
     }
 
@@ -35,7 +38,8 @@ class EstadosResource extends Resource
     {
         return $table
             ->columns([
-                //
+                TextColumn::make('Estado'),
+                TextColumn::make('Descripcion'),
             ])
             ->filters([
                 //
