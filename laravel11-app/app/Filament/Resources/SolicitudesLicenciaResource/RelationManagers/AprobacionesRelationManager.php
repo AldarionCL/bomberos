@@ -33,9 +33,14 @@ class AprobacionesRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('Aprobadores')
             ->columns([
-                Tables\Columns\TextColumn::make('Orden')
-                    ->label('Nivel de Aprobación'),
-
+                /*Tables\Columns\TextColumn::make('Orden')
+                    ->label('Nivel de Aprobación'),*/
+                Tables\Columns\ImageColumn::make('aprobador.persona.Foto')
+                    ->defaultImageUrl(url('/storage/fotosPersonas/placeholderAvatar.png'))
+                    ->circular()
+                    ->grow(false)
+                    ->label('Foto')
+                    ->size(70),
                 Tables\Columns\TextColumn::make('aprobador.name'),
                 /*Tables\Columns\ToggleColumn::make('Estado')
                     ->onColor('success')

@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Nette\Utils\Image;
 
 class AprobacionesRelationManager extends RelationManager
 {
@@ -44,10 +45,16 @@ class AprobacionesRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('Aprobadores')
             ->columns([
-                Tables\Columns\TextColumn::make('Orden')
+                /*Tables\Columns\TextColumn::make('Orden')
                     ->label('Nivel')
                     ->grow(false)
-                    ->width(100),
+                    ->width(100),*/
+                Tables\Columns\ImageColumn::make('aprobador.persona.Foto')
+                    ->defaultImageUrl(url('/storage/fotosPersonas/placeholderAvatar.png'))
+                    ->circular()
+                    ->grow(false)
+                    ->label('Foto')
+                ->size(70),
 
                 Tables\Columns\TextColumn::make('aprobador.name'),
                 /*Tables\Columns\ToggleColumn::make('Estado')
@@ -145,7 +152,7 @@ class AprobacionesRelationManager extends RelationManager
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+//                    Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }

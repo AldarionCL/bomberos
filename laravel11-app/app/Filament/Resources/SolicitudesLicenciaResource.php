@@ -99,13 +99,18 @@ class SolicitudesLicenciaResource extends Resource
             })
             ->columns([
                 TextColumn::make('id')->label('ID'),
+                Tables\Columns\ImageColumn::make('aprobador.persona.Foto')
+                    ->defaultImageUrl(url('/storage/fotosPersonas/placeholderAvatar.png'))
+                    ->circular()
+                    ->grow(false)
+                    ->label('Foto'),
                 TextColumn::make('asociado.name')->label('Nombre')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('Estado')
-                    ->state(fn ($record) => ($record->Estado === 0) ? 'Pendiente' : 'Aprobado')
+                    ->state(fn($record) => ($record->Estado === 0) ? 'Pendiente' : 'Aprobado')
                     ->badge()
-                    ->color(fn($state)=> $state == 'Aprobado' ? 'success' : 'danger')
-                    ->icon(fn($state)=> $state == 'Aprobado' ? 'heroicon-s-check' : 'heroicon-o-clock')
+                    ->color(fn($state) => $state == 'Aprobado' ? 'success' : 'danger')
+                    ->icon(fn($state) => $state == 'Aprobado' ? 'heroicon-s-check' : 'heroicon-o-clock')
                     ->label('Estado'),
                 TextColumn::make('solicitante.name')->label('Solicitado por:'),
                 TextColumn::make('Fecha_registro')

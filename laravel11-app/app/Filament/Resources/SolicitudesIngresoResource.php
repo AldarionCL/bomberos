@@ -61,51 +61,48 @@ class SolicitudesIngresoResource extends Resource
 
                     ])->columns(),
 
-                Forms\Components\Group::make()
-                    ->schema([
-                        Forms\Components\Section::make('Datos del Voluntario')
-                            ->schema([
-                                Forms\Components\TextInput::make('RutPostulante')
-                                    ->required(),
-                                Forms\Components\TextInput::make('NombrePostulante')
-                                    ->required(),
-                                Forms\Components\TextInput::make('TelefonoPostulante'),
-                                Forms\Components\TextInput::make('CorreoPostulante')
-                                    ->required(),
-                                Flatpickr::make('FechaNacimientoPostulante')
-                                    ->label('Fecha Nacimiento')
-                                    ->required(),
-                                TextInput::make('EdadPostulante'),
-                                TextInput::make('NacionalidadPostulante'),
-                                Forms\Components\Select::make('EstadoCivilPostulante')
-                                    ->options([
-                                        'Soltero' => 'Soltero',
-                                        'Casado' => 'Casado',
-                                        'Divorciado' => 'Divorciado',
-                                        'Viudo' => 'Viudo',
-                                    ]),
-                                TextInput::make('SituacionMilitarPostulante'),
-                                Forms\Components\TextInput::make('DireccionPostulante'),
-                                Forms\Components\TextInput::make('NivelEstudioPostulante'),
+                Forms\Components\Split::make([
+                    Forms\Components\Section::make('Datos del Voluntario')
+                        ->schema([
+                            Forms\Components\TextInput::make('RutPostulante')
+                                ->required(),
+                            Forms\Components\TextInput::make('NombrePostulante')
+                                ->required(),
+                            Forms\Components\TextInput::make('TelefonoPostulante'),
+                            Forms\Components\TextInput::make('CorreoPostulante')
+                                ->required(),
+                            Flatpickr::make('FechaNacimientoPostulante')
+                                ->label('Fecha Nacimiento')
+                                ->required(),
+                            TextInput::make('EdadPostulante'),
+                            TextInput::make('NacionalidadPostulante'),
+                            Forms\Components\Select::make('EstadoCivilPostulante')
+                                ->options([
+                                    'Soltero' => 'Soltero',
+                                    'Casado' => 'Casado',
+                                    'Divorciado' => 'Divorciado',
+                                    'Viudo' => 'Viudo',
+                                ]),
+                            TextInput::make('SituacionMilitarPostulante'),
+                            Forms\Components\TextInput::make('DireccionPostulante'),
+                            Forms\Components\TextInput::make('NivelEstudioPostulante'),
 
-                                Forms\Components\TextInput::make('OcupacionPostulante')
-                            ])->columns()
+                            Forms\Components\TextInput::make('OcupacionPostulante')
+                        ])->columns()
                         ->compact(),
-                    ]),
-                Forms\Components\Group::make()
-                    ->schema([
-                        Forms\Components\Section::make('Foto')
-                            ->schema([
-                                Forms\Components\FileUpload::make('FotoPostulante')
-                                    ->disk('public')
-                                    ->directory('fotosPersonas')
-                                    ->avatar()
-                                    ->preserveFilenames()
-                                    ->moveFiles()
-                                    ->previewable()
+                    Forms\Components\Section::make('Foto')
+                        ->schema([
+                            Forms\Components\FileUpload::make('FotoPostulante')
+                                ->disk('public')
+                                ->directory('fotosPersonas')
+                                ->avatar()
+                                ->imageEditor()
+                                ->preserveFilenames()
+                                ->moveFiles()
+                                ->previewable()
                                 ->deletable(true),
-                            ])
-                    ]),
+                        ])->grow(false),
+                ])->columnSpanFull(),
 
 
                 Forms\Components\Section::make('Documentos')
@@ -141,8 +138,8 @@ class SolicitudesIngresoResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('Estado')
                     ->state(fn($record) => ($record->Estado === 0) ? 'Pendiente' : 'Aprobado')
-                    ->color(fn($state)=> $state == 'Aprobado' ? 'success' : 'danger')
-                    ->icon(fn($state)=> $state == 'Aprobado' ? 'heroicon-s-check' : 'heroicon-o-clock')
+                    ->color(fn($state) => $state == 'Aprobado' ? 'success' : 'danger')
+                    ->icon(fn($state) => $state == 'Aprobado' ? 'heroicon-s-check' : 'heroicon-o-clock')
                     ->badge()
                     ->label('Estado'),
                 TextColumn::make('Fecha_registro')

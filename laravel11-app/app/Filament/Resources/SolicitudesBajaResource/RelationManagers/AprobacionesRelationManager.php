@@ -23,7 +23,7 @@ class AprobacionesRelationManager extends RelationManager
         return $form
             ->schema([
                 Forms\Components\Select::make('idAprobador')
-                    ->relationship('aprobador','name')
+                    ->relationship('aprobador', 'name')
                     ->required(),
             ]);
     }
@@ -33,10 +33,17 @@ class AprobacionesRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('Aprobadores')
             ->columns([
-                Tables\Columns\TextColumn::make('Orden')
-                    ->label('Nivel de Aprobación'),
-
+/*                Tables\Columns\TextColumn::make('Orden')
+                    ->label('Nivel de Aprobación')
+                    ->badge(),*/
+                Tables\Columns\ImageColumn::make('aprobador.persona.Foto')
+                    ->defaultImageUrl(url('/storage/fotosPersonas/placeholderAvatar.png'))
+                    ->circular()
+                    ->grow(false)
+                    ->label('Foto')
+                ->size(70),
                 Tables\Columns\TextColumn::make('aprobador.name'),
+
                 /*Tables\Columns\ToggleColumn::make('Estado')
                     ->onColor('success')
                     ->onIcon('heroicon-s-check')
@@ -45,8 +52,8 @@ class AprobacionesRelationManager extends RelationManager
                 ->disabled(fn ($record) => ($record->idAprobador == Auth::user()->id) ? false : true),*/
                 Tables\Columns\TextColumn::make('EstadoSol')
                     ->default(fn($record) => $record->Estado == 1 ? 'Aprobado' : 'Pendiente')
-                    ->color(fn($state)=> $state == 'Aprobado' ? 'success' : 'danger')
-                    ->icon(fn($state)=> $state == 'Aprobado' ? 'heroicon-s-check' : 'heroicon-o-clock')
+                    ->color(fn($state) => $state == 'Aprobado' ? 'success' : 'danger')
+                    ->icon(fn($state) => $state == 'Aprobado' ? 'heroicon-s-check' : 'heroicon-o-clock')
                     ->label('Estado Aprobación')
                     ->badge(),
                 Tables\Columns\TextColumn::make('FechaAprobacion')
@@ -69,7 +76,7 @@ class AprobacionesRelationManager extends RelationManager
                         $record->FechaAprobacion = date('Y-m-d');
                         $record->save();
 
-                        if(Aprobaciones::where('idSolicitud', $record->idSolicitud)->where('Estado', 0)->count() === 0){
+                        if (Aprobaciones::where('idSolicitud', $record->idSolicitud)->where('Estado', 0)->count() === 0) {
                             Solicitud::find($record->idSolicitud)->update(['Estado' => 1]);
 
                             Notification::make()
@@ -82,11 +89,11 @@ class AprobacionesRelationManager extends RelationManager
                         }
                     })
                     ->requiresConfirmation()
-                    ->disabled(function($record) {
+                    ->disabled(function ($record) {
                         if ($record->Estado == 0) {
-                            if ($record->idAprobador == Auth::user()->id){
+                            if ($record->idAprobador == Auth::user()->id) {
                                 return false;
-                            } else{
+                            } else {
                                 return true;
                             }
                         } else {
@@ -103,7 +110,7 @@ class AprobacionesRelationManager extends RelationManager
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+//                    Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }

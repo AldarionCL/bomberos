@@ -29,15 +29,34 @@ class PersonasResource extends Resource
     {
         return $form
             ->schema([
+                Forms\Components\Section::make('Datos de Usuario')
+                    ->schema([
+                        Forms\Components\TextInput::make('name')->required(),
+                        Forms\Components\TextInput::make('email')->required(),
+                        Forms\Components\TextInput::make('password')
+                            ->password()
+                            ->autocomplete(false)
+                            ->dehydrateStateUsing(fn($state) => Hash::make($state))
+                            ->dehydrated(fn($state) => filled($state)),
+                    ])->columns(),
+
                 Forms\Components\Split::make([
-                    Forms\Components\Section::make('Datos de Usuario')
+                    Forms\Components\Section::make('Datos Personales')
+                        ->relationship('persona')
                         ->schema([
-                            Forms\Components\TextInput::make('name')->required(),
-                            Forms\Components\TextInput::make('email')->required(),
-                            Forms\Components\TextInput::make('password')
-                                ->password()
-                                ->dehydrateStateUsing(fn($state) => Hash::make($state))
-                                ->dehydrated(fn($state) => filled($state)),
+                            Forms\Components\TextInput::make('Rut')
+                                ->required(),
+                            Forms\Components\TextInput::make('Telefono'),
+                            Forms\Components\TextInput::make('Direccion'),
+
+                            Forms\Components\Select::make('idCargo')
+                                ->relationship('cargo', 'Cargo')
+                                ->label('Cargo')
+                                ->required(),
+
+                            Forms\Components\Select::make('idEstado')
+                                ->relationship('estado', 'Estado')
+                                ->required(),
                         ])->columns(),
                     Forms\Components\Section::make('Foto')
                         ->relationship('persona')
@@ -46,32 +65,13 @@ class PersonasResource extends Resource
                                 ->disk('public')
                                 ->directory('fotosPersonas')
                                 ->avatar()
-//                                ->preserveFilenames()
-//                                ->moveFiles()
+                                ->preserveFilenames()
+                                ->moveFiles()
                                 ->previewable()
+                                ->imageEditor()
                                 ->deletable(true),
-                        ]),
-                ])->columnSpanFull(),
-
-
-                Forms\Components\Section::make('Datos Personales')
-                    ->schema([
-                        Forms\Components\TextInput::make('Rut')
-                            ->required(),
-                        Forms\Components\TextInput::make('Telefono'),
-                        Forms\Components\TextInput::make('Direccion'),
-
-                        Forms\Components\Select::make('idCargo')
-                            ->relationship('cargo', 'Cargo')
-                            ->label('Cargo')
-                            ->required(),
-
-                        Forms\Components\Select::make('idEstado')
-                            ->relationship('estado', 'Estado')
-                            ->required(),
-                    ])->relationship('persona')
-                    ->columns(),
-
+                        ])->grow(false),
+                ])->columnSpanFull()
             ]);
 
 
@@ -81,6 +81,9 @@ class PersonasResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\ImageColumn::make('persona.Foto')
+                    ->defaultImageUrl(url('/storage/fotosPersonas/placeholderAvatar.png'))
+                    ->circular(),
                 Tables\Columns\TextColumn::make('persona.Rut')
                     ->label('Rut')
                     ->searchable(),

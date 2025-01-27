@@ -99,6 +99,11 @@ class SolicitudesBajaResource extends Resource
             })
             ->columns([
                 TextColumn::make('id')->label('ID'),
+                Tables\Columns\ImageColumn::make('aprobador.persona.Foto')
+                    ->defaultImageUrl(url('/storage/fotosPersonas/placeholderAvatar.png'))
+                    ->circular()
+                    ->grow(false)
+                    ->label('Foto'),
                 TextColumn::make('asociado.name')->label('Nombre')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('Estado')
