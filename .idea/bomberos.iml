@@ -175,6 +175,16 @@
       <excludeFolder url="file://$MODULE_DIR$/laravel11-app/vendor/symfony/polyfill-php81" />
       <excludeFolder url="file://$MODULE_DIR$/laravel11-app/vendor/hasnayeen/themes" />
       <excludeFolder url="file://$MODULE_DIR$/laravel11-app/vendor/savannabits/filament-flatpickr" />
+      <excludeFolder url="file://$MODULE_DIR$/laravel11-app/vendor/calebporzio/sushi" />
+      <excludeFolder url="file://$MODULE_DIR$/laravel11-app/vendor/filament/spatie-laravel-media-library-plugin" />
+      <excludeFolder url="file://$MODULE_DIR$/laravel11-app/vendor/maennchen/zipstream-php" />
+      <excludeFolder url="file://$MODULE_DIR$/laravel11-app/vendor/spatie/image" />
+      <excludeFolder url="file://$MODULE_DIR$/laravel11-app/vendor/spatie/image-optimizer" />
+      <excludeFolder url="file://$MODULE_DIR$/laravel11-app/vendor/spatie/laravel-medialibrary" />
+      <excludeFolder url="file://$MODULE_DIR$/laravel11-app/vendor/spatie/temporary-directory" />
+      <excludeFolder url="file://$MODULE_DIR$/laravel11-app/vendor/tomatophp/console-helpers" />
+      <excludeFolder url="file://$MODULE_DIR$/laravel11-app/vendor/tomatophp/filament-icons" />
+      <excludeFolder url="file://$MODULE_DIR$/laravel11-app/vendor/tomatophp/filament-media-manager" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

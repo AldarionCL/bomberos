@@ -29,15 +29,31 @@ class PersonasResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Datos de Usuario')
-                    ->schema([
-                        Forms\Components\TextInput::make('name')->required(),
-                        Forms\Components\TextInput::make('email')->required(),
-                        Forms\Components\TextInput::make('password')
-                            ->password()
-                            ->dehydrateStateUsing(fn($state) => Hash::make($state))
-                            ->dehydrated(fn($state) => filled($state)),
-                    ])->columns(),
+                Forms\Components\Split::make([
+                    Forms\Components\Section::make('Datos de Usuario')
+                        ->schema([
+                            Forms\Components\TextInput::make('name')->required(),
+                            Forms\Components\TextInput::make('email')->required(),
+                            Forms\Components\TextInput::make('password')
+                                ->password()
+                                ->dehydrateStateUsing(fn($state) => Hash::make($state))
+                                ->dehydrated(fn($state) => filled($state)),
+                        ])->columns(),
+                    Forms\Components\Section::make('Foto')
+                        ->relationship('persona')
+                        ->schema([
+                            Forms\Components\FileUpload::make('Foto')
+                                ->disk('public')
+                                ->directory('fotosPersonas')
+                                ->avatar()
+//                                ->preserveFilenames()
+//                                ->moveFiles()
+                                ->previewable()
+                                ->deletable(true),
+                        ]),
+                ])->columnSpanFull(),
+
+
                 Forms\Components\Section::make('Datos Personales')
                     ->schema([
                         Forms\Components\TextInput::make('Rut')
@@ -55,15 +71,10 @@ class PersonasResource extends Resource
                             ->required(),
                     ])->relationship('persona')
                     ->columns(),
-                Forms\Components\FileUpload::make('Foto')
-                    ->disk('public')
-                    ->directory('fotosPersonas')
-                    ->avatar()
-                    ->preserveFilenames()
-                    ->moveFiles()
-                    ->previewable()
-                    ->deletable(true),
+
             ]);
+
+
     }
 
     public static function table(Table $table): Table
@@ -87,7 +98,7 @@ class PersonasResource extends Resource
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('idCargo')
-                ->relationship('persona.cargo', 'Cargo')
+                    ->relationship('persona.cargo', 'Cargo')
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

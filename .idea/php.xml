@@ -185,6 +185,16 @@
       <path value="$PROJECT_DIR$/laravel11-app/vendor/laravel/jetstream" />
       <path value="$PROJECT_DIR$/laravel11-app/vendor/savannabits/filament-flatpickr" />
       <path value="$PROJECT_DIR$/laravel11-app/vendor/hasnayeen/themes" />
+      <path value="$PROJECT_DIR$/laravel11-app/vendor/tomatophp/filament-media-manager" />
+      <path value="$PROJECT_DIR$/laravel11-app/vendor/tomatophp/console-helpers" />
+      <path value="$PROJECT_DIR$/laravel11-app/vendor/tomatophp/filament-icons" />
+      <path value="$PROJECT_DIR$/laravel11-app/vendor/filament/spatie-laravel-media-library-plugin" />
+      <path value="$PROJECT_DIR$/laravel11-app/vendor/calebporzio/sushi" />
+      <path value="$PROJECT_DIR$/laravel11-app/vendor/maennchen/zipstream-php" />
+      <path value="$PROJECT_DIR$/laravel11-app/vendor/spatie/laravel-medialibrary" />
+      <path value="$PROJECT_DIR$/laravel11-app/vendor/spatie/temporary-directory" />
+      <path value="$PROJECT_DIR$/laravel11-app/vendor/spatie/image" />
+      <path value="$PROJECT_DIR$/laravel11-app/vendor/spatie/image-optimizer" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.2" />
