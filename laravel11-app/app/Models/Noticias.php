@@ -22,4 +22,8 @@ class Noticias extends Model
     public function user(){
         return $this->hasOne(User::class, 'id', 'createdBy');
     }
+
+    public function documento(){
+        return $this->hasOne(Documentos::class, 'id', 'id');
+    }
 }

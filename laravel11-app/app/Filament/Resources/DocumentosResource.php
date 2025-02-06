@@ -5,16 +5,21 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\DocumentosResource\Pages;
 use App\Filament\Resources\DocumentosResource\RelationManagers;
 use App\Models\Documentos;
+use App\Models\DocumentosTipo;
+use Faker\Provider\Text;
 use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Enums\FiltersLayout;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class DocumentosResource extends Resource
@@ -37,7 +42,7 @@ class DocumentosResource extends Resource
                             ->required(),
 
                         Forms\Components\Select::make('TipoDocumento')
-                            ->relationship('tipo', 'Tipo')
+                            ->options(fn()=>DocumentosTipo::where('Clasificacion', 'publico'))
                             ->label('Tipo de Documento')
                             ->required(),
 
@@ -70,45 +75,83 @@ class DocumentosResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(function ($query) {
+                if (!Auth::user()->isRole('Administrador')) {
+                    $query->whereHas('tipo', function ($query) {
+                        return $query->where('Clasificacion', 'publico');
+                    });
+                }
+                return $query->orderBy('created_at', 'desc');
+            })
             ->columns([
-                Tables\Columns\Layout\Split::make([
-                    Tables\Columns\IconColumn::make('extension')
-                        ->icon('heroicon-o-document')
-                        ->default(1)
-                        ->grow(false),
-                    Tables\Columns\TextColumn::make('Nombre')->searchable()
-                        ->description(fn($record) => $record->tipo->Tipo),
+                Tables\Columns\IconColumn::make('')
+                    ->icon(function ($record) {
+                        $extension = explode(".", $record->Path);
+                        if ($extension[1] == "pdf") {
+                            return 'fas-file-pdf';
+                        } else if ($extension[1] == "png" || $extension[1] == "jpg" || $extension[1] == "jpeg") {
+                            return 'fas-image';
+                        } else if ($extension[1] == "docx") {
+                            return 'fas-file-word';
+                        } else if ($extension[1] == "xlsx") {
+                            return 'fas-file-excel';
+                        } else {
+                            return 'fas-file';
+                        }
+                    })
+                    ->default(1)
+                    ->grow(false),
+                Tables\Columns\TextColumn::make('Nombre')->searchable()
+//                        ->description(fn($record) => $record->tipo->Tipo)
+                ,
+                Tables\Columns\TextColumn::make('tipo.Tipo')->searchable(),
+                TextColumn::make('tipo.Clasificacion')
+                    ->badge()
+                    ->color(fn(string $state): string => match ($state) {
+                        'privado' => 'badgeAlert',
+                        'publico' => 'success',
+                        default => 'gray',
+                    })
+                    ->visible(fn() => Auth::user()->isRole('Administrador')),
+                TextColumn::make('asociado.name')
+                    ->visible(fn() => Auth::user()->isRole('Administrador')),
 
-                    Tables\Columns\Layout\Stack::make([
-                        Tables\Columns\TextColumn::make('asociado.name'),
-//                    Tables\Columns\TextColumn::make('solicitud.id'),
-                        Tables\Columns\TextColumn::make('created_at')
-                            ->date("d/m/Y"),
-                    ])
-                ])
-            ])->contentGrid([
-                'md' => 2,
-                'xl' => 3,
+
+                Tables\Columns\TextColumn::make('created_at')
+                    ->label('Fecha Creacion')
+                    ->date("d/m/Y"),
             ])
+
+            ->recordUrl(function ($record) {
+                return APP::make('url')->to('storage/' . $record->Path);
+            }, true)
+
             ->filters([
-                /*Tables\Filters\SelectFilter::make('TipoDocumento')
-                ->relationship('tipo', 'Tipo')*/
-            ])
+                Tables\Filters\SelectFilter::make('TipoDocumento')
+                    ->options(fn() => Auth::user()->isRole('Administrador')
+                        ? DocumentosTipo::all()->pluck('Tipo', 'id')
+                        : DocumentosTipo::where('Clasificacion', 'publico')->pluck('Tipo', 'id')
+                    ),
+
+            ], FiltersLayout::AboveContent)
             ->actions([
 //                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make()
-                    ->button(),
                 Tables\Actions\Action::make('descargar')
                     ->action(fn($record) => Storage::disk('public')->download($record->Path))
                     ->icon('heroicon-s-arrow-down-on-square')
                     ->color('info')
                     ->button()
+                    ->size('xs'),
+                Tables\Actions\EditAction::make()
+                    ->button()
+                    ->size('xs')
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
 //                    Tables\Actions\DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->defaultSort('created_at', 'desc');
     }
 
     public static function getRelations(): array

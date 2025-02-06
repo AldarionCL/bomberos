@@ -16,19 +16,16 @@ class DocumentosPolicy
 
     public function viewAny(User $user)
     {
-        //
         return true;
     }
 
     public function create(User $user)
     {
-        //
         return $user->isRole('Administrador') || $user->isCargo('Director');
 
     }
     public function update(User $user)
     {
-        //
         return $user->isRole('Administrador') || $user->isCargo('Director');
 
     }

@@ -17,19 +17,19 @@ class SolicitudPolicy
     public function viewAny(User $user)
     {
         //
-        return $user->isRole('Administrador') || $user->isCargo(['Director', 'Capitan','Teniente 1','Teniente 2','Teniente 3','Ayudante']);
+        return $user->isRole('Administrador') || $user->isCargo(['Director', 'Capitán','Teniente 1','Teniente 2','Teniente 3','Ayudante']);
     }
 
     public function create(User $user)
     {
         //
-        return $user->isRole('Administrador') || $user->isCargo(['Director', 'Capitan','Teniente 1','Teniente 2','Teniente 3','Ayudante']);
+        return $user->isRole('Administrador') || $user->isCargo(['Director', 'Capitán','Teniente 1','Teniente 2','Teniente 3','Ayudante']);
 
     }
     public function update(User $user)
     {
         //
-        return $user->isRole('Administrador') || $user->isCargo(['Director', 'Capitan','Teniente 1','Teniente 2','Teniente 3','Ayudante']);
+        return $user->isRole('Administrador') || $user->isCargo(['Director', 'Capitán','Teniente 1','Teniente 2','Teniente 3','Ayudante']);
 
     }
 }

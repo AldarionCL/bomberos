@@ -26,6 +26,11 @@ class DocumentosTipoResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('Tipo'),
                 Forms\Components\TextInput::make('Descripcion'),
+                Forms\Components\Select::make('Clasificacion')
+                ->options([
+                    'publico' => 'Publico',
+                    'privado' => 'Privado',
+                ])
             ]);
     }
 
@@ -35,7 +40,15 @@ class DocumentosTipoResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('Tipo')
                 ->searchable(),
+                Tables\Columns\TextColumn::make('Clasificacion')
+                    ->badge()
+                    ->color(fn(string $state): string => match ($state) {
+                        'privado' => 'badgeAlert',
+                        'publico' => 'success',
+                        default => 'gray',
+                    }),
                 Tables\Columns\TextColumn::make('Descripcion'),
+
             ])
             ->filters([
                 //

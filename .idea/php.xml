@@ -195,6 +195,7 @@
       <path value="$PROJECT_DIR$/laravel11-app/vendor/spatie/temporary-directory" />
       <path value="$PROJECT_DIR$/laravel11-app/vendor/spatie/image" />
       <path value="$PROJECT_DIR$/laravel11-app/vendor/spatie/image-optimizer" />
+      <path value="$PROJECT_DIR$/laravel11-app/vendor/owenvoke/blade-fontawesome" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.2" />

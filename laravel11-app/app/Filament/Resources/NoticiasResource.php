@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\NoticiasResource\Pages;
 use App\Filament\Resources\NoticiasResource\RelationManagers;
+use App\Models\DocumentosTipo;
 use App\Models\Noticias;
 use Coolsam\FilamentFlatpickr\Forms\Components\Flatpickr;
 use Faker\Provider\Text;
@@ -36,26 +37,35 @@ class NoticiasResource extends Resource
                         Forms\Components\TextInput::make('Titulo')
                             ->required()
                             ->maxLength(255)
-                        ->columnSpan(2),
+                            ->columnSpan(2),
                         Forms\Components\TextInput::make('Subtitulo')
-                        ->columnSpan(2),
+                            ->columnSpan(2),
                         Forms\Components\MarkdownEditor::make('Contenido')
                             ->required()
-                        ->columnSpan(2),
+                            ->columnSpan(2),
                         Flatpickr::make('FechaPublicacion')
-                            ->default(fn () => now()->format('Y-m-d'))
+                            ->default(fn() => now()->format('Y-m-d'))
                             ->required(),
                         Flatpickr::make('FechaExpiracion'),
                         Forms\Components\Select::make('Estado')
-                        ->options([
-                            1 => 'Publicado',
-                            2 => 'Agendado',
-                            3 => 'Expirado',
-                        ])
-                        ->default(1),
+                            ->options([
+                                1 => 'Publicado',
+                                2 => 'Agendado',
+                                3 => 'Expirado',
+                            ])
+                            ->default(1),
                         Forms\Components\FileUpload::make('Imagen'),
 
                     ])->columns(),
+                Forms\Components\Section::make('Documento')
+                    ->relationship('documento')
+                    ->schema([
+                        Forms\Components\TextInput::make('Nombre'),
+                        Forms\Components\TextInput::make('Descripcion'),
+                        Forms\Components\Select::make('TipoDocumento')
+                            ->options(fn() => DocumentosTipo::where('Clasificacion', 'publico')->pluck('Tipo', 'id')->toArray())
+
+                    ])
 
             ]);
     }
@@ -65,7 +75,7 @@ class NoticiasResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('Titulo')
-                ->searchable(),
+                    ->searchable(),
                 TextColumn::make('Subtitulo'),
                 Tables\Columns\BooleanColumn::make('Estado'),
                 Tables\Columns\TextColumn::make('FechaPublicacion')

@@ -21,7 +21,7 @@ class ListDocumentos extends ListRecords
         ];
     }
 
-    public function getTabs(): array
+    /*public function getTabs(): array
     {
 
         $tipoDocs = DocumentosTipo::all()->pluck('Tipo', 'id');
@@ -39,5 +39,5 @@ class ListDocumentos extends ListRecords
             }
         }
         return $tabs;
-    }
+    }*/
 }

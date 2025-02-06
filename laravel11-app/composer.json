@@ -11,6 +11,7 @@
         "hasnayeen/themes": "^3.0",
         "laravel/framework": "^11.31",
         "laravel/tinker": "^2.9",
+        "owenvoke/blade-fontawesome": "*",
         "savannabits/filament-flatpickr": "^3.1",
         "tomatophp/filament-media-manager": "^1.1"
     },

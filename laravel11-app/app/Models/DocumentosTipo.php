@@ -11,6 +11,7 @@ class DocumentosTipo extends Model
     protected $fillable = [
         'Tipo',
         'Descripcion',
+        'Clasificacion',
     ];
 
 }

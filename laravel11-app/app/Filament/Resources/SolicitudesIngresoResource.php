@@ -17,6 +17,8 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
+use Filament\Forms\Components\Tabs;
+
 
 class SolicitudesIngresoResource extends Resource
 {
@@ -35,94 +37,137 @@ class SolicitudesIngresoResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Soliciud')
+                Forms\Components\Section::make('Soliciud')->schema([
+                    Forms\Components\Select::make('SolicitadoPor')
+                        ->relationship('solicitante', 'name')
+                        ->disabled()
+                        ->label('Solicitado por')
+                        ->default(Auth::user()->id),
+                    Forms\Components\Select::make('Estado')
+                        ->options([
+                            0 => 'Pendiente',
+                            1 => 'Aprobado',
+                            2 => 'Cancelado',
+                        ])->default(0)
+                        ->live()
+                        ->disabled(fn($record) => Auth::user()->isRole('admin')),
+                    Forms\Components\Select::make('TipoSolicitud')
+                        ->options([
+                            1 => 'Ingreso',
+                            2 => 'Baja',
+                            3 => 'Permiso'
+                        ])
+                        ->default(2)
+                        ->hidden(),
+                ])->columns(),
+
+                Forms\Components\Section::make()
+                    ->relationship('persona')
                     ->schema([
-                        Forms\Components\Select::make('SolicitadoPor')
-                            ->relationship('solicitante', 'name')
-                            ->disabled()
-                            ->label('Solicitado por')
-                            ->default(Auth::user()->id),
-                        Forms\Components\Select::make('Estado')
-                            ->options([
-                                0 => 'Pendiente',
-                                1 => 'Aprobado',
-                                2 => 'Cancelado',
-                            ])->default(0)
-                            ->live()
-                            ->disabled(fn($record) => Auth::user()->isRole('admin')),
-                        Forms\Components\Select::make('TipoSolicitud')
-                            ->options([
-                                1 => 'Ingreso',
-                                2 => 'Baja',
-                                3 => 'Permiso'
-                            ])
-                            ->default(2)
-                            ->hidden(),
+                        Forms\Components\Split::make([
+                            Tabs::make('TabDatosUsuario')->tabs([
+                                Tabs\Tab::make('Datos Generales')->schema([
 
-                    ])->columns(),
+                                    TextInput::make('idEstado')
+                                        ->default(2)
+                                        ->visible(false),
+                                    TextInput::make('Activo')
+                                        ->default(0)
+                                        ->visible(false),
 
-                Forms\Components\Split::make([
-                    Forms\Components\Section::make('Datos del Voluntario')
-                        ->schema([
-                            Forms\Components\TextInput::make('RutPostulante')
-                                ->required(),
-                            Forms\Components\TextInput::make('NombrePostulante')
-                                ->required(),
-                            Forms\Components\TextInput::make('TelefonoPostulante'),
-                            Forms\Components\TextInput::make('CorreoPostulante')
-                                ->required(),
-                            Flatpickr::make('FechaNacimientoPostulante')
-                                ->label('Fecha Nacimiento')
-                                ->required(),
-                            TextInput::make('EdadPostulante'),
-                            TextInput::make('NacionalidadPostulante'),
-                            Forms\Components\Select::make('EstadoCivilPostulante')
-                                ->options([
-                                    'Soltero' => 'Soltero',
-                                    'Casado' => 'Casado',
-                                    'Divorciado' => 'Divorciado',
-                                    'Viudo' => 'Viudo',
+                                    Forms\Components\TextInput::make('Nombre')
+                                        ->required(),
+                                    Forms\Components\TextInput::make('Rut')
+                                        ->required(),
+                                    Forms\Components\TextInput::make('Correo')
+                                        ->label('Correo Electronico')
+                                        ->required(),
+                                    Forms\Components\TextInput::make('Telefono'),
+                                    Flatpickr::make('FechaNacimiento')
+                                        ->label('Fecha Nacimiento')
+                                        ->required(),
+                                    TextInput::make('Edad'),
+                                    TextInput::make('Nacionalidad'),
+                                    Select::make('idCargo')
+                                        ->relationship('cargo', 'Cargo')
+                                        ->label('Cargo')
+                                        ->required()
+                                ])->columns(),
+                                Tabs\Tab::make('Datos Personales')->schema([
+                                    Forms\Components\TextInput::make('DireccionPostulante'),
+                                    Forms\Components\TextInput::make('ComunaPostulante'),
+                                    TextInput::make('SituacionMilitarPostulante'),
+                                    Forms\Components\Select::make('NivelEstudioPostulante')
+                                        ->options([
+                                            "basica" => "Basica",
+                                            "media" => "Media",
+                                            "tecnica" => "Tecnica",
+                                            "universitaria" => "Universitaria",
+                                        ]),
+                                    Forms\Components\TextInput::make('OcupacionPostulante'),
+                                    Forms\Components\TextInput::make('LugarEstudioTrabajoPostulante'),
+                                    Forms\Components\Select::make('EstadoCivilPostulante')
+                                        ->options([
+                                            'Soltero' => 'Soltero',
+                                            'Casado' => 'Casado',
+                                            'Divorciado' => 'Divorciado',
+                                            'Viudo' => 'Viudo',
+                                        ]),
+                                    Forms\Components\Select::make('GrupoSanguineoPostulante')
+                                        ->options([
+                                            "A+" => "A+",
+                                            "A-" => "A-",
+                                            "B+" => "B+",
+                                            "B-" => "B-",
+                                            "AB+" => "AB+",
+                                            "AB-" => "AB-",
+                                            "O+" => "O+",
+                                            "O-" => "O-"
+                                        ])
                                 ]),
-                            TextInput::make('SituacionMilitarPostulante'),
-                            Forms\Components\TextInput::make('DireccionPostulante'),
-                            Forms\Components\TextInput::make('NivelEstudioPostulante'),
+                                Tabs\Tab::make('Tallas de Ropa')->schema([
+                                    Forms\Components\TextInput::make('TallaZapatosPostulante'),
+                                    Forms\Components\TextInput::make('TallaPantalonesPostulante'),
+                                    Forms\Components\TextInput::make('TallaCamisaPostulante'),
+                                    Forms\Components\TextInput::make('TallaChaquetaPostulante'),
+                                    Forms\Components\TextInput::make('TallaSombreroPostulante'),
+                                ])
+                            ])->columns(),
 
-                            Forms\Components\TextInput::make('OcupacionPostulante')
-                        ])->columns()
-                        ->compact(),
-                    Forms\Components\Section::make('Foto')
+                            Forms\Components\Section::make()
+                                ->schema([
+                                    Forms\Components\FileUpload::make('FotoPostulante')
+                                        ->disk('public')
+                                        ->directory('fotosPersonas')
+                                        ->avatar()
+                                        ->imageEditor()
+                                        ->preserveFilenames()
+                                        ->moveFiles()
+                                        ->previewable()
+                                        ->deletable(true)
+                                    ,
+                                ])->grow(false)
+
+                        ])->columnSpanFull(),
+                    ]),
+
+                Forms\Components\Section::make('Documentos')->schema([
+                    Forms\Components\Repeater::make('Documentos')
+                        ->relationship('documentos')
                         ->schema([
-                            Forms\Components\FileUpload::make('FotoPostulante')
+                            Select::make('TipoDocumento')
+                                ->relationship('tipo', 'Tipo'),
+                            TextInput::make('Nombre'),
+                            Forms\Components\FileUpload::make('Path')
+                                ->inlineLabel(true)
+                                ->label('Archivo')
                                 ->disk('public')
-                                ->directory('fotosPersonas')
-                                ->avatar()
-                                ->imageEditor()
-                                ->preserveFilenames()
-                                ->moveFiles()
-                                ->previewable()
-                                ->deletable(true),
-                        ])->grow(false),
-                ])->columnSpanFull(),
+                                ->directory('documentos')
+                            ,
+                        ])->columns(3)
+                        ->defaultItems(0),
 
-
-                Forms\Components\Section::make('Documentos')
-                    ->schema([
-                        Forms\Components\Repeater::make('Documentos')
-                            ->relationship('documentos')
-                            ->schema([
-                                Select::make('TipoDocumento')
-                                    ->relationship('tipo', 'Tipo'),
-                                TextInput::make('Nombre'),
-                                Forms\Components\FileUpload::make('Path')
-                                    ->inlineLabel(true)
-                                    ->label('Archivo')
-                                    ->disk('public')
-                                    ->directory('documentos')
-                                ,
-                            ])->columns(3)
-                            ->defaultItems(0),
-
-                    ])->compact(),
+                ])->compact(),
             ]);
     }
 

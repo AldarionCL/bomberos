@@ -53,4 +53,9 @@ class Solicitud extends Model
         return $this->hasOne(User::class, 'id', 'AsociadoA');
     }
 
+    public function persona()
+    {
+        return $this->hasOne(Persona::class, 'id', 'AsociadoA');
+    }
+
 }

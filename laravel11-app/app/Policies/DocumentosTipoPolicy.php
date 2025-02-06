@@ -32,4 +32,10 @@ class DocumentosTipoPolicy
         return $user->isRole('Administrador');
 
     }
+    public function delete(User $user)
+    {
+        //
+        return $user->isRole('Administrador');
+
+    }
 }

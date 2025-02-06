@@ -5,7 +5,6 @@
       <sourceFolder url="file://$MODULE_DIR$/laravel11-app/app" isTestSource="false" packagePrefix="App\" />
       <sourceFolder url="file://$MODULE_DIR$/laravel11-app/database/factories" isTestSource="false" packagePrefix="Database\Factories\" />
       <sourceFolder url="file://$MODULE_DIR$/laravel11-app/database/seeders" isTestSource="false" packagePrefix="Database\Seeders\" />
-      <sourceFolder url="file://$MODULE_DIR$/laravel11-app/tests" isTestSource="true" />
       <sourceFolder url="file://$MODULE_DIR$/laravel11-app/tests" isTestSource="true" packagePrefix="Tests\" />
       <excludeFolder url="file://$MODULE_DIR$/laravel11-app/vendor/brick/math" />
       <excludeFolder url="file://$MODULE_DIR$/laravel11-app/vendor/carbonphp/carbon-doctrine-types" />
@@ -185,6 +184,7 @@
       <excludeFolder url="file://$MODULE_DIR$/laravel11-app/vendor/tomatophp/console-helpers" />
       <excludeFolder url="file://$MODULE_DIR$/laravel11-app/vendor/tomatophp/filament-icons" />
       <excludeFolder url="file://$MODULE_DIR$/laravel11-app/vendor/tomatophp/filament-media-manager" />
+      <excludeFolder url="file://$MODULE_DIR$/laravel11-app/vendor/owenvoke/blade-fontawesome" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
