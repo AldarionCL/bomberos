@@ -96,3 +96,7 @@ html .fi-page .fi-header-heading {
 html .fi-btn {
     @apply shadow-md;
 }
+
+html .fi-ta-filters-above-content-ctn{
+    @apply bg-white;
+}
