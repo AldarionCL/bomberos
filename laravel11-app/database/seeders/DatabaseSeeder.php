@@ -69,7 +69,7 @@ class DatabaseSeeder extends Seeder
             'Activo' => 1
         ]);
 
-        User::factory(20)->create();
+//        User::factory(20)->create();
 
         CuotasEstados::create(['Estado'=>'Pendiente']);
         CuotasEstados::create(['Estado'=>'Aprobado']);
@@ -142,23 +142,28 @@ class DatabaseSeeder extends Seeder
         ]);
         DocumentosTipo::create([
             'Tipo' => 'Cedula Identidad',
+            'Clasificacion' => 'privado',
         ]);
         DocumentosTipo::create([
             'Tipo' => 'Curriculum',
+            'Clasificacion' => 'privado',
         ]);
         DocumentosTipo::create([
             'Tipo' => 'Chequeo Médico',
+            'Clasificacion' => 'privado',
         ]);
         DocumentosTipo::create([
             'Tipo' => 'Comprobante Domicilio',
+            'Clasificacion' => 'privado',
         ]);
         DocumentosTipo::create([
             'Tipo' => 'Otro',
+            'Clasificacion' => 'privado',
         ]);
 
 
-        $controlador = new CuotasController();
-        $controlador->sincronizarUserPersona();
-        $controlador->sincronizarCuotas();
+//        $controlador = new CuotasController();
+//        $controlador->sincronizarUserPersona();
+//        $controlador->sincronizarCuotas();
     }
 }

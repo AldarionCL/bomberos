@@ -42,7 +42,7 @@ class DocumentosResource extends Resource
                             ->required(),
 
                         Forms\Components\Select::make('TipoDocumento')
-                            ->options(fn()=>DocumentosTipo::where('Clasificacion', 'publico'))
+                            ->options(fn()=>DocumentosTipo::where('Clasificacion', 'publico')->pluck('Tipo', 'id'))
                             ->label('Tipo de Documento')
                             ->required(),
 

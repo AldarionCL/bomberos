@@ -14,23 +14,31 @@ return new class extends Migration
         Schema::create('postulantes', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('idSolicitud')->unsigned();
+            $table->bigInteger('idCargo')->unsigned();
 
             $table->string('RutPostulante')->nullable();
             $table->string('NombrePostulante')->nullable();
             $table->string('TelefonoPostulante')->nullable();
             $table->string('CorreoPostulante')->nullable();
             $table->string('DireccionPostulante')->nullable();
+            $table->string('ComunaPostulante')->nullable();
             $table->string('Observaciones')->nullable();
             $table->string('NivelEstudioPostulante')->nullable();
             $table->date('FechaNacimientoPostulante')->nullable();
+            $table->integer('EdadPostulante')->nullable();
             $table->string('SexoPostulante')->nullable();
             $table->string('EstadoCivilPostulante')->nullable();
             $table->string('OcupacionPostulante')->nullable();
-
             $table->string('FotoPostulante')->nullable();
-            $table->integer('EdadPostulante')->nullable();
             $table->string('NacionalidadPostulante')->nullable();
             $table->string('SituacionMilitarPostulante')->nullable();
+            $table->string('LugarOcupacionPostulante')->nullable();
+            $table->string('GrupoSanguineoPostulante')->nullable();
+            $table->string('TallaZapatosPostulante')->nullable();
+            $table->string('TallaPantalonPostulante')->nullable();
+            $table->string('TallaCamisaPostulante')->nullable();
+            $table->string('TallaChaquetaPostulante')->nullable();
+            $table->string('TallaSombreroPostulante')->nullable();
 
             $table->foreign('idSolicitud')->references('id')->on('solicitudes');
             $table->timestamps();

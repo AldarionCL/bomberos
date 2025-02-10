@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\SolicitudesIngresoResource\Pages;
 use App\Filament\Resources\SolicitudesIngresoResource\RelationManagers;
+use App\Models\PersonaCargo;
 use App\Models\Solicitud;
 use Coolsam\FilamentFlatpickr\Forms\Components\Flatpickr;
 use Filament\Forms;
@@ -40,7 +41,7 @@ class SolicitudesIngresoResource extends Resource
                 Forms\Components\Section::make('Soliciud')->schema([
                     Forms\Components\Select::make('SolicitadoPor')
                         ->relationship('solicitante', 'name')
-                        ->disabled()
+                        ->disabled(fn($record) => !Auth::user()->isRole('Administrador'))
                         ->label('Solicitado por')
                         ->default(Auth::user()->id),
                     Forms\Components\Select::make('Estado')
@@ -50,7 +51,7 @@ class SolicitudesIngresoResource extends Resource
                             2 => 'Cancelado',
                         ])->default(0)
                         ->live()
-                        ->disabled(fn($record) => Auth::user()->isRole('admin')),
+                        ->disabled(fn($record) => !Auth::user()->isRole('Administrador')),
                     Forms\Components\Select::make('TipoSolicitud')
                         ->options([
                             1 => 'Ingreso',
@@ -62,34 +63,27 @@ class SolicitudesIngresoResource extends Resource
                 ])->columns(),
 
                 Forms\Components\Section::make()
-                    ->relationship('persona')
+                    ->relationship('postulante')
                     ->schema([
                         Forms\Components\Split::make([
                             Tabs::make('TabDatosUsuario')->tabs([
                                 Tabs\Tab::make('Datos Generales')->schema([
 
-                                    TextInput::make('idEstado')
-                                        ->default(2)
-                                        ->visible(false),
-                                    TextInput::make('Activo')
-                                        ->default(0)
-                                        ->visible(false),
-
-                                    Forms\Components\TextInput::make('Nombre')
+                                    Forms\Components\TextInput::make('NombrePostulante')
                                         ->required(),
-                                    Forms\Components\TextInput::make('Rut')
+                                    Forms\Components\TextInput::make('RutPostulante')
                                         ->required(),
-                                    Forms\Components\TextInput::make('Correo')
+                                    Forms\Components\TextInput::make('CorreoPostulante')
                                         ->label('Correo Electronico')
                                         ->required(),
-                                    Forms\Components\TextInput::make('Telefono'),
-                                    Flatpickr::make('FechaNacimiento')
+                                    Forms\Components\TextInput::make('TelefonoPostulante'),
+                                    Flatpickr::make('FechaNacimientoPostulante')
                                         ->label('Fecha Nacimiento')
                                         ->required(),
-                                    TextInput::make('Edad'),
-                                    TextInput::make('Nacionalidad'),
+                                    TextInput::make('EdadPostulante'),
+                                    TextInput::make('NacionalidadPostulante'),
                                     Select::make('idCargo')
-                                        ->relationship('cargo', 'Cargo')
+                                        ->options(fn()=>PersonaCargo::where('Activo', 1)->pluck('Cargo', 'id'))
                                         ->label('Cargo')
                                         ->required()
                                 ])->columns(),
@@ -105,7 +99,7 @@ class SolicitudesIngresoResource extends Resource
                                             "universitaria" => "Universitaria",
                                         ]),
                                     Forms\Components\TextInput::make('OcupacionPostulante'),
-                                    Forms\Components\TextInput::make('LugarEstudioTrabajoPostulante'),
+                                    Forms\Components\TextInput::make('LugarOcupacionPostulante'),
                                     Forms\Components\Select::make('EstadoCivilPostulante')
                                         ->options([
                                             'Soltero' => 'Soltero',
@@ -127,10 +121,15 @@ class SolicitudesIngresoResource extends Resource
                                 ]),
                                 Tabs\Tab::make('Tallas de Ropa')->schema([
                                     Forms\Components\TextInput::make('TallaZapatosPostulante'),
-                                    Forms\Components\TextInput::make('TallaPantalonesPostulante'),
+                                    Forms\Components\TextInput::make('TallaPantalonPostulante'),
                                     Forms\Components\TextInput::make('TallaCamisaPostulante'),
                                     Forms\Components\TextInput::make('TallaChaquetaPostulante'),
                                     Forms\Components\TextInput::make('TallaSombreroPostulante'),
+                                ]),
+                                Tabs\Tab::make('Observaciones')->schema([
+                                    Forms\Components\Textarea::make('Observaciones')
+                                        ->rows(5)
+                                    ->columnSpanFull()
                                 ])
                             ])->columns(),
 
@@ -179,7 +178,7 @@ class SolicitudesIngresoResource extends Resource
             })
             ->columns([
                 TextColumn::make('id')->label('ID'),
-                TextColumn::make('NombrePostulante')->label('Nombre')
+                TextColumn::make('postulante.NombrePostulante')->label('Nombre')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('Estado')
                     ->state(fn($record) => ($record->Estado === 0) ? 'Pendiente' : 'Aprobado')

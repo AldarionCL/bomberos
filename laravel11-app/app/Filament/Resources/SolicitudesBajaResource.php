@@ -38,7 +38,7 @@ class SolicitudesBajaResource extends Resource
                     ->schema([
                         Forms\Components\Select::make('SolicitadoPor')
                             ->relationship('solicitante', 'name')
-                            ->disabled()
+                            ->disabled(fn($record) => !Auth::user()->isRole('Administrador'))
                             ->label('Solicitado por')
                             ->default(Auth::user()->id),
                         Forms\Components\Select::make('Estado')
@@ -47,7 +47,7 @@ class SolicitudesBajaResource extends Resource
                                 1 => 'Aprobado',
                                 2 => 'Cancelado',
                             ])->default(0)
-                            ->disabled(),
+                            ->disabled(fn($record) => !Auth::user()->isRole('Administrador')),
                         Forms\Components\Select::make('TipoSolicitud')
                             ->options([
                                 1 => 'Ingreso',
@@ -71,8 +71,11 @@ class SolicitudesBajaResource extends Resource
 
                 Forms\Components\Section::make('Documentos')
                     ->schema([
-                        Forms\Components\Repeater::make('Documentos')
+                        Forms\Components\Repeater::make('DocumentosRepeater')
+                            ->label('')
                             ->relationship('documentos')
+                            ->addActionLabel('Agregar Documento')
+                            ->deletable(false)
                             ->schema([
                                 Select::make('TipoDocumento')
                                     ->relationship('tipo', 'Tipo'),
@@ -82,8 +85,19 @@ class SolicitudesBajaResource extends Resource
                                     ->label('Archivo')
                                     ->disk('public')
                                     ->directory('documentos')
-                                ,
+                                    ->downloadable()
+                                    ->previewable()
+                                    ->deletable(false)
+                                    ->inlineLabel(false),
                             ])->columns(3)
+                            ->mutateRelationshipDataBeforeCreateUsing(function (array $data, $get): array {
+                                $data['AsociadoA'] = $get('AsociadoA');
+                                return $data;
+                            })
+                            ->mutateRelationshipDataBeforeSaveUsing(function (array $data, $get): array {
+                                $data['AsociadoA'] = $get('AsociadoA');
+                                return $data;
+                            })
                             ->defaultItems(0),
 
                     ])->compact(),

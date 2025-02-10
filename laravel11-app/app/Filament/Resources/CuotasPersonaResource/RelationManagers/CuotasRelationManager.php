@@ -8,11 +8,13 @@ use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 
 class CuotasRelationManager extends RelationManager
 {
@@ -38,6 +40,7 @@ class CuotasRelationManager extends RelationManager
                         Select::make('Estado')
                             ->relationship('estadocuota', 'Estado')
                             ->default(1)
+                            ->disabled(fn($record) => !Auth::user()->isRole('Administrador'))
                             ->required()
                             ->label('Estado'),
                     ])->columns(),
@@ -77,7 +80,7 @@ class CuotasRelationManager extends RelationManager
 
                         Flatpickr::make('FechaPago')
                             ->label('Fecha de Pago')
-                            ->default(fn () => Carbon::today()->format('Y-m-d')),
+                            ->default(fn() => Carbon::today()->format('Y-m-d')),
 
                         Forms\Components\TextInput::make('Documento')
                             ->label('N° Documento'),
@@ -119,13 +122,26 @@ class CuotasRelationManager extends RelationManager
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                    ->label('Ingresar Pago'),
+                    ->label('Ingresar Pago')
+                    ->button()
+                    ->color('info'),
 //                Tables\Actions\DeleteAction::make(),
-                /*Tables\Actions\Action::make('IngresarPago')
-                    ->url(fn ($url) => route('filament.cuotas-pago', $url))
-                    ->icon('heroicon-o-currency-dollar')
+                Tables\Actions\Action::make('AprobarPago')
+                    ->action(function ($record) {
+                        $record->update(['Estado' => 2]);
+
+                        Notification::make()
+                            ->title('Pago Aprobado')
+                            ->success()
+                            ->icon('heroicon-s-check')
+                            ->send();
+                    })
+                    ->button()
                     ->color('success')
-                ->label('Ingresar Pago'),*/
+                    ->icon('heroicon-s-check')
+                    ->disabled(fn($record) => !((Auth::user()->isRole('Administrador') || Auth::user()->isCargo('Tesorero'))))
+                    ->requiresConfirmation()
+
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

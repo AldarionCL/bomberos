@@ -5,9 +5,7 @@ namespace App\Filament\Resources\SolicitudesIngresoResource\Pages;
 use App\Filament\Resources\SolicitudesIngresoResource;
 use App\Models\Aprobaciones;
 use App\Models\Aprobadores;
-use App\Models\User;
 use Carbon\Carbon;
-use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Facades\Auth;
 
@@ -17,8 +15,7 @@ class CreateSolicitudesIngreso extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        $record = $this->getAttributes();
-        dd($record);
+//        dd($record);
 
         $data["TipoSolicitud"] = 2;
         $data["Fecha_registro"] = Carbon::today()->format('Y-m-d');
@@ -33,6 +30,7 @@ class CreateSolicitudesIngreso extends CreateRecord
     protected function afterCreate(){
         $record = $this->getRecord();
         $aprobadores = Aprobadores::where('idSolicitudTipo', 2)->get();
+
         foreach ($aprobadores as $aprobador){
             Aprobaciones::create([
                 'idSolicitud' => $record->id ,

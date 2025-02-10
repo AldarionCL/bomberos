@@ -36,12 +36,14 @@ class SolicitudesTipoResource extends Resource
                 Tables\Columns\TextColumn::make('Tipo'),
                 Tables\Columns\TextColumn::make('Descripcion'),
             ])
+            ->checkIfRecordIsSelectableUsing(fn($record)=>!$record->Locked)
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->disabled(fn($record)=>$record->Locked),
+//                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

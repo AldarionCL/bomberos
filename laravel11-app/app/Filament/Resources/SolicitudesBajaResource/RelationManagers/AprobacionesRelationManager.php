@@ -4,6 +4,7 @@ namespace App\Filament\Resources\SolicitudesBajaResource\RelationManagers;
 
 use App\Models\Aprobaciones;
 use App\Models\Solicitud;
+use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
@@ -22,9 +23,24 @@ class AprobacionesRelationManager extends RelationManager
     {
         return $form
             ->schema([
+                Forms\Components\Select::make('Orden')
+                    ->options([
+                        1 => 1,
+                        2 => 2,
+                        3 => 3,
+                        4 => 4,
+                        5 => 5,
+                    ]),
                 Forms\Components\Select::make('idAprobador')
                     ->relationship('aprobador', 'name')
                     ->required(),
+                Forms\Components\Toggle::make('Estado')
+                    ->label('Aprobado')
+                    ->onColor('success')
+                    ->onIcon('heroicon-s-check')
+                    ->offColor('danger')
+                    ->offIcon('heroicon-s-x-mark')
+                    ->inline(false)
             ]);
     }
 
@@ -64,7 +80,9 @@ class AprobacionesRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-//                Tables\Actions\CreateAction::make(),
+                Tables\Actions\CreateAction::make()
+                    ->label('Agregar aprobador')
+                    ->visible(fn() => Auth::user()->isRole('Administrador')),
             ])
             ->actions([
                 Tables\Actions\Action::make('aprobar')
@@ -77,7 +95,14 @@ class AprobacionesRelationManager extends RelationManager
                         $record->save();
 
                         if (Aprobaciones::where('idSolicitud', $record->idSolicitud)->where('Estado', 0)->count() === 0) {
-                            Solicitud::find($record->idSolicitud)->update(['Estado' => 1]);
+                            $solicitud = Solicitud::find($record->idSolicitud);
+                            $solicitud->Estado = 1;
+
+                            $solicitud->asociado->persona->Activo = false;
+                            $solicitud->asociado->persona->idEstado = 4;
+                            $solicitud->asociado->persona->save();
+
+                            $solicitud->save();
 
                             Notification::make()
                                 ->title('Solicitud Aprobada')
@@ -104,9 +129,7 @@ class AprobacionesRelationManager extends RelationManager
 
                 Tables\Actions\EditAction::make()
                     ->button()
-                    ->hidden(fn($record) => Auth::user()->isRole('admin')),
-                Tables\Actions\DeleteAction::make()
-                    ->hidden(fn($record) => !Auth::user()->isRole('admin')),
+                    ->disabled(fn($record) => !Auth::user()->isRole('Administrador')),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

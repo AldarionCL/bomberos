@@ -15,22 +15,7 @@ class Solicitud extends Model
         'Fecha_registro',
         'SolicitadoPor',
         'AsociadoA',
-        'RutPostulante',
-        'NombrePostulante',
-        'TelefonoPostulante',
-        'CorreoPostulante',
-        'DireccionPostulante',
         'Observaciones',
-        'NivelEstudioPostulante',
-        'FechaNacimientoPostulante',
-        'SexoPostulante',
-        'EstadoCivilPostulante',
-        'OcupacionPostulante',
-        'FotoPostulante',
-        'EdadPostulante',
-        'NacionalidadPostulante',
-        'SituacionMilitarPostulante',
-        'NivelEstudiosPostulante',
     ];
 
     public function solicitante()
@@ -56,6 +41,11 @@ class Solicitud extends Model
     public function persona()
     {
         return $this->hasOne(Persona::class, 'id', 'AsociadoA');
+    }
+
+    public function postulante()
+    {
+        return $this->hasOne(Postulante::class, 'idSolicitud', 'id');
     }
 
 }

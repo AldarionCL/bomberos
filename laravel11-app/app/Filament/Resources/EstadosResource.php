@@ -41,12 +41,15 @@ class EstadosResource extends Resource
                 TextColumn::make('Estado'),
                 TextColumn::make('Descripcion'),
             ])
+            ->checkIfRecordIsSelectableUsing(fn($record)=>!$record->Locked)
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->disabled(fn($record)=>$record->Locked),
             ])
+            ->recordUrl(null)
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),

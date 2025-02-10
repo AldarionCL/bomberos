@@ -27,6 +27,14 @@ class AprobacionesRelationManager extends RelationManager
     {
         return $form
             ->schema([
+                Forms\Components\Select::make('Orden')
+                    ->options([
+                        1 => 1,
+                        2 => 2,
+                        3 => 3,
+                        4 => 4,
+                        5 => 5,
+                    ]),
                 Forms\Components\Select::make('idAprobador')
                     ->relationship('aprobador', 'name')
                     ->required(),
@@ -54,7 +62,7 @@ class AprobacionesRelationManager extends RelationManager
                     ->circular()
                     ->grow(false)
                     ->label('Foto')
-                ->size(70),
+                    ->size(70),
 
                 Tables\Columns\TextColumn::make('aprobador.name'),
                 /*Tables\Columns\ToggleColumn::make('Estado')
@@ -78,7 +86,9 @@ class AprobacionesRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-//                Tables\Actions\CreateAction::make(),
+                Tables\Actions\CreateAction::make()
+                    ->label('Agregar aprobador')
+                    ->visible(fn() => Auth::user()->isRole('Administrador')),
             ])
             ->actions([
                 Tables\Actions\Action::make('aprobar')
@@ -96,24 +106,37 @@ class AprobacionesRelationManager extends RelationManager
                             $solicitud->save();
 
                             $usuario = User::create([
-                                'name' => $solicitud->NombrePostulante,
-                                'email' => $solicitud->CorreoPostulante,
+                                'name' => $solicitud->postulante->NombrePostulante,
+                                'email' => $solicitud->postulante->CorreoPostulante,
                                 'password' => Hash::make('password'),
                                 'idRole' => 2
                             ]);
 
                             Persona::create([
                                 'idUsuario' => $usuario->id,
-                                'idCargo' => 1,
+                                'idCargo' => $solicitud->postulante->idCargo,
                                 'idEstado' => 1,
-                                'Rut' => $solicitud->RutPostulante,
-                                'Telefono' => $solicitud->TelefonoPostulante,
-                                'Direccion' => $solicitud->DireccionPostulante,
-                                'FechaNacimiento' => $solicitud->FechaNacimientoPostulante,
-                                'Sexo' => $solicitud->SexoPostulante,
-                                'EstadoCivil' => $solicitud->EstadoCivilPostulante,
-                                'Ocupacion' => $solicitud->OcupacionPostulante,
-                                'Foto' => $solicitud->FotoPostulante,
+                                'Rut' => $solicitud->postulante->RutPostulante,
+                                'Telefono' => $solicitud->postulante->TelefonoPostulante,
+                                'Direccion' => $solicitud->postulante->DireccionPostulante,
+                                'Comuna' => $solicitud->postulante->ComunaPostulante,
+                                'Observaciones' => $solicitud->postulante->Observaciones,
+                                'NivelEstudio' => $solicitud->postulante->NivelEstudioPostulante,
+                                'FechaNacimiento' => $solicitud->postulante->FechaNacimientoPostulante,
+                                'Edad' => $solicitud->postulante->EdadPostulante,
+                                'Sexo' => $solicitud->postulante->SexoPostulante,
+                                'EstadoCivil' => $solicitud->postulante->EstadoCivilPostulante,
+                                'Ocupacion' => $solicitud->postulante->OcupacionPostulante,
+                                'Foto' => $solicitud->postulante->FotoPostulante,
+                                'Nacionalidad' => $solicitud->postulante->NacionalidadPostulante,
+                                'SituacionMilitar' => $solicitud->postulante->SituacionMilitarPostulante,
+                                'LugarOcupacion' => $solicitud->postulante->LugarOcupacionPostulante,
+                                'GrupoSanguineo' => $solicitud->postulante->GrupoSanguineoPostulante,
+                                'TallaZapatos' => $solicitud->postulante->TallaZapatosPostulante,
+                                'TallaPantalon' => $solicitud->postulante->TallaPantalonPostulante,
+                                'TallaCamisa' => $solicitud->postulante->TallaCamisaPostulante,
+                                'TallaChaqueta' => $solicitud->postulante->TallaChaquetaPostulante,
+                                'TallaSombrero' => $solicitud->postulante->TallaSombreroPostulante,
                                 'Activo' => 1
                             ]);
 
@@ -146,9 +169,9 @@ class AprobacionesRelationManager extends RelationManager
 
                 Tables\Actions\EditAction::make()
                     ->button()
-                    ->hidden(fn($record) => Auth::user()->isRole('admin')),
+                    ->disabled(fn($record) => !Auth::user()->isRole('Administrador')),
                 Tables\Actions\DeleteAction::make()
-                    ->hidden(fn($record) => !Auth::user()->isRole('admin')),
+                    ->hidden(fn($record) => !Auth::user()->isRole('Administrador')),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

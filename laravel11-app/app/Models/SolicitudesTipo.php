@@ -11,6 +11,7 @@ class SolicitudesTipo extends Model
     protected $fillable = [
         'Tipo',
         'Descripcion',
+        'Locked',
     ];
 
     public function aprobadores(){

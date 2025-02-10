@@ -27,10 +27,10 @@ class CuotasPersonaResource extends Resource
     protected static ?string $label = 'Recaudacion por Persona';
 
     public static function canAccess(): bool{
-        return Auth::user()->isRole('Administrador') || Auth::user()->isCargo('Tesorero');
+        return true;
     }
     public static function canEdit($record): bool{
-        return Auth::user()->isRole('Administrador') || Auth::user()->isCargo('Tesorero');
+        return Auth::user()->isRole('Administrador') || Auth::user()->isCargo('Tesorero') || Auth::user()->id == $record->idUsuario;
     }
     public static function form(Form $form): Form
     {
@@ -75,7 +75,7 @@ class CuotasPersonaResource extends Resource
                     ->default(fn($record) => $record->cuotas->where('Estado', '1')->count())
                     ->label('Cuotas Pendientes'),
                 TextColumn::make('montoPendiente')
-                ->default(fn($record) => $record->cuotas->sum('Pendiente'))
+                ->default(fn($record) => $record->cuotas->where('Estado', 1)->sum('Monto'))
                     ->prefix('$')
                 ->money('CLP')
             ])

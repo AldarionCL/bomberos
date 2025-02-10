@@ -4,15 +4,21 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\PersonasResource\Pages;
 use App\Filament\Resources\PersonasResource\RelationManagers;
+use App\Models\PersonaCargo;
 use App\Models\User;
+use Coolsam\FilamentFlatpickr\Forms\Components\Flatpickr;
 use Faker\Provider\Text;
 use Filament\Forms;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class PersonasResource extends Resource
@@ -40,40 +46,91 @@ class PersonasResource extends Resource
                             ->dehydrated(fn($state) => filled($state)),
                         Forms\Components\Select::make('idRole')
                             ->relationship('role', 'Rol')
+                            ->visible(fn() => Auth::user()->isRole('Administrador'))
                     ])->columns(),
 
-                Forms\Components\Split::make([
-                    Forms\Components\Section::make('Datos Personales')
-                        ->relationship('persona')
-                        ->schema([
-                            Forms\Components\TextInput::make('Rut')
-                                ->required(),
-                            Forms\Components\TextInput::make('Telefono'),
-                            Forms\Components\TextInput::make('Direccion'),
+                Forms\Components\Section::make()
+                    ->relationship('persona')
+                    ->schema([
+                        Forms\Components\Split::make([
+                            Tabs::make('TabDatosUsuario')->tabs([
+                                Tabs\Tab::make('Datos Generales')->schema([
 
-                            Forms\Components\Select::make('idCargo')
-                                ->relationship('cargo', 'Cargo')
-                                ->label('Cargo')
-                                ->required(),
+                                    Forms\Components\TextInput::make('Rut')
+                                        ->required(),
+                                    Forms\Components\TextInput::make('Telefono'),
+                                    Flatpickr::make('FechaNacimiento')
+                                        ->label('Fecha Nacimiento')
+                                        ->required(),
+                                    TextInput::make('Edad'),
+                                    TextInput::make('Nacionalidad'),
+                                    Select::make('idCargo')
+                                        ->options(fn() => PersonaCargo::where('Activo', 1)->pluck('Cargo', 'id'))
+                                        ->label('Cargo')
+                                        ->required()
+                                ])->columns(),
+                                Tabs\Tab::make('Datos Personales')->schema([
+                                    Forms\Components\TextInput::make('Direccion'),
+                                    Forms\Components\TextInput::make('Comuna'),
+                                    TextInput::make('SituacionMilitar'),
+                                    Forms\Components\Select::make('NivelEstudio')
+                                        ->options([
+                                            "basica" => "Basica",
+                                            "media" => "Media",
+                                            "tecnica" => "Tecnica",
+                                            "universitaria" => "Universitaria",
+                                        ]),
+                                    Forms\Components\TextInput::make('Ocupacion'),
+                                    Forms\Components\TextInput::make('LugarOcupacion'),
+                                    Forms\Components\Select::make('EstadoCivil')
+                                        ->options([
+                                            'Soltero' => 'Soltero',
+                                            'Casado' => 'Casado',
+                                            'Divorciado' => 'Divorciado',
+                                            'Viudo' => 'Viudo',
+                                        ]),
+                                    Forms\Components\Select::make('GrupoSanguineo')
+                                        ->options([
+                                            "A+" => "A+",
+                                            "A-" => "A-",
+                                            "B+" => "B+",
+                                            "B-" => "B-",
+                                            "AB+" => "AB+",
+                                            "AB-" => "AB-",
+                                            "O+" => "O+",
+                                            "O-" => "O-"
+                                        ])
+                                ]),
+                                Tabs\Tab::make('Tallas de Ropa')->schema([
+                                    Forms\Components\TextInput::make('TallaZapatos'),
+                                    Forms\Components\TextInput::make('TallaPantalon'),
+                                    Forms\Components\TextInput::make('TallaCamisa'),
+                                    Forms\Components\TextInput::make('TallaChaqueta'),
+                                    Forms\Components\TextInput::make('TallaSombrero'),
+                                ]),
+                                Tabs\Tab::make('Observaciones')->schema([
+                                    Forms\Components\Textarea::make('Observaciones')
+                                        ->rows(5)
+                                        ->columnSpanFull()
+                                ])
+                            ])->columns(),
 
-                            Forms\Components\Select::make('idEstado')
-                                ->relationship('estado', 'Estado')
-                                ->required(),
-                        ])->columns(),
-                    Forms\Components\Section::make('Foto')
-                        ->relationship('persona')
-                        ->schema([
-                            Forms\Components\FileUpload::make('Foto')
-                                ->disk('public')
-                                ->directory('fotosPersonas')
-                                ->avatar()
-                                ->preserveFilenames()
-                                ->moveFiles()
-                                ->previewable()
-                                ->imageEditor()
-                                ->deletable(true),
-                        ])->grow(false),
-                ])->columnSpanFull()
+                            Forms\Components\Section::make()
+                                ->schema([
+                                    Forms\Components\FileUpload::make('Foto')
+                                        ->disk('public')
+                                        ->directory('fotosPersonas')
+                                        ->avatar()
+                                        ->imageEditor()
+                                        ->preserveFilenames()
+                                        ->moveFiles()
+                                        ->previewable()
+                                        ->deletable(true)
+                                    ,
+                                ])->grow(false)
+
+                        ])->columnSpanFull(),
+                    ]),
             ]);
 
 
@@ -97,7 +154,14 @@ class PersonasResource extends Resource
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('persona.cargo.Cargo'),
-                Tables\Columns\TextColumn::make('persona.estado.Estado'),
+                Tables\Columns\TextColumn::make('persona.estado.Estado')
+                ->badge()
+                    ->color(fn(string $state): string => match ($state) {
+                        'Activo' => 'info',
+                        'Licencia' => 'warning',
+                        'Baja' => 'danger',
+                        default => 'gray',
+                    }),
                 Tables\Columns\TextColumn::make('created_at')->label('Creado'),
 
             ])

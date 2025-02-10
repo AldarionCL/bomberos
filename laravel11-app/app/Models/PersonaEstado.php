@@ -9,7 +9,8 @@ class PersonaEstado extends Model
 
     protected $table = 'persona_estados';
     protected $fillable = [
-        'estado',
-        'descripcion',
+        'Estado',
+        'Descripcion',
+        'Locked',
     ];
 }

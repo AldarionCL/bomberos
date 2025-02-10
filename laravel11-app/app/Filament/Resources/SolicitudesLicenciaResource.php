@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\SolicitudesLicenciaResource\Pages;
 use App\Filament\Resources\SolicitudesLicenciaResource\RelationManagers;
+use App\Models\DocumentosTipo;
 use App\Models\Solicitud;
 use App\Models\SolicitudesLicencia;
 use Filament\Forms;
@@ -38,7 +39,7 @@ class SolicitudesLicenciaResource extends Resource
                     ->schema([
                         Forms\Components\Select::make('SolicitadoPor')
                             ->relationship('solicitante', 'name')
-                            ->disabled()
+                            ->disabled(fn($record) => !Auth::user()->isRole('Administrador'))
                             ->label('Solicitado por')
                             ->default(Auth::user()->id),
                         Forms\Components\Select::make('Estado')
@@ -47,7 +48,7 @@ class SolicitudesLicenciaResource extends Resource
                                 1 => 'Aprobado',
                                 2 => 'Cancelado',
                             ])->default(0)
-                            ->disabled(),
+                            ->disabled(fn($record) => !Auth::user()->isRole('Administrador')),
                         Forms\Components\Select::make('TipoSolicitud')
                             ->options([
                                 1 => 'Ingreso',
@@ -63,27 +64,43 @@ class SolicitudesLicenciaResource extends Resource
                     ->schema([
                         Forms\Components\Select::make('AsociadoA')
                             ->relationship('asociado', 'name')
+                            ->live()
                             ->label('Voluntario')
+                            ->searchable()
                             ->hint('Seleccione un Voluntario para asociar a esta solicitud')
                             ->required(),
                         Forms\Components\RichEditor::make('Observaciones')
-                    ])->columns(),
+                    ]),
 
                 Forms\Components\Section::make('Documentos')
                     ->schema([
-                        Forms\Components\Repeater::make('Documentos')
+                        Forms\Components\Repeater::make('DocumentosRepeater')
+                            ->label('')
+                            ->addActionLabel('Agregar Documento')
                             ->relationship('documentos')
+                            ->deletable(false)
                             ->schema([
                                 Select::make('TipoDocumento')
-                                    ->relationship('tipo', 'Tipo'),
+                                    ->options(fn() => DocumentosTipo::where('Clasificacion', 'privado')->pluck('Tipo', 'id')),
                                 TextInput::make('Nombre'),
                                 Forms\Components\FileUpload::make('Path')
                                     ->inlineLabel(true)
                                     ->label('Archivo')
                                     ->disk('public')
+                                    ->downloadable()
+                                    ->previewable()
+                                    ->deletable(false)
                                     ->directory('documentos')
-                                ,
+                                    ->inlineLabel(false),
                             ])->columns(3)
+                            ->mutateRelationshipDataBeforeCreateUsing(function (array $data, $get): array {
+                                $data['AsociadoA'] = $get('AsociadoA');
+                                return $data;
+                            })
+                            ->mutateRelationshipDataBeforeSaveUsing(function (array $data, $get): array {
+                                $data['AsociadoA'] = $get('AsociadoA');
+                                return $data;
+                            })
                             ->defaultItems(0),
 
                     ])->compact(),

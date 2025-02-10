@@ -17,7 +17,7 @@ class CuotaPolicy
     public function viewAny(User $user)
     {
         //
-        return $user->isRole('Administrador') || $user->isCargo('Tesorero');
+        return true;
     }
 
     public function create(User $user)
@@ -29,7 +29,8 @@ class CuotaPolicy
     public function update(User $user)
     {
         //
-        return $user->isRole('Administrador') || $user->isCargo('Tesorero');
+//        return $user->isRole('Administrador') || $user->isCargo('Tesorero');
+        return true;
 
     }
 }

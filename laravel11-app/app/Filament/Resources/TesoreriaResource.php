@@ -18,6 +18,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 
 class TesoreriaResource extends Resource
 {
@@ -29,6 +30,9 @@ class TesoreriaResource extends Resource
     protected static ?string $label = 'Cuota';
     protected static ?string $pluralLabel = 'Cuotas';
 
+    public static function canAccess(): bool{
+        return Auth::user()->isRole('Administrador') || Auth::user()->isCargo('Tesorero');
+    }
     public static function form(Form $form): Form
     {
         return $form
