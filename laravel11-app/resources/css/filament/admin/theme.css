@@ -42,19 +42,19 @@ html body {
 }
 
 html .fi-tabs {
-    @apply bg-yellow-500;
-    @apply drop-shadow;
+    /*@apply bg-indigo-100;*/
+    /*@apply drop-shadow;*/
 }
 
 html .fi-tabs-item-label {
-    @apply text-white;
+    /*@apply text-white;*/
 }
 html .fi-tabs-item-icon {
     @apply text-primary-300;
 }
 
 html .fi-tabs-item-active .fi-tabs-item-label {
-    @apply text-gray-500;
+    @apply text-red-500;
 }
 
 

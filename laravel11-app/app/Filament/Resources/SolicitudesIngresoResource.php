@@ -83,10 +83,11 @@ class SolicitudesIngresoResource extends Resource
                                     TextInput::make('EdadPostulante'),
                                     TextInput::make('NacionalidadPostulante'),
                                     Select::make('idCargo')
-                                        ->options(fn()=>PersonaCargo::where('Activo', 1)->pluck('Cargo', 'id'))
+                                        ->options(fn() => PersonaCargo::where('Activo', 1)->pluck('Cargo', 'id'))
                                         ->label('Cargo')
                                         ->required()
-                                ])->columns(),
+                                ])->icon('fas-user-pen')
+                                    ->columns(),
                                 Tabs\Tab::make('Datos Personales')->schema([
                                     Forms\Components\TextInput::make('DireccionPostulante'),
                                     Forms\Components\TextInput::make('ComunaPostulante'),
@@ -118,19 +119,19 @@ class SolicitudesIngresoResource extends Resource
                                             "O+" => "O+",
                                             "O-" => "O-"
                                         ])
-                                ]),
+                                ])->icon('fas-graduation-cap'),
                                 Tabs\Tab::make('Tallas de Ropa')->schema([
                                     Forms\Components\TextInput::make('TallaZapatosPostulante'),
                                     Forms\Components\TextInput::make('TallaPantalonPostulante'),
                                     Forms\Components\TextInput::make('TallaCamisaPostulante'),
                                     Forms\Components\TextInput::make('TallaChaquetaPostulante'),
                                     Forms\Components\TextInput::make('TallaSombreroPostulante'),
-                                ]),
+                                ])->icon('fas-shirt'),
                                 Tabs\Tab::make('Observaciones')->schema([
                                     Forms\Components\Textarea::make('Observaciones')
                                         ->rows(5)
-                                    ->columnSpanFull()
-                                ])
+                                        ->columnSpanFull()
+                                ])->icon('fas-comment')
                             ])->columns(),
 
                             Forms\Components\Section::make()
