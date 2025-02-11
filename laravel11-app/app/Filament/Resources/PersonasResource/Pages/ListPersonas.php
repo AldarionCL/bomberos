@@ -22,7 +22,6 @@ class ListPersonas extends ListRecords
     public function getTabs(): array
     {
         return [
-            'Todos' => Tab::make(),
             'Activos' => Tab::make()
                 ->modifyQueryUsing(fn(Builder $query) => $query->whereHas('persona', function ($query) {
                     $query->where('Activo', 1);
@@ -31,6 +30,7 @@ class ListPersonas extends ListRecords
                 ->modifyQueryUsing(fn(Builder $query) => $query->whereHas('persona', function ($query) {
                     $query->where('Activo', 0);
                 })),
+            'Todos' => Tab::make(),
         ];
     }
 }
