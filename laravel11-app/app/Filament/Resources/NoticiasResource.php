@@ -63,7 +63,8 @@ class NoticiasResource extends Resource
                         Forms\Components\TextInput::make('Nombre'),
                         Forms\Components\TextInput::make('Descripcion'),
                         Forms\Components\Select::make('TipoDocumento')
-                            ->options(fn() => DocumentosTipo::where('Clasificacion', 'publico')->pluck('Tipo', 'id')->toArray()),
+                            ->options(fn() => DocumentosTipo::where('Clasificacion', 'publico')->pluck('Tipo', 'id')->toArray())
+                        ->required(),
                         Forms\Components\FileUpload::make('Path')
                             ->disk('public')
                             ->label('Archivo')
