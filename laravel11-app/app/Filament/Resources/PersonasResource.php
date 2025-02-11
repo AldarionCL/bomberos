@@ -68,7 +68,8 @@ class PersonasResource extends Resource
                                         ->options(fn() => PersonaCargo::where('Activo', 1)->pluck('Cargo', 'id'))
                                         ->label('Cargo')
                                         ->required()
-                                ])->columns(),
+                                ])->columns()
+                                    ->icon('fas-user-pen'),
                                 Tabs\Tab::make('Datos Personales')->schema([
                                     Forms\Components\TextInput::make('Direccion'),
                                     Forms\Components\TextInput::make('Comuna'),
@@ -100,19 +101,36 @@ class PersonasResource extends Resource
                                             "O+" => "O+",
                                             "O-" => "O-"
                                         ])
-                                ]),
+                                ])->icon('fas-graduation-cap'),
                                 Tabs\Tab::make('Tallas de Ropa')->schema([
                                     Forms\Components\TextInput::make('TallaZapatos'),
                                     Forms\Components\TextInput::make('TallaPantalon'),
                                     Forms\Components\TextInput::make('TallaCamisa'),
                                     Forms\Components\TextInput::make('TallaChaqueta'),
                                     Forms\Components\TextInput::make('TallaSombrero'),
-                                ]),
+                                ])->icon('fas-shirt'),
                                 Tabs\Tab::make('Observaciones')->schema([
                                     Forms\Components\Textarea::make('Observaciones')
                                         ->rows(5)
                                         ->columnSpanFull()
-                                ])
+                                ])->icon('fas-comment'),
+                                Tabs\Tab::make('Documentos')->schema([
+                                    Forms\Components\Repeater::make('Documentos')
+                                        ->relationship('documentos')
+                                        ->schema([
+                                            Select::make('TipoDocumento')
+                                                ->relationship('tipo', 'Tipo'),
+                                            TextInput::make('Nombre'),
+                                            Forms\Components\FileUpload::make('Path')
+                                                ->inlineLabel(false)
+                                                ->label('Archivo')
+                                                ->disk('public')
+                                                ->directory('documentos')
+                                            ,
+                                        ])->columnSpanFull()
+                                        ->columns(3)
+                                        ->defaultItems(0),
+                                ])->icon('fas-file')
                             ])->columns(),
 
                             Forms\Components\Section::make()
@@ -155,7 +173,7 @@ class PersonasResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('persona.cargo.Cargo'),
                 Tables\Columns\TextColumn::make('persona.estado.Estado')
-                ->badge()
+                    ->badge()
                     ->color(fn(string $state): string => match ($state) {
                         'Activo' => 'info',
                         'Licencia' => 'warning',

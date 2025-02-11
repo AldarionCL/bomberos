@@ -71,6 +71,10 @@ class Persona extends Model
         return $this->hasMany(Cuota::class, 'idUser', 'idUsuario');
     }
 
+    public function documentos(){
+        return $this->hasMany(Documentos::class, 'AsociadoA', 'id');
+    }
+
 
     public function scopeIsRole($query, $roles = [])
     {

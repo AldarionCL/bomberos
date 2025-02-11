@@ -49,6 +49,9 @@ html .fi-tabs {
 html .fi-tabs-item-label {
     @apply text-white;
 }
+html .fi-tabs-item-icon {
+    @apply text-primary-300;
+}
 
 html .fi-tabs-item-active .fi-tabs-item-label {
     @apply text-gray-500;
