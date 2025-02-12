@@ -22,11 +22,12 @@ class ListCuotasPersonas extends ListRecords
     public function getTabs(): array
     {
         return [
-            'Todos' => Tab::make(),
             'Activos' => Tab::make()
                 ->modifyQueryUsing(fn(Builder $query) => $query->where('Activo', 1)),
             'Inactivos' => Tab::make()
                 ->modifyQueryUsing(fn(Builder $query) => $query->where('Activo', '<>', 1)),
+            'Todos' => Tab::make(),
+
         ];
     }
 }

@@ -10,6 +10,7 @@ use Faker\Provider\Text;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Support\Enums\Alignment;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -26,12 +27,16 @@ class CuotasPersonaResource extends Resource
     protected static ?string $navigationLabel = 'Recaudacion';
     protected static ?string $label = 'Recaudacion por Persona';
 
-    public static function canAccess(): bool{
+    public static function canAccess(): bool
+    {
         return true;
     }
-    public static function canEdit($record): bool{
+
+    public static function canEdit($record): bool
+    {
         return Auth::user()->isRole('Administrador') || Auth::user()->isCargo('Tesorero') || Auth::user()->id == $record->idUsuario;
     }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -47,7 +52,7 @@ class CuotasPersonaResource extends Resource
                             ->content(fn($record) => $record->estado->Estado),
                         Forms\Components\Placeholder::make('contCuotas')
                             ->content(fn($record) => $record->cuotas->where('Estado', 1)->count())
-                        ->label('Cuotas Pendientes'),
+                            ->label('Cuotas Pendientes'),
                     ])->columns()
             ]);
     }
@@ -56,34 +61,49 @@ class CuotasPersonaResource extends Resource
     {
         return $table
             ->modifyQueryUsing(function (Builder $query) {
-                if(!Auth::user()->isRole('Administrador') && !Auth::user()->isCargo('Tesorero')){
+                if (!Auth::user()->isRole('Administrador') && !Auth::user()->isCargo('Tesorero')) {
                     $query->where('idUsuario', Auth::id());
                 }
             })
             ->columns([
-                TextColumn::make('Rut')
-                    ->searchable()
-                    ->sortable(),
-                TextColumn::make('user.name')
-                    ->label('Nombre')
-                    ->searchable()
-                    ->sortable(),
-                TextColumn::make('estado.Estado'),
-                TextColumn::make('contCuotas')
-                    ->badge()
-                    ->color(fn($record)=>$record->cuotas->where('Estado', '1')->count()>0 ? 'logoYellow' : 'logoBlue')
-                    ->default(fn($record) => $record->cuotas->where('Estado', '1')->count())
-                    ->label('Cuotas Pendientes'),
-                TextColumn::make('montoPendiente')
-                ->default(fn($record) => $record->cuotas->where('Estado', 1)->sum('Monto'))
-                    ->prefix('$')
-                ->money('CLP')
+                Tables\Columns\Layout\Split::make([
+
+                    TextColumn::make('Rut')
+                        ->searchable()
+                        ->sortable()
+                        ->visibleFrom('md'),
+                    TextColumn::make('user.name')
+//                        ->description(fn($record) => $record->Rut)
+                        ->label('Nombre')
+                        ->searchable()
+                        ->sortable(),
+                    TextColumn::make('estado.Estado')
+                        ->visibleFrom('md')
+                        ->grow(false),
+                    Tables\Columns\Layout\Stack::make([
+                        TextColumn::make('contCuotas')
+                            ->badge()
+                            ->color(fn($record) => $record->cuotas->where('Estado', '1')->count() > 0 ? 'logoYellow' : 'logoBlue')
+                            ->prefix("Cuotas Pendientes: ")
+                            ->default(fn($record) => $record->cuotas->where('Estado', '1')->count())
+                            ->label('Cuotas Pendientes')
+                            ->grow(false),
+                        TextColumn::make('montoPendiente')
+                            ->default(fn($record) => $record->cuotas->where('Estado', 1)->sum('Monto'))
+                            ->prefix('$')
+                            ->money('CLP')
+                        ->grow(false),
+                    ])->alignment(Alignment::End),
+
+                ])
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make()->label('Pagar'),
+                Tables\Actions\EditAction::make()
+                    ->label('Pagar')
+                    ->button(),
 //                Tables\Actions\ViewAction::make(),
             ])
             ->bulkActions([

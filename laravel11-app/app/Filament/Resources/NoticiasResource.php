@@ -64,7 +64,7 @@ class NoticiasResource extends Resource
                         Forms\Components\TextInput::make('Descripcion'),
                         Forms\Components\Select::make('TipoDocumento')
                             ->options(fn() => DocumentosTipo::where('Clasificacion', 'publico')->pluck('Tipo', 'id')->toArray())
-                        ->required(),
+                            ->required(),
                         Forms\Components\FileUpload::make('Path')
                             ->disk('public')
                             ->label('Archivo')
@@ -80,22 +80,33 @@ class NoticiasResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('Titulo')
-                    ->searchable(),
-                TextColumn::make('Subtitulo'),
-                Tables\Columns\BooleanColumn::make('Estado'),
-                Tables\Columns\TextColumn::make('FechaPublicacion')
-                    ->sortable()
-                    ->date(),
-                Tables\Columns\TextColumn::make('FechaExpiracion')
-                    ->sortable()
-                    ->date(),
+                Tables\Columns\Layout\Split::make([
+
+                    Tables\Columns\TextColumn::make('Titulo')
+                        ->description(fn($record): string => $record->Subtitulo ?? '')
+                        ->searchable(),
+//                TextColumn::make('Subtitulo'),
+                    Tables\Columns\TextColumn::make('Estado')
+                        ->state(fn($record) => $record->Estado == 1 ? 'Publicado' : 'No Publicado')
+                        ->badge()
+                        ->icon(fn($record) => $record->Estado == 1 ? 'fas-check-circle' : 'fas-x-circle')
+                        ->color(fn($record) => $record->Estado == 1 ? 'info' : 'warning')
+                    ->grow(false),
+                    Tables\Columns\TextColumn::make('FechaPublicacion')
+                        ->sortable()
+                        ->grow(false)
+                        ->date(),
+                    /*Tables\Columns\TextColumn::make('FechaExpiracion')
+                        ->sortable()
+                        ->date(),*/
+                ])
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                ->button(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

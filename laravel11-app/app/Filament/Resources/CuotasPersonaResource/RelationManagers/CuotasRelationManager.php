@@ -10,6 +10,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Support\Enums\Alignment;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -24,7 +25,7 @@ class CuotasRelationManager extends RelationManager
     {
         return $form
             ->schema([
-                Forms\Components\Section::make()
+                Forms\Components\Section::make('Informacion Cuota')
                     ->schema([
                         Forms\Components\Placeholder::make('Monto')
                             ->content(fn($record) => "$" . $record->Monto),
@@ -44,7 +45,7 @@ class CuotasRelationManager extends RelationManager
                             ->required()
                             ->label('Estado'),
                     ])->columns(),
-                Forms\Components\Section::make()
+                Forms\Components\Section::make('Pago')
                     ->schema([
                         Forms\Components\TextInput::make('Pendiente')
                             ->prefix('$')
@@ -99,20 +100,44 @@ class CuotasRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('Cuotas')
             ->columns([
-                Tables\Columns\TextColumn::make('FechaPeriodo')->date(),
-                Tables\Columns\TextColumn::make('FechaVencimiento')->date(),
-                Tables\Columns\TextColumn::make('FechaPago')->date(),
-                Tables\Columns\TextColumn::make('estadocuota.Estado')->badge()
-                    ->color(fn(string $state): string => match ($state) {
-                        'Pendiente' => 'badgeAlert',
-                        'Aprobado' => 'success',
-                        'Rechazado' => 'danger',
-                        'Cancelado' => 'danger',
-                        default => 'gray',
-                    }),
-                Tables\Columns\TextColumn::make('Pendiente'),
-                Tables\Columns\TextColumn::make('Recaudado'),
 
+                Tables\Columns\Layout\Split::make([
+
+                    Tables\Columns\Layout\Panel::make([
+                        Tables\Columns\Layout\Stack::make([
+                            Tables\Columns\TextColumn::make('FechaPeriodo')
+                                ->description('Periodo', position: 'above')
+                                ->date("d/m/Y"),
+//                                ->prefix("Periodo: "),
+                            Tables\Columns\TextColumn::make('FechaVencimiento')
+                                ->description('Fecha Vencimiento', position: 'above')
+                                ->date("d/m/Y")
+//                                ->prefix("Vencimiento: "),
+                        ]),
+                    ]),
+                    Tables\Columns\Layout\Stack::make([
+                        Tables\Columns\TextColumn::make('Pendiente')
+                            ->prefix("Pendiente : $")
+                            ->color('warning'),
+                        Tables\Columns\TextColumn::make('Recaudado')
+                            ->prefix("Recaudado : $")
+                            ->color('success'),
+                    ]),
+                    Tables\Columns\TextColumn::make('estadocuota.Estado')
+                        ->badge()
+                        ->grow(false)
+                        ->color(fn(string $state): string => match ($state) {
+                            'Pendiente' => 'badgeAlert',
+                            'Aprobado' => 'success',
+                            'Rechazado' => 'danger',
+                            'Cancelado' => 'danger',
+                            default => 'gray',
+                        })->visibleFrom('md'),
+                    Tables\Columns\TextColumn::make('FechaPago')
+                        ->description('Fecha de Pago', position: 'above')
+                        ->date("d/m/Y")
+                        ->visibleFrom('md'),
+                ])
             ])
             ->filters([
                 //

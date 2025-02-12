@@ -178,28 +178,38 @@ class SolicitudesIngresoResource extends Resource
                 return $query->where('TipoSolicitud', 2);
             })
             ->columns([
-                TextColumn::make('id')->label('ID'),
-                TextColumn::make('postulante.NombrePostulante')->label('Nombre')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('Estado')
-                    ->state(fn($record) => ($record->Estado === 0) ? 'Pendiente' : 'Aprobado')
-                    ->color(fn($state) => $state == 'Aprobado' ? 'success' : 'danger')
-                    ->icon(fn($state) => $state == 'Aprobado' ? 'heroicon-s-check' : 'heroicon-o-clock')
-                    ->badge()
-                    ->label('Estado'),
-                TextColumn::make('Fecha_registro')
-                    ->label('Fecha Registro')
-                    ->date('d/m/Y'),
+                Tables\Columns\Layout\Split::make([
+                    TextColumn::make('id')
+                        ->description('ID', position: 'above')
+                        ->label('ID'),
+                    TextColumn::make('postulante.NombrePostulante')
+                        ->description('Postulante', position: 'above')
+                        ->label('Nombre')
+                        ->searchable(),
+                    TextColumn::make('Fecha_registro')
+                        ->description('Fecha Solicitud', position: 'above')
+                        ->label('Fecha Registro')
+                        ->date('d/m/Y'),
+
+                    Tables\Columns\TextColumn::make('Estado')
+                        ->state(fn($record) => ($record->Estado === 0) ? 'Pendiente' : 'Aprobado')
+                        ->color(fn($state) => $state == 'Aprobado' ? 'success' : 'danger')
+                        ->icon(fn($state) => $state == 'Aprobado' ? 'heroicon-s-check' : 'heroicon-o-clock')
+                        ->badge()
+                        ->label('Estado'),
+                ])
+
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                ->button(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+//                    Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }

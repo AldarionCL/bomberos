@@ -11,6 +11,8 @@ use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\FontWeight;
 use Filament\Tables;
 use Filament\Tables\Columns\SpatieMediaLibraryImageColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -42,7 +44,7 @@ class DocumentosResource extends Resource
                             ->required(),
 
                         Forms\Components\Select::make('TipoDocumento')
-                            ->options(fn()=>DocumentosTipo::where('Clasificacion', 'publico')->pluck('Tipo', 'id'))
+                            ->options(fn() => DocumentosTipo::where('Clasificacion', 'publico')->pluck('Tipo', 'id'))
                             ->label('Tipo de Documento')
                             ->required(),
 
@@ -84,48 +86,53 @@ class DocumentosResource extends Resource
                 return $query->orderBy('created_at', 'desc');
             })
             ->columns([
-                Tables\Columns\IconColumn::make('')
-                    ->icon(function ($record) {
-                        $extension = explode(".", $record->Path);
-                        if ($extension[1] == "pdf") {
-                            return 'fas-file-pdf';
-                        } else if ($extension[1] == "png" || $extension[1] == "jpg" || $extension[1] == "jpeg") {
-                            return 'fas-image';
-                        } else if ($extension[1] == "docx") {
-                            return 'fas-file-word';
-                        } else if ($extension[1] == "xlsx") {
-                            return 'fas-file-excel';
-                        } else {
-                            return 'fas-file';
-                        }
-                    })
-                    ->default(1)
-                    ->grow(false),
-                Tables\Columns\TextColumn::make('Nombre')->searchable()
-//                        ->description(fn($record) => $record->tipo->Tipo)
-                ,
-                Tables\Columns\TextColumn::make('tipo.Tipo')->searchable(),
-                TextColumn::make('tipo.Clasificacion')
-                    ->badge()
-                    ->color(fn(string $state): string => match ($state) {
-                        'privado' => 'badgeAlert',
-                        'publico' => 'success',
-                        default => 'gray',
-                    })
-                    ->visible(fn() => Auth::user()->isRole('Administrador')),
-                TextColumn::make('asociado.name')
-                    ->visible(fn() => Auth::user()->isRole('Administrador')),
+                Tables\Columns\Layout\Split::make([
+                    Tables\Columns\IconColumn::make('')
+                        ->icon(function ($record) {
+                            $extension = explode(".", $record->Path);
+                            if ($extension[1] == "pdf") {
+                                return 'fas-file-pdf';
+                            } else if ($extension[1] == "png" || $extension[1] == "jpg" || $extension[1] == "jpeg") {
+                                return 'fas-image';
+                            } else if ($extension[1] == "docx") {
+                                return 'fas-file-word';
+                            } else if ($extension[1] == "xlsx") {
+                                return 'fas-file-excel';
+                            } else {
+                                return 'fas-file';
+                            }
+                        })
+                        ->default(1)
+                        ->grow(false),
+                    Tables\Columns\TextColumn::make('Nombre')->searchable()
+                        ->description(fn($record) => $record->tipo->Tipo)
+                    ,
+//                Tables\Columns\TextColumn::make('tipo.Tipo')->searchable(),
 
+                    Tables\Columns\Layout\Stack::make([
+                        TextColumn::make('tipo.Clasificacion')
+                            ->label('Acceso')
+                            ->badge()
+                            ->color(fn(string $state): string => match ($state) {
+                                'privado' => 'badgeAlert',
+                                'publico' => 'success',
+                                default => 'gray',
+                            })
+                            ->visible(fn() => Auth::user()->isRole('Administrador')),
 
-                Tables\Columns\TextColumn::make('created_at')
-                    ->label('Fecha Creacion')
-                    ->date("d/m/Y"),
+                        TextColumn::make('asociado.name')
+                            ->visible(fn() => Auth::user()->isRole('Administrador')),
+                    ])->alignment(Alignment::End),
+
+                    Tables\Columns\TextColumn::make('created_at')
+                        ->label('Fecha Creacion')
+                        ->date("d/m/Y")
+                        ->weight(FontWeight::Thin),
+                ])
             ])
-
             ->recordUrl(function ($record) {
                 return APP::make('url')->to('storage/' . $record->Path);
             }, true)
-
             ->filters([
                 Tables\Filters\SelectFilter::make('TipoDocumento')
                     ->options(fn() => Auth::user()->isRole('Administrador')

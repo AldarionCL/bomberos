@@ -37,7 +37,9 @@ class PersonasResource extends Resource
             ->schema([
                 Forms\Components\Section::make('Datos de Usuario')
                     ->schema([
-                        Forms\Components\TextInput::make('name')->required(),
+                        Forms\Components\TextInput::make('name')
+                            ->label('Nombre')
+                            ->required(),
                         Forms\Components\TextInput::make('email')->required(),
                         Forms\Components\TextInput::make('password')
                             ->password()
@@ -52,7 +54,7 @@ class PersonasResource extends Resource
                 Forms\Components\Section::make()
                     ->relationship('persona')
                     ->schema([
-                        Forms\Components\Split::make([
+//                        Forms\Components\Split::make([
                             Tabs::make('TabDatosUsuario')->tabs([
                                 Tabs\Tab::make('Datos Generales')->schema([
 
@@ -114,6 +116,7 @@ class PersonasResource extends Resource
                                         ->rows(5)
                                         ->columnSpanFull()
                                 ])->icon('fas-comment'),
+
                                 Tabs\Tab::make('Documentos')->schema([
                                     Forms\Components\Repeater::make('Documentos')
                                         ->relationship('documentos')
@@ -143,12 +146,11 @@ class PersonasResource extends Resource
                                         ->preserveFilenames()
                                         ->moveFiles()
                                         ->previewable()
-                                        ->deletable(true)
-                                    ,
+                                        ->deletable(true),
                                 ])->grow(false)
 
-                        ])->columnSpanFull(),
-                    ]),
+                        ]),
+//                    ]),
             ]);
 
 
@@ -158,29 +160,51 @@ class PersonasResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\ImageColumn::make('persona.Foto')
-                    ->defaultImageUrl(url('/storage/fotosPersonas/placeholderAvatar.png'))
-                    ->circular(),
-                Tables\Columns\TextColumn::make('persona.Rut')
-                    ->label('Rut')
-                    ->searchable(),
+                Tables\Columns\Layout\Split::make([
 
-                Tables\Columns\TextColumn::make('name')
-                    ->searchable()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('email')
-                    ->searchable()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('persona.cargo.Cargo'),
-                Tables\Columns\TextColumn::make('persona.estado.Estado')
-                    ->badge()
-                    ->color(fn(string $state): string => match ($state) {
-                        'Activo' => 'info',
-                        'Licencia' => 'warning',
-                        'Baja' => 'danger',
-                        default => 'gray',
-                    }),
-                Tables\Columns\TextColumn::make('created_at')->label('Creado'),
+                    Tables\Columns\Layout\Split::make([
+                        Tables\Columns\ImageColumn::make('persona.Foto')
+                            ->defaultImageUrl(url('/storage/fotosPersonas/placeholderAvatar.png'))
+                            ->circular()
+                            ->grow(false),
+
+                        Tables\Columns\Layout\Stack::make([
+                            Tables\Columns\TextColumn::make('name')
+                                ->label('Nombre')
+                                ->searchable()
+                                ->sortable(),
+
+                            Tables\Columns\TextColumn::make('persona.Rut')
+                                ->label('Rut')
+                                ->searchable()
+                                ->sortable(),
+                        ]),
+                    ]),
+
+                    Tables\Columns\TextColumn::make('email')
+                        ->description('Email', position: 'above')
+                        ->searchable()
+                        ->sortable(),
+
+                    Tables\Columns\TextColumn::make('persona.cargo.Cargo')
+                        ->description('Cargo', position: 'above'),
+
+                    Tables\Columns\TextColumn::make('persona.estado.Estado')
+                        ->badge()
+                        ->color(fn(string $state): string => match ($state) {
+                            'Activo' => 'info',
+                            'Licencia' => 'warning',
+                            'Baja' => 'danger',
+                            default => 'gray',
+                        }),
+
+                    Tables\Columns\TextColumn::make('created_at')
+                        ->date("d/m/Y")
+                        ->description('Fecha Creacion', position: 'above')
+                        ->label('Creado')
+                        ->visibleFrom('md'),
+                ])
+
 
             ])
             ->filters([
@@ -188,11 +212,12 @@ class PersonasResource extends Resource
                     ->relationship('persona.cargo', 'Cargo')
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->button(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+//                    Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }

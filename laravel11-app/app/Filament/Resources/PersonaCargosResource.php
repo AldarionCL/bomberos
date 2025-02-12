@@ -9,6 +9,7 @@ use App\Models\PersonaCargos;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Support\Enums\FontWeight;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -38,17 +39,27 @@ class PersonaCargosResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('Cargo')
-                ->searchable(),
-                Tables\Columns\TextColumn::make('Descripcion'),
-                Tables\Columns\BooleanColumn::make('Activo')
+                Tables\Columns\Layout\Split::make([
+                    Tables\Columns\TextColumn::make('Cargo')
+                        ->weight(FontWeight::Bold)
+                        ->description(fn($record): string => $record->Descripcion ?? '')
+                        ->searchable(),
+//                    Tables\Columns\TextColumn::make('Descripcion'),
+                    Tables\Columns\TextColumn::make('Activo')
+                        ->state(fn($record) => $record->Activo == 1 ? 'Activo' : 'Inactivo')
+                        ->badge()
+                        ->icon(fn($record) => $record->Activo == 1 ? 'fas-check-circle' : 'fas-x-circle')
+                        ->color(fn($record) => $record->Activo == 1 ? 'info' : 'warning')
+                        ->grow(false)
+                ])
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\EditAction::make()
+                ->button(),
+//                Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

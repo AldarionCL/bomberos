@@ -12,6 +12,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Support\Enums\Alignment;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -115,34 +116,49 @@ class SolicitudesLicenciaResource extends Resource
                 return $query->where('TipoSolicitud', 3);
             })
             ->columns([
-                TextColumn::make('id')->label('ID'),
-                Tables\Columns\ImageColumn::make('aprobador.persona.Foto')
-                    ->defaultImageUrl(url('/storage/fotosPersonas/placeholderAvatar.png'))
-                    ->circular()
-                    ->grow(false)
-                    ->label('Foto'),
-                TextColumn::make('asociado.name')->label('Nombre')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('Estado')
-                    ->state(fn($record) => ($record->Estado === 0) ? 'Pendiente' : 'Aprobado')
-                    ->badge()
-                    ->color(fn($state) => $state == 'Aprobado' ? 'success' : 'danger')
-                    ->icon(fn($state) => $state == 'Aprobado' ? 'heroicon-s-check' : 'heroicon-o-clock')
-                    ->label('Estado'),
-                TextColumn::make('solicitante.name')->label('Solicitado por:'),
-                TextColumn::make('Fecha_registro')
-                    ->label('Fecha de Solicitud')
-                    ->date('d/m/Y'),
+                Tables\Columns\Layout\Split::make([
+                    TextColumn::make('id')
+                        ->description('ID', position: 'above')
+                        ->label('ID'),
+
+                    Tables\Columns\Layout\Split::make([
+                        Tables\Columns\ImageColumn::make('aprobador.persona.Foto')
+                            ->defaultImageUrl(url('/storage/fotosPersonas/placeholderAvatar.png'))
+                            ->circular()
+                            ->grow(false)
+                            ->label('Foto'),
+                        TextColumn::make('asociado.name')
+                            ->description('Nombre', position: 'above')
+                            ->label('Nombre')
+                            ->searchable(),
+                    ]),
+
+                    TextColumn::make('solicitante.name')
+                        ->description('Solicitado por', position: 'above')
+                        ->label('Solicitado por:'),
+                    TextColumn::make('Fecha_registro')
+                        ->description('Fecha solicitud', position: 'above')
+                        ->label('Fecha de Solicitud')
+                        ->date('d/m/Y'),
+
+                    Tables\Columns\TextColumn::make('Estado')
+                        ->state(fn($record) => ($record->Estado === 0) ? 'Pendiente' : 'Aprobado')
+                        ->badge()
+                        ->color(fn($state) => $state == 'Aprobado' ? 'success' : 'danger')
+                        ->icon(fn($state) => $state == 'Aprobado' ? 'heroicon-s-check' : 'heroicon-o-clock')
+                        ->label('Estado'),
+                ])
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                ->button(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+//                    Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
     }
