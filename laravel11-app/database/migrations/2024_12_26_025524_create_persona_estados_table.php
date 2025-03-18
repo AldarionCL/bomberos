@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('Estado');
             $table->string('Descripcion')->nullable();
-            $table->boolean('Locked');
+            $table->boolean('Locked')->default(false);
 
             $table->timestamps();
         });
