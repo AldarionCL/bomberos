@@ -6,6 +6,7 @@ use App\Filament\Resources\PersonasResource\Pages;
 use App\Filament\Resources\PersonasResource\RelationManagers;
 use App\Models\PersonaCargo;
 use App\Models\User;
+use App\Models\UserRole;
 use Coolsam\FilamentFlatpickr\Forms\Components\Flatpickr;
 use Faker\Provider\Text;
 use Filament\Forms;
@@ -47,7 +48,7 @@ class PersonasResource extends Resource
                             ->dehydrateStateUsing(fn($state) => Hash::make($state))
                             ->dehydrated(fn($state) => filled($state)),
                         Forms\Components\Select::make('idRole')
-                            ->relationship('role', 'Rol')
+                            ->options(fn()=>UserRole::all()->pluck('Rol', 'id'))
                             ->visible(fn() => Auth::user()->isRole('Administrador'))
                     ])->columns(),
 
