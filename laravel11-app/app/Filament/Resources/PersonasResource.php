@@ -6,6 +6,7 @@ use App\Filament\Resources\PersonasResource\Pages;
 use App\Filament\Resources\PersonasResource\RelationManagers;
 use App\Models\DocumentosTipo;
 use App\Models\PersonaCargo;
+use App\Models\PersonaEstado;
 use App\Models\User;
 use App\Models\UserRole;
 use Coolsam\FilamentFlatpickr\Forms\Components\Flatpickr;
@@ -74,7 +75,7 @@ class PersonasResource extends Resource
                                         ->label('Cargo')
                                         ->required(),
                                     Select::make('idEstado')
-                                    ->relationship('estado', 'Estado')
+                                    ->options(fn() => PersonaEstado::all()->pluck('Estado', 'id'))
                                     ->default(1)
                                 ])->columns()
                                     ->icon('fas-user-pen'),
