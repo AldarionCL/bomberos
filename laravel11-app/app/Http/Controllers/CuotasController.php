@@ -23,6 +23,7 @@ class CuotasController extends Controller
         foreach ($personas as $persona) {
             $fechaIngreso = Carbon::parse($persona->FechaReclutamiento);
             $fechaHoy = Carbon::now();
+            $fechaFinAnio = Carbon::now()->endOfYear();
 
             // Trae ultima cuota creada
             $cuota = Cuota::select('FechaPeriodo')
@@ -36,15 +37,15 @@ class CuotasController extends Controller
                 $ultimaFechaCuota = $fechaIngreso;
             }
 
-            if($ultimaFechaCuota < $fechaHoy->firstOfMonth()) {
+            if($ultimaFechaCuota < $fechaFinAnio) {
 
-                print($persona->idUsuario);
-                $diffMeses = round($ultimaFechaCuota->diffInMonths($fechaHoy));
-                dump($diffMeses);
+//                print($persona->idUsuario);
+                $diffMeses = round($ultimaFechaCuota->diffInMonths($fechaFinAnio));
+//                dump($diffMeses);
                 for ($i = 0; $i <= $diffMeses; $i++) {
                     $fechaPeriodo = $ultimaFechaCuota->copy()->addMonths($i);
                     $fechaVencimiento = $fechaPeriodo->copy()->addMonths(1);
-                    print($fechaPeriodo->format("Y-m-d"). " ". $fechaVencimiento->format("Y-m-d"));
+//                    print($fechaPeriodo->format("Y-m-d"). " ". $fechaVencimiento->format("Y-m-d"));
 
                     $cuota = Cuota::create([
                         'idUser' => $persona->idUsuario,

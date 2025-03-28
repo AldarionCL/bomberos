@@ -48,6 +48,7 @@ class PersonasResource extends Resource
                             ->dehydrateStateUsing(fn($state) => Hash::make($state))
                             ->dehydrated(fn($state) => filled($state)),
                         Forms\Components\Select::make('idRole')
+                            ->label('Rol')
                             ->options(fn()=>UserRole::all()->pluck('Rol', 'id'))
                             ->visible(fn() => Auth::user()->isRole('Administrador'))
                     ])->columns(),
@@ -70,7 +71,10 @@ class PersonasResource extends Resource
                                     Select::make('idCargo')
                                         ->options(fn() => PersonaCargo::where('Activo', 1)->pluck('Cargo', 'id'))
                                         ->label('Cargo')
-                                        ->required()
+                                        ->required(),
+                                    Select::make('idEstado')
+                                    ->relationship('estado', 'Estado')
+                                    ->default(1)
                                 ])->columns()
                                     ->icon('fas-user-pen'),
                                 Tabs\Tab::make('Datos Personales')->schema([
