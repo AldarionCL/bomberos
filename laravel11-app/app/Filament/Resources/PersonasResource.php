@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\PersonasResource\Pages;
 use App\Filament\Resources\PersonasResource\RelationManagers;
+use App\Models\DocumentosTipo;
 use App\Models\PersonaCargo;
 use App\Models\User;
 use App\Models\UserRole;
@@ -127,7 +128,7 @@ class PersonasResource extends Resource
                                         ->relationship('documentos')
                                         ->schema([
                                             Select::make('TipoDocumento')
-                                                ->relationship('tipo', 'Tipo'),
+                                                ->options(fn() => DocumentosTipo::where('Clasificacion', 'privado')->pluck('Tipo', 'id')),
                                             TextInput::make('Nombre'),
                                             Forms\Components\FileUpload::make('Path')
                                                 ->inlineLabel(false)
