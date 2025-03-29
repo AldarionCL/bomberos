@@ -18,7 +18,7 @@ return new class extends Migration
             $table->dateTime('Fecha_registro');
             $table->bigInteger('SolicitadoPor')->unsigned();
             $table->bigInteger('AsociadoA')->unsigned();
-            $table->Text('Observaciones');
+            $table->Text('Observaciones')->nullable();
 
             $table->foreign('SolicitadoPor')->references('id')->on('users');
 
