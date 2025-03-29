@@ -42,7 +42,7 @@ return new class extends Migration
 
             $table->text('Observaciones')->nullable();
 
-            $table->boolean('Activo');
+            $table->boolean('Activo')->default(1);
 
             $table->unique('Rut');
             $table->foreign('idUsuario')->references('id')->on('users');
