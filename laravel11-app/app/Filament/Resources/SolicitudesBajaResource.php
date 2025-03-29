@@ -37,7 +37,10 @@ class SolicitudesBajaResource extends Resource
                 Forms\Components\Section::make('Soliciud')
                     ->schema([
                         Forms\Components\Select::make('SolicitadoPor')
-                            ->relationship('solicitante', 'name')
+                            ->options(fn()=> \App\Models\User::whereHas('persona', function($query){
+                                $query->where('Activo', 1);
+                            })->pluck('name', 'id'))
+//                            ->relationship('solicitante', 'name')
                             ->disabled(fn($record) => !Auth::user()->isRole('Administrador'))
                             ->label('Solicitado por')
                             ->default(Auth::user()->id),
