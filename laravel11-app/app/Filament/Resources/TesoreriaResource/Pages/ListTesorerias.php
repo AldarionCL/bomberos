@@ -4,6 +4,9 @@ namespace App\Filament\Resources\TesoreriaResource\Pages;
 
 use App\Filament\Resources\TesoreriaResource;
 use Filament\Actions;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Components\Tab;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Database\Eloquent\Builder;
@@ -17,9 +20,21 @@ class ListTesorerias extends ListRecords
         return [
             Actions\CreateAction::make(),
             Actions\Action::make('generarCuotas')
-                ->action(function () {
+                ->form([
+                        TextInput::make('Monto')
+                            ->hint('Ingrese el monto de las cuotas')
+                            ->numeric()
+                            ->required(),
+                    ])
+                ->action(function ($data) {
                     $cuotasController = new \App\Http\Controllers\CuotasController();
-                    $cuotasController->sincronizarCuotas();
+                    $cuotasController->sincronizarCuotas($data['Monto']);
+
+                    Notification::make()
+                    ->success()
+                    ->title('Cuotas generadas')
+                    ->send();
+
                     return true;
                 })
                 ->color('warning')
