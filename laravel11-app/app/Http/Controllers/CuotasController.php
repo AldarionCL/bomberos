@@ -52,8 +52,8 @@ class CuotasController extends Controller
                         'FechaPeriodo' => $fechaPeriodo->format('Y-m-01'),
                         'FechaVencimiento' => $fechaVencimiento->format('Y-m-05'),
                         'Estado' => 1,
-                        'Monto' => 20000,
-                        'Pendiente' => 20000,
+                        'Monto' => env('CUOTA_MENSUAL', 20000),
+                        'Pendiente' => env('CUOTA_MENSUAL', 20000),
                         'Recaudado' => 0,
                     ]);
                 }
