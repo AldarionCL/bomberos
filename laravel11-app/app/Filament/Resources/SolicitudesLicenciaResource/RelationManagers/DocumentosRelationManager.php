@@ -24,7 +24,8 @@ class DocumentosRelationManager extends RelationManager
                     ->maxLength(255),
                 Forms\Components\TextInput::make('Descripcion'),
                 Forms\Components\Select::make('TipoDocumento')
-                    ->relationship('tipo', 'Tipo')
+                    ->options(fn() => \App\Models\DocumentosTipo::where('Clasificacion', 'privado')->pluck('Tipo', 'id'))
+//                    ->relationship('tipo', 'Tipo')
                     ->label('Tipo Documento'),
                 Forms\Components\FileUpload::make('Path')
                     ->downloadable()

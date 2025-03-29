@@ -31,7 +31,10 @@ class AprobacionesRelationManager extends RelationManager
                         5 => 5,
                     ]),
                 Forms\Components\Select::make('idAprobador')
-                    ->relationship('aprobador', 'name')
+//                    ->relationship('aprobador', 'name')
+                    ->options(fn()=> \App\Models\User::whereHas('persona', function($query){
+                        $query->where('Activo', 1);
+                    })->pluck('name', 'id'))
                     ->required(),
                 Forms\Components\Toggle::make('Estado')
                     ->label('Aprobado')
