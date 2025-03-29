@@ -74,7 +74,7 @@ class SolicitudesBajaResource extends Resource
                             ->hint('Seleccione un Voluntario para asociar a esta solicitud')
                             ->required(),
                         Forms\Components\RichEditor::make('Observaciones')
-                    ])->columns(),
+                    ]),
 
                 Forms\Components\Section::make('Documentos')
                     ->schema([
@@ -96,6 +96,7 @@ class SolicitudesBajaResource extends Resource
                                     ->downloadable()
                                     ->previewable()
                                     ->deletable(false)
+                                    ->required()
                                     ->inlineLabel(false),
                             ])->columns(3)
                             ->mutateRelationshipDataBeforeCreateUsing(function (array $data, $get): array {

@@ -19,6 +19,8 @@ return new class extends Migration
             $table->bigInteger('SolicitadoPor')->unsigned();
             $table->bigInteger('AsociadoA')->unsigned();
             $table->Text('Observaciones')->nullable();
+            $table->date('FechaDesde')->nullable();
+            $table->date('FechaHasta')->nullable();
 
             $table->foreign('SolicitadoPor')->references('id')->on('users');
 

@@ -104,6 +104,7 @@ class SolicitudesLicenciaResource extends Resource
                                     ->previewable()
                                     ->deletable(false)
                                     ->directory('documentos')
+                                    ->required()
                                     ->inlineLabel(false),
                             ])->columns(3)
                             ->mutateRelationshipDataBeforeCreateUsing(function (array $data, $get): array {
