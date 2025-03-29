@@ -89,15 +89,19 @@ class DocumentosResource extends Resource
                 Tables\Columns\Layout\Split::make([
                     Tables\Columns\IconColumn::make('')
                         ->icon(function ($record) {
-                            $extension = explode(".", $record->Path);
-                            if ($extension[1] == "pdf") {
-                                return 'fas-file-pdf';
-                            } else if ($extension[1] == "png" || $extension[1] == "jpg" || $extension[1] == "jpeg") {
-                                return 'fas-image';
-                            } else if ($extension[1] == "docx") {
-                                return 'fas-file-word';
-                            } else if ($extension[1] == "xlsx") {
-                                return 'fas-file-excel';
+                            if($record->Path) {
+                                $extension = explode(".", $record->Path);
+                                if ($extension[1] == "pdf") {
+                                    return 'fas-file-pdf';
+                                } else if ($extension[1] == "png" || $extension[1] == "jpg" || $extension[1] == "jpeg") {
+                                    return 'fas-image';
+                                } else if ($extension[1] == "docx") {
+                                    return 'fas-file-word';
+                                } else if ($extension[1] == "xlsx") {
+                                    return 'fas-file-excel';
+                                } else {
+                                    return 'fas-file';
+                                }
                             } else {
                                 return 'fas-file';
                             }
