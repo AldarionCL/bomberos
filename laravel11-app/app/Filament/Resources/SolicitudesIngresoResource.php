@@ -161,7 +161,8 @@ class SolicitudesIngresoResource extends Resource
                         ->schema([
                             Select::make('TipoDocumento')
 //                                ->relationship('tipo', 'Tipo'),
-                                ->options(fn() => DocumentosTipo::where('Clasificacion', 'privado')->pluck('Tipo', 'id')),
+                                ->options(fn() => DocumentosTipo::where('Clasificacion', 'privado')->pluck('Tipo', 'id'))
+                                ->required(),
 
                             TextInput::make('Nombre'),
                             Forms\Components\FileUpload::make('Path')

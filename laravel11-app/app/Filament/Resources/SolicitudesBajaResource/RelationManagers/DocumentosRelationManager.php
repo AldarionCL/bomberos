@@ -25,6 +25,7 @@ class DocumentosRelationManager extends RelationManager
                 Forms\Components\TextInput::make('Descripcion'),
                 Forms\Components\Select::make('TipoDocumento')
                     ->options(fn() => \App\Models\DocumentosTipo::where('Clasificacion', 'privado')->pluck('Tipo', 'id'))
+                    ->required()
 //                    ->relationship('tipo', 'Tipo')
                 ->label('Tipo Documento'),
                 Forms\Components\FileUpload::make('Path')

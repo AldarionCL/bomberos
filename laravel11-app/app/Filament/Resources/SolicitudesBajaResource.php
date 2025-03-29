@@ -85,7 +85,8 @@ class SolicitudesBajaResource extends Resource
                             ->deletable(false)
                             ->schema([
                                 Select::make('TipoDocumento')
-                                    ->options(fn() => DocumentosTipo::where('Clasificacion', 'privado')->pluck('Tipo', 'id')),
+                                    ->options(fn() => DocumentosTipo::where('Clasificacion', 'privado')->pluck('Tipo', 'id'))
+                                    ->required(),
 //                                    ->relationship('tipo', 'Tipo'),
                                 TextInput::make('Nombre'),
                                 Forms\Components\FileUpload::make('Path')
