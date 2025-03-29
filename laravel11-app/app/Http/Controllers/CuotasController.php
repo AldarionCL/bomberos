@@ -12,13 +12,14 @@ use Illuminate\Http\Request;
 class CuotasController extends Controller
 {
 
-    public function sincronizarCuotas()
+    public function sincronizarCuotas($monto = 20000)
     {
 
         // Trae las personas activas
         $personas = Persona::where('Activo', 1)
             ->orderBy('FechaReclutamiento', 'asc')
             ->get();
+
 
         foreach ($personas as $persona) {
             $fechaIngreso = Carbon::parse($persona->FechaReclutamiento);
@@ -52,8 +53,8 @@ class CuotasController extends Controller
                         'FechaPeriodo' => $fechaPeriodo->format('Y-m-01'),
                         'FechaVencimiento' => $fechaVencimiento->format('Y-m-05'),
                         'Estado' => 1,
-                        'Monto' => env('CUOTA_MENSUAL', 20000),
-                        'Pendiente' => env('CUOTA_MENSUAL', 20000),
+                        'Monto' => $monto,
+                        'Pendiente' => $monto,
                         'Recaudado' => 0,
                     ]);
                 }
