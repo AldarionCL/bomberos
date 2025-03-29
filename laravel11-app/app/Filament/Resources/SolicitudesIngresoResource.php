@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\SolicitudesIngresoResource\Pages;
 use App\Filament\Resources\SolicitudesIngresoResource\RelationManagers;
+use App\Models\DocumentosTipo;
 use App\Models\PersonaCargo;
 use App\Models\Solicitud;
 use Coolsam\FilamentFlatpickr\Forms\Components\Flatpickr;
@@ -40,7 +41,7 @@ class SolicitudesIngresoResource extends Resource
             ->schema([
                 Forms\Components\Section::make('Soliciud')->schema([
                     Forms\Components\Select::make('SolicitadoPor')
-                        ->options(fn()=> \App\Models\User::whereHas('persona', function($query){
+                        ->options(fn() => \App\Models\User::whereHas('persona', function ($query) {
                             $query->where('Activo', 1);
                         })->pluck('name', 'id'))
 //                        ->relationship('solicitante', 'name')
@@ -159,7 +160,9 @@ class SolicitudesIngresoResource extends Resource
                         ->relationship('documentos')
                         ->schema([
                             Select::make('TipoDocumento')
-                                ->relationship('tipo', 'Tipo'),
+//                                ->relationship('tipo', 'Tipo'),
+                                ->options(fn() => DocumentosTipo::where('Clasificacion', 'privado')->pluck('Tipo', 'id')),
+
                             TextInput::make('Nombre'),
                             Forms\Components\FileUpload::make('Path')
                                 ->inlineLabel(true)
@@ -208,7 +211,7 @@ class SolicitudesIngresoResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                ->button(),
+                    ->button(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
