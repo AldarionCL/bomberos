@@ -66,7 +66,10 @@ class SolicitudesBajaResource extends Resource
                 Forms\Components\Section::make('Datos del Voluntario')
                     ->schema([
                         Forms\Components\Select::make('AsociadoA')
-                            ->relationship('asociado', 'name')
+//                            ->relationship('asociado', 'name')
+                            ->options(fn() => \App\Models\User::whereHas('persona', function ($query) {
+                                $query->where('Activo', 1);
+                            })->pluck('name', 'id'))
                             ->label('Voluntario')
                             ->hint('Seleccione un Voluntario para asociar a esta solicitud')
                             ->required(),
