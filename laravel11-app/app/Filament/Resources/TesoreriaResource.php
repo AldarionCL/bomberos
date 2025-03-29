@@ -59,7 +59,7 @@ class TesoreriaResource extends Resource
                             ->required(),
 
                         Select::make('Estado')
-                            ->relationship('estadocuota', 'Estado')
+                            ->options(fn() => \App\Models\CuotasEstados::all()->pluck('Estado', 'id'))
                             ->default(1)
                             ->label('Estado'),
 
