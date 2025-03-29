@@ -76,7 +76,10 @@ class PersonasResource extends Resource
                                         ->required(),
                                     Select::make('idEstado')
                                     ->options(fn() => PersonaEstado::all()->pluck('Estado', 'id'))
-                                    ->default(1)
+                                    ->default(1),
+                                    Forms\Components\Toggle::make('Activo')
+                                    ->inline(false)
+                                    ->default(true)
                                 ])->columns()
                                     ->icon('fas-user-pen'),
                                 Tabs\Tab::make('Datos Personales')->schema([
