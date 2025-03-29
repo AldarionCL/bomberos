@@ -139,6 +139,7 @@ class PersonasResource extends Resource
                                             ->label('Archivo')
                                             ->disk('public')
                                             ->downloadable()
+                                            ->previewable()
                                             ->directory('documentos')
                                             ->required(),
                                     ])->columnSpanFull()
