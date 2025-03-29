@@ -103,7 +103,7 @@ class CuotasPersonaResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make()
                     ->label('Ver cuotas')
-                    ->icon('heroicon-s-clipboard-list')
+                    ->icon('heroicon-s-eye')
                     ->button(),
 //                Tables\Actions\ViewAction::make(),
             ])
