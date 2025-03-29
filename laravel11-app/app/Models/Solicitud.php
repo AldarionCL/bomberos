@@ -20,7 +20,7 @@ class Solicitud extends Model
 
     public function solicitante()
     {
-        return $this->belongsTo(User::class, 'id', 'SolicitadoPor');
+        return $this->hasOne(User::class, 'id', 'SolicitadoPor');
     }
 
     public function documentos()
