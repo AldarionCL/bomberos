@@ -20,6 +20,7 @@ class ListTesorerias extends ListRecords
         return [
             Actions\CreateAction::make(),
             Actions\Action::make('generarCuotas')
+                ->label('Generar Cuotas Anual')
                 ->form([
                         TextInput::make('Monto')
                             ->hint('Ingrese el monto de las cuotas')
