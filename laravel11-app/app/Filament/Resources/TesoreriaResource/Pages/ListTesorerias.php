@@ -16,6 +16,16 @@ class ListTesorerias extends ListRecords
     {
         return [
             Actions\CreateAction::make(),
+            Actions\Action::make('generarCuotas')
+                ->action(function () {
+                    $cuotasController = new \App\Http\Controllers\CuotasController();
+                    $cuotasController->sincronizarCuotas();
+                    return true;
+                })
+                ->color('warning')
+                ->requiresConfirmation()
+                ->modalHeading('Generar Cuotas')
+                ->modalDescription('Esta seguro que desea generar las cuotas del año completo?'),
         ];
     }
 
