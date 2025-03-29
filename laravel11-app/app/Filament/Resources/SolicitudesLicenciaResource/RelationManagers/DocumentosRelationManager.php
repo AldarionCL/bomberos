@@ -29,6 +29,8 @@ class DocumentosRelationManager extends RelationManager
                     ->label('Tipo Documento'),
                 Forms\Components\FileUpload::make('Path')
                     ->downloadable()
+                    ->previewable()
+                    ->required()
                     ->label('Documento'),
             ]);
     }
