@@ -51,7 +51,7 @@ class PersonasResource extends Resource
                             ->dehydrated(fn($state) => filled($state)),
                         Forms\Components\Select::make('idRole')
                             ->label('Rol')
-                            ->options(fn()=>UserRole::all()->pluck('Rol', 'id'))
+                            ->options(fn() => UserRole::all()->pluck('Rol', 'id'))
                             ->visible(fn() => Auth::user()->isRole('Administrador'))
                     ])->columns(),
 
@@ -59,107 +59,108 @@ class PersonasResource extends Resource
                     ->relationship('persona')
                     ->schema([
 //                        Forms\Components\Split::make([
-                            Tabs::make('TabDatosUsuario')->tabs([
-                                Tabs\Tab::make('Datos Generales')->schema([
+                        Tabs::make('TabDatosUsuario')->tabs([
+                            Tabs\Tab::make('Datos Generales')->schema([
 
-                                    Forms\Components\TextInput::make('Rut')
-                                        ->required(),
-                                    Forms\Components\TextInput::make('Telefono'),
-                                    Flatpickr::make('FechaNacimiento')
-                                        ->label('Fecha Nacimiento')
-                                        ->required(),
-                                    TextInput::make('Edad'),
-                                    TextInput::make('Nacionalidad'),
-                                    Select::make('idCargo')
-                                        ->options(fn() => PersonaCargo::where('Activo', 1)->pluck('Cargo', 'id'))
-                                        ->label('Cargo')
-                                        ->required(),
-                                    Select::make('idEstado')
+                                Forms\Components\TextInput::make('Rut')
+                                    ->required(),
+                                Forms\Components\TextInput::make('Telefono'),
+                                Flatpickr::make('FechaNacimiento')
+                                    ->label('Fecha Nacimiento')
+                                    ->required(),
+                                TextInput::make('Edad'),
+                                TextInput::make('Nacionalidad'),
+                                Select::make('idCargo')
+                                    ->options(fn() => PersonaCargo::where('Activo', 1)->pluck('Cargo', 'id'))
+                                    ->label('Cargo')
+                                    ->required(),
+                                Select::make('idEstado')
                                     ->options(fn() => PersonaEstado::all()->pluck('Estado', 'id'))
                                     ->default(1),
-                                    Forms\Components\Toggle::make('Activo')
+                                Forms\Components\Toggle::make('Activo')
                                     ->inline(false)
                                     ->default(true)
-                                ])->columns()
-                                    ->icon('fas-user-pen'),
-                                Tabs\Tab::make('Datos Personales')->schema([
-                                    Forms\Components\TextInput::make('Direccion'),
-                                    Forms\Components\TextInput::make('Comuna'),
-                                    TextInput::make('SituacionMilitar'),
-                                    Forms\Components\Select::make('NivelEstudio')
-                                        ->options([
-                                            "basica" => "Basica",
-                                            "media" => "Media",
-                                            "tecnica" => "Tecnica",
-                                            "universitaria" => "Universitaria",
-                                        ]),
-                                    Forms\Components\TextInput::make('Ocupacion'),
-                                    Forms\Components\TextInput::make('LugarOcupacion'),
-                                    Forms\Components\Select::make('EstadoCivil')
-                                        ->options([
-                                            'Soltero' => 'Soltero',
-                                            'Casado' => 'Casado',
-                                            'Divorciado' => 'Divorciado',
-                                            'Viudo' => 'Viudo',
-                                        ]),
-                                    Forms\Components\Select::make('GrupoSanguineo')
-                                        ->options([
-                                            "A+" => "A+",
-                                            "A-" => "A-",
-                                            "B+" => "B+",
-                                            "B-" => "B-",
-                                            "AB+" => "AB+",
-                                            "AB-" => "AB-",
-                                            "O+" => "O+",
-                                            "O-" => "O-"
-                                        ])
-                                ])->icon('fas-graduation-cap'),
-                                Tabs\Tab::make('Tallas de Ropa')->schema([
-                                    Forms\Components\TextInput::make('TallaZapatos'),
-                                    Forms\Components\TextInput::make('TallaPantalon'),
-                                    Forms\Components\TextInput::make('TallaCamisa'),
-                                    Forms\Components\TextInput::make('TallaChaqueta'),
-                                    Forms\Components\TextInput::make('TallaSombrero'),
-                                ])->icon('fas-shirt'),
-                                Tabs\Tab::make('Observaciones')->schema([
-                                    Forms\Components\Textarea::make('Observaciones')
-                                        ->rows(5)
-                                        ->columnSpanFull()
-                                ])->icon('fas-comment'),
+                            ])->columns()
+                                ->icon('fas-user-pen'),
+                            Tabs\Tab::make('Datos Personales')->schema([
+                                Forms\Components\TextInput::make('Direccion'),
+                                Forms\Components\TextInput::make('Comuna'),
+                                TextInput::make('SituacionMilitar'),
+                                Forms\Components\Select::make('NivelEstudio')
+                                    ->options([
+                                        "basica" => "Basica",
+                                        "media" => "Media",
+                                        "tecnica" => "Tecnica",
+                                        "universitaria" => "Universitaria",
+                                    ]),
+                                Forms\Components\TextInput::make('Ocupacion'),
+                                Forms\Components\TextInput::make('LugarOcupacion'),
+                                Forms\Components\Select::make('EstadoCivil')
+                                    ->options([
+                                        'Soltero' => 'Soltero',
+                                        'Casado' => 'Casado',
+                                        'Divorciado' => 'Divorciado',
+                                        'Viudo' => 'Viudo',
+                                    ]),
+                                Forms\Components\Select::make('GrupoSanguineo')
+                                    ->options([
+                                        "A+" => "A+",
+                                        "A-" => "A-",
+                                        "B+" => "B+",
+                                        "B-" => "B-",
+                                        "AB+" => "AB+",
+                                        "AB-" => "AB-",
+                                        "O+" => "O+",
+                                        "O-" => "O-"
+                                    ])
+                            ])->icon('fas-graduation-cap'),
+                            Tabs\Tab::make('Tallas de Ropa')->schema([
+                                Forms\Components\TextInput::make('TallaZapatos'),
+                                Forms\Components\TextInput::make('TallaPantalon'),
+                                Forms\Components\TextInput::make('TallaCamisa'),
+                                Forms\Components\TextInput::make('TallaChaqueta'),
+                                Forms\Components\TextInput::make('TallaSombrero'),
+                            ])->icon('fas-shirt'),
+                            Tabs\Tab::make('Observaciones')->schema([
+                                Forms\Components\Textarea::make('Observaciones')
+                                    ->rows(5)
+                                    ->columnSpanFull()
+                            ])->icon('fas-comment'),
 
-                                Tabs\Tab::make('Documentos')->schema([
-                                    Forms\Components\Repeater::make('Documentos')
-                                        ->relationship('documentos')
-                                        ->schema([
-                                            Select::make('TipoDocumento')
-                                                ->options(fn() => DocumentosTipo::where('Clasificacion', 'privado')->pluck('Tipo', 'id')),
-                                            TextInput::make('Nombre'),
-                                            Forms\Components\FileUpload::make('Path')
-                                                ->inlineLabel(false)
-                                                ->label('Archivo')
-                                                ->disk('public')
-                                                ->directory('documentos')
-                                            ,
-                                        ])->columnSpanFull()
-                                        ->columns(3)
-                                        ->defaultItems(0),
-                                ])->icon('fas-file')
-                            ])->columns(),
+                            Tabs\Tab::make('Documentos')->schema([
+                                Forms\Components\Repeater::make('Documentos')
+                                    ->relationship('documentos')
+                                    ->schema([
+                                        Select::make('TipoDocumento')
+                                            ->options(fn() => DocumentosTipo::where('Clasificacion', 'privado')->pluck('Tipo', 'id')),
+                                        TextInput::make('Nombre'),
+                                        Forms\Components\FileUpload::make('Path')
+                                            ->inlineLabel(false)
+                                            ->label('Archivo')
+                                            ->disk('public')
+                                            ->downloadable()
+                                            ->directory('documentos')
+                                            ->required(),
+                                    ])->columnSpanFull()
+                                    ->columns(3)
+                                    ->defaultItems(0),
+                            ])->icon('fas-file')
+                        ])->columns(),
 
-                            Forms\Components\Section::make()
-                                ->schema([
-                                    Forms\Components\FileUpload::make('Foto')
-                                        ->disk('public')
-                                        ->directory('fotosPersonas')
-                                        ->avatar()
-                                        ->imageEditor()
-                                        ->preserveFilenames()
-                                        ->moveFiles()
-                                        ->previewable()
-                                        ->deletable(true),
-                                ])->grow(false)
+                        Forms\Components\Section::make()
+                            ->schema([
+                                Forms\Components\FileUpload::make('Foto')
+                                    ->disk('public')
+                                    ->directory('fotosPersonas')
+                                    ->avatar()
+                                    ->imageEditor()
+                                    ->preserveFilenames()
+                                    ->moveFiles()
+                                    ->previewable()
+                                    ->deletable(true),
+                            ])->grow(false)
 
-                        ]),
+                    ]),
 //                    ]),
             ]);
 
