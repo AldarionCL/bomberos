@@ -61,6 +61,12 @@ class SolicitudesLicenciaResource extends Resource
                             ])
                             ->default(2)
                             ->hidden(),
+                        Forms\Components\DatePicker::make('FechaDesde')
+                            ->label('Fecha Desde')
+                            ->required(),
+                        Forms\Components\DatePicker::make('FechaHasta')
+                            ->label('Fecha Hasta')
+                            ->required(),
 
                     ])->columns(),
 
@@ -145,6 +151,14 @@ class SolicitudesLicenciaResource extends Resource
                     TextColumn::make('Fecha_registro')
                         ->description('Fecha solicitud', position: 'above')
                         ->label('Fecha de Solicitud')
+                        ->date('d/m/Y'),
+                    TextColumn::make('FechaDesde')
+                        ->description('Fecha Desde', position: 'above')
+                        ->label('Fecha desde')
+                        ->date('d/m/Y'),
+                    TextColumn::make('FechaHasta')
+                        ->description('Fecha Hasta', position: 'above')
+                        ->label('Fecha hasta')
                         ->date('d/m/Y'),
 
                     Tables\Columns\TextColumn::make('Estado')

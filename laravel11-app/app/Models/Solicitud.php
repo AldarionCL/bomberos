@@ -16,6 +16,8 @@ class Solicitud extends Model
         'SolicitadoPor',
         'AsociadoA',
         'Observaciones',
+        'FechaDesde',
+        'FechaHasta',
     ];
 
     public function solicitante()
