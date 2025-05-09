@@ -191,6 +191,7 @@
       <path value="$PROJECT_DIR$/laravel11-app/vendor/savannabits/filament-flatpickr" />
       <path value="$PROJECT_DIR$/laravel11-app/vendor/hasnayeen/themes" />
       <path value="$PROJECT_DIR$/laravel11-app/vendor/owenvoke/blade-fontawesome" />
+      <path value="$PROJECT_DIR$/laravel11-app/vendor/_laravel_idea" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.2" />

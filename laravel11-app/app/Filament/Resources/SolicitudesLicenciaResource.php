@@ -7,10 +7,12 @@ use App\Filament\Resources\SolicitudesLicenciaResource\RelationManagers;
 use App\Models\DocumentosTipo;
 use App\Models\Solicitud;
 use App\Models\SolicitudesLicencia;
+use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\Alignment;
 use Filament\Tables;
@@ -36,10 +38,10 @@ class SolicitudesLicenciaResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Soliciud')
+                Forms\Components\Section::make('Resumen')
                     ->schema([
                         Forms\Components\Select::make('SolicitadoPor')
-                            ->options(fn()=> \App\Models\User::whereHas('persona', function($query){
+                            ->options(fn() => \App\Models\User::whereHas('persona', function ($query) {
                                 $query->where('Activo', 1);
                             })->pluck('name', 'id'))
 //                            ->relationship('solicitante', 'name')
@@ -54,21 +56,79 @@ class SolicitudesLicenciaResource extends Resource
                             ])->default(0)
                             ->disabled(fn($record) => !Auth::user()->isRole('Administrador')),
                         Forms\Components\Select::make('TipoSolicitud')
-                            ->options([
-                                1 => 'Ingreso',
-                                2 => 'Baja',
-                                3 => 'Permiso'
-                            ])
-                            ->default(2)
-                            ->hidden(),
+                            ->options(fn() => \App\Models\SolicitudesTipo::whereIn('id', [3, 4])->pluck('Tipo', 'id'))
+                            ->default(3)
+                            ->hint('Una licencia, tiene un plazo maximo de 30 dias (trimestral), mientras que una extendida, tiene un plazo maximo de 6 meses')
+                            ->reactive()
+                            ->required(),
+                    ])->columns(),
+                Forms\Components\Section::make('Soliciud')
+                    ->schema([
                         Forms\Components\DatePicker::make('FechaDesde')
+                            ->reactive()
+                            ->afterStateUpdated(function ($state, $set, $get) {
+                                if ($state) {
+                                    $fechaDesde = Carbon::parse($state);
+                                    if ($get('FechaHasta')) {
+                                        $fechaHasta = Carbon::parse($get('FechaHasta'));
+                                        $dias = $fechaDesde->diffInDays($fechaHasta) + 1;
+                                        for ($i = 0; $i <= $dias; $i++) {
+                                            $fecha = $fechaDesde->copy()->addDays($i);
+                                            if ($fecha->isWeekend()) {
+                                                $dias--;
+                                            }
+                                        }
+                                        $set('DiasHabiles', $dias);
+
+                                        if (!Solicitud::verificaDiasDisponibles($get('AsociadoA'), $dias, $get('TipoSolicitud'))) {
+                                            Notification::make()
+                                                ->title('Error')
+                                                ->body('El rango de dias solicitados supera los 30 dias disponibles')
+                                                ->icon('heroicon-o-x-circle')
+                                                ->danger()
+                                                ->send();
+                                        }
+                                    }
+                                }
+                            })
                             ->label('Fecha Desde')
                             ->required(),
                         Forms\Components\DatePicker::make('FechaHasta')
+                            ->live()
+                            ->afterStateUpdated(function ($state, $set, $get) {
+                                if ($get('FechaDesde')) {
+                                    $fechaDesde = Carbon::parse($get('FechaDesde'));
+                                    if ($state) {
+                                        $fechaHasta = Carbon::parse($state);
+                                        $dias = $fechaDesde->diffInDays($fechaHasta) + 1;
+                                        for ($i = 0; $i <= $dias; $i++) {
+                                            $fecha = $fechaDesde->copy()->addDays($i);
+                                            if ($fecha->isWeekend()) {
+                                                $dias--;
+                                            }
+                                        }
+                                        $set('DiasHabiles', $dias);
+
+                                        if (!Solicitud::verificaDiasDisponibles($get('AsociadoA'), $dias, $get('TipoSolicitud'))) {
+                                            Notification::make()
+                                                ->title('Error')
+                                                ->body('El rango de dias solicitados supera los dias disponibles')
+                                                ->icon('heroicon-o-x-circle')
+                                                ->danger()
+                                                ->send();
+                                        }
+                                    }
+                                }
+                            })
                             ->label('Fecha Hasta')
                             ->required(),
+                        TextInput::make('DiasHabiles')
+                            ->live()
+                            ->label('Total Dias')
+                            ->disabled()
+                            ->required(),
 
-                    ])->columns(),
+                    ])->columns(3),
 
                 Forms\Components\Section::make('Datos del Voluntario')
                     ->schema([
@@ -127,7 +187,7 @@ class SolicitudesLicenciaResource extends Resource
     {
         return $table
             ->modifyQueryUsing(function ($query) {
-                return $query->where('TipoSolicitud', 3);
+                return $query->whereIn('TipoSolicitud', [3, 4]);
             })
             ->columns([
                 Tables\Columns\Layout\Split::make([
@@ -162,6 +222,13 @@ class SolicitudesLicenciaResource extends Resource
                         ->description('Fecha Hasta', position: 'above')
                         ->label('Fecha hasta')
                         ->date('d/m/Y'),
+                    TextColumn::make('DiasHabiles')
+                        ->description('Total Dias', position: 'above')
+                        ->label('Total Dias')
+                        ->sortable(),
+                    TextColumn::make('tipo.Tipo')
+                        ->description('Tipo Solicitud', position: 'above')
+                        ->label('Tipo Solicitud'),
 
                     Tables\Columns\TextColumn::make('Estado')
                         ->state(fn($record) => ($record->Estado === 0) ? 'Pendiente' : 'Aprobado')
@@ -176,7 +243,7 @@ class SolicitudesLicenciaResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                ->button(),
+                    ->button(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

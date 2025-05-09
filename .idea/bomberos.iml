@@ -175,6 +175,7 @@
       <excludeFolder url="file://$MODULE_DIR$/laravel11-app/vendor/hasnayeen/themes" />
       <excludeFolder url="file://$MODULE_DIR$/laravel11-app/vendor/savannabits/filament-flatpickr" />
       <excludeFolder url="file://$MODULE_DIR$/laravel11-app/vendor/owenvoke/blade-fontawesome" />
+      <excludeFolder url="file://$MODULE_DIR$/laravel11-app/vendor/_laravel_idea" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
