@@ -87,6 +87,8 @@ class SolicitudesLicenciaResource extends Resource
                                                 ->icon('heroicon-o-x-circle')
                                                 ->danger()
                                                 ->send();
+                                            $set('NoGuarda', true);
+
                                         }
                                     }
                                 }
@@ -116,6 +118,7 @@ class SolicitudesLicenciaResource extends Resource
                                                 ->icon('heroicon-o-x-circle')
                                                 ->danger()
                                                 ->send();
+                                            $set('NoGuarda', true);
                                         }
                                     }
                                 }

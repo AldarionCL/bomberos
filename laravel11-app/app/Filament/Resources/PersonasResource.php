@@ -75,6 +75,7 @@ class PersonasResource extends Resource
                                     ->label('Cargo')
                                     ->required(),
                                 Select::make('idEstado')
+                                    ->label('Estado')
                                     ->options(fn() => PersonaEstado::all()->pluck('Estado', 'id'))
                                     ->default(1),
                                 Forms\Components\Toggle::make('Activo')

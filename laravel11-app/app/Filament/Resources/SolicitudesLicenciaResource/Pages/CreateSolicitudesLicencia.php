@@ -36,4 +36,14 @@ class CreateSolicitudesLicencia extends CreateRecord
             ]);
         }
     }
+
+    protected function beforeSave(){
+        $record = $this->getRecord();
+        if ($record->NoGuarda) {
+            dump($record->NoGuarda);
+            return false;
+        } else {
+            return true;
+        }
+    }
 }

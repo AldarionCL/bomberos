@@ -18,4 +18,14 @@ class EditSolicitudesLicencia extends EditRecord
             Actions\DeleteAction::make(),
         ];
     }
+
+    protected function beforeSave(){
+        $record = $this->getRecord();
+        if ($record->NoGuarda) {
+            dump($record->NoGuarda);
+            return false;
+        } else {
+            return true;
+        }
+    }
 }
