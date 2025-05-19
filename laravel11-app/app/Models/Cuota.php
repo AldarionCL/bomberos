@@ -20,6 +20,7 @@ class Cuota extends Model
         'Monto',
         'Pendiente',
         'Recaudado',
+        'TipoCuota',
     ];
 
     protected $dates = [

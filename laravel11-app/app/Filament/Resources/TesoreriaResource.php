@@ -33,6 +33,7 @@ class TesoreriaResource extends Resource
     public static function canAccess(): bool{
         return Auth::user()->isRole('Administrador') || Auth::user()->isCargo('Tesorero');
     }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -57,6 +58,14 @@ class TesoreriaResource extends Resource
                         Flatpickr::make('FechaVencimiento')
                             ->label('Fecha de Vencimiento')
                             ->required(),
+
+                        Select::make('TipoCuota')
+                         ->options([
+                            'Cuota Mensual' => 'Cuota Mensual',
+                            'Cuota Extraordinaria' => 'Cuota Extraordinaria',
+                         ])
+                        ->required()
+                        ->default('cuota_mensual'),
 
                         Select::make('Estado')
                             ->options(fn() => \App\Models\CuotasEstados::all()->pluck('Estado', 'id'))
@@ -97,6 +106,9 @@ class TesoreriaResource extends Resource
                 TextColumn::make('FechaVencimiento')
                     ->label('Fecha Vencimiento')
                     ->date('d/m/Y'),
+
+                TextColumn::make('TipoCuota')
+                    ->label('Tipo Cuota'),
 
                 Tables\Columns\TextColumn::make('estadocuota.Estado')
                     ->badge()

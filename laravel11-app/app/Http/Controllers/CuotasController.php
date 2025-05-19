@@ -81,4 +81,16 @@ class CuotasController extends Controller
         }
     }
 
+    public function revisaCuotasVencidas()
+    {
+        $cuotas = Cuota::where('Estado', 1)
+            ->where('FechaVencimiento', '<', Carbon::now())
+            ->get();
+
+        foreach ($cuotas as $cuota) {
+            $cuota->Estado = 0;
+            $cuota->save();
+        }
+    }
+
 }

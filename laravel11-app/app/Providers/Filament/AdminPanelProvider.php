@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Pages\Home;
+use App\Filament\Resources\DocumentosResource;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -29,8 +30,6 @@ class AdminPanelProvider extends PanelProvider
             ->path('/app')
             ->login()
             ->colors([
-//                'primary' => Color::hex('#ccb301'),
-//                'secondary' => Color::hex('#043aa7'),
                 'badgeAlert' => Color::hex('#cdb200'),
                 'logoYellow' => Color::hex('#cdb200'),
                 'logoBlue' => Color::hex('#023aab'),
@@ -44,19 +43,20 @@ class AdminPanelProvider extends PanelProvider
             ->sidebarCollapsibleOnDesktop()
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->plugin(
-                \Hasnayeen\Themes\ThemesPlugin::make(),
+                \Hasnayeen\Themes\ThemesPlugin::make()
+                    ->canViewThemesPage(fn() => auth()->user()?->isRole('Administrador') ?? false),
             )
             ->breadcrumbs(false)
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
-//                Pages\Dashboard::class,
-                Home::class,
+                Pages\Dashboard::class,
+//                Home::class,
+//                DocumentosResource::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
-//                Widgets\FilamentInfoWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,
@@ -70,6 +70,7 @@ class AdminPanelProvider extends PanelProvider
                 DispatchServingFilamentEvent::class,
                 \Hasnayeen\Themes\Http\Middleware\SetTheme::class
             ])
+            ->databaseNotifications()
             ->authMiddleware([
                 Authenticate::class,
             ]);
