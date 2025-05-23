@@ -164,7 +164,8 @@ class SolicitudesLicenciaResource extends Resource
                                 Select::make('TipoDocumento')
                                     ->options(fn() => DocumentosTipo::where('Clasificacion', 'privado')->pluck('Tipo', 'id'))
                                     ->required(),
-                                TextInput::make('Nombre'),
+                                TextInput::make('Nombre')
+                                ->required(),
                                 Forms\Components\FileUpload::make('Path')
                                     ->inlineLabel(true)
                                     ->label('Archivo')

@@ -164,12 +164,14 @@ class SolicitudesIngresoResource extends Resource
                                 ->options(fn() => DocumentosTipo::where('Clasificacion', 'privado')->pluck('Tipo', 'id'))
                                 ->required(),
 
-                            TextInput::make('Nombre'),
+                            TextInput::make('Nombre')
+                                ->required(),
                             Forms\Components\FileUpload::make('Path')
                                 ->inlineLabel(true)
                                 ->label('Archivo')
                                 ->disk('public')
                                 ->directory('documentos')
+                                ->required()
                             ,
                         ])->columns(3)
                         ->defaultItems(0),
