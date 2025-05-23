@@ -90,7 +90,7 @@ class CuotasRelationManager extends RelationManager
                             ->downloadable()
                             ->previewable()
                             ->deletable(false)
-                            ->label('Archivo'),
+                            ->label('Comprobante de Pago'),
                     ])->columns()
             ]);
     }
@@ -171,7 +171,19 @@ class CuotasRelationManager extends RelationManager
                     ->button()
                     ->color('success')
                     ->icon('heroicon-s-check')
-                    ->disabled(fn($record) => !((Auth::user()->isRole('Administrador') || Auth::user()->isCargo('Tesorero'))))
+                    ->disabled(function ($record) {
+
+                        if (Auth::user()->isRole('Administrador') || Auth::user()->isCargo('Tesorero')) {
+                            if (($record->Recaudado == $record->Monto)) {
+                                return false;
+                            } else {
+                                return true;
+                            }
+                        } else {
+                            return true;
+                        }
+
+                    })
                     ->requiresConfirmation()
 
             ])
@@ -180,5 +192,24 @@ class CuotasRelationManager extends RelationManager
 //                    Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ]);
+    }
+
+    protected function afterSave(): void
+    {
+        if ($this->record->Recaudado == $this->record->Monto) {
+            Notification::make()
+                ->title('Cuota  Pagada')
+                ->body('Se ha pagado la cuota del periodo ' . Carbon::parse($this->record->FechaPeriodo)->format('d/m/Y'))
+                ->success()
+                ->icon('heroicon-s-check')
+                ->send();
+        }
+
+        Notification::make()
+            ->title('Cuota Actualizada')
+            ->body('Se ha actualizado la cuota del periodo ' . Carbon::parse($this->ownerRecord->FechaPeriodo)->format('d/m/Y'))
+            ->success()
+            ->icon('heroicon-s-check')
+            ->sendToDatabase($this->ownerRecord->user);
     }
 }
