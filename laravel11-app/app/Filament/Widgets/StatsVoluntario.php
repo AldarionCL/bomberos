@@ -48,7 +48,11 @@ class StatsVoluntario extends BaseWidget
             ->where('FechaPeriodo', '<=', Carbon::now())
             ->where('FechaVencimiento', '>=', Carbon::now())
             ->first();
-        $estadoCuota = $cuotas->estadocuota->Estado;
+        if($cuotas){
+            $estadoCuota = $cuotas->estadocuota->Estado;
+        } else {
+            $estadoCuota = 'No disponible';
+        }
 
 
         return [
