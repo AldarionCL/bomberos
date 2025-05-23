@@ -160,6 +160,13 @@ class CuotasRelationManager extends RelationManager
                             ->success()
                             ->icon('heroicon-s-check')
                             ->send();
+
+                        Notification::make()
+                            ->title('Pago Aprobado')
+                            ->body('Se ha aprobado el pago de la cuota del periodo ' . Carbon::parse($record->FechaPeriodo)->format('d/m/Y'))
+                            ->success()
+                            ->icon('heroicon-s-check')
+                            ->sendToDatabase($record->user);
                     })
                     ->button()
                     ->color('success')
