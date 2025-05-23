@@ -4,8 +4,10 @@ namespace App\Filament\Resources\SolicitudesLicenciaResource\RelationManagers;
 
 use App\Models\Aprobaciones;
 use App\Models\Solicitud;
+use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
@@ -32,7 +34,7 @@ class AprobacionesRelationManager extends RelationManager
                     ]),
                 Forms\Components\Select::make('idAprobador')
 //                    ->relationship('aprobador', 'name')
-                    ->options(fn()=> \App\Models\User::whereHas('persona', function($query){
+                    ->options(fn() => \App\Models\User::whereHas('persona', function ($query) {
                         $query->where('Activo', 1);
                     })->pluck('name', 'id'))
                     ->required(),
@@ -68,8 +70,8 @@ class AprobacionesRelationManager extends RelationManager
                 ->disabled(fn ($record) => ($record->idAprobador == Auth::user()->id) ? false : true),*/
                 Tables\Columns\TextColumn::make('EstadoSol')
                     ->default(fn($record) => $record->Estado == 1 ? 'Aprobado' : 'Pendiente')
-                    ->color(fn($state)=> $state == 'Aprobado' ? 'success' : 'danger')
-                    ->icon(fn($state)=> $state == 'Aprobado' ? 'heroicon-s-check' : 'heroicon-o-clock')
+                    ->color(fn($state) => $state == 'Aprobado' ? 'success' : 'danger')
+                    ->icon(fn($state) => $state == 'Aprobado' ? 'heroicon-s-check' : 'heroicon-o-clock')
                     ->label('Estado Aprobación')
                     ->badge(),
                 Tables\Columns\TextColumn::make('FechaAprobacion')
@@ -94,7 +96,7 @@ class AprobacionesRelationManager extends RelationManager
                         $record->FechaAprobacion = date('Y-m-d');
                         $record->save();
 
-                        if(Aprobaciones::where('idSolicitud', $record->idSolicitud)->where('Estado', 0)->count() === 0){
+                        if (Aprobaciones::where('idSolicitud', $record->idSolicitud)->where('Estado', 0)->count() === 0) {
                             $solicitud = Solicitud::find($record->idSolicitud);
                             $solicitud->Estado = 1;
 
@@ -109,21 +111,67 @@ class AprobacionesRelationManager extends RelationManager
                                 ->icon('heroicon-s-check')
                                 ->send();
 
+                            Notification::make()
+                                ->title('Solicitud Aprobada')
+                                ->body('Se ha aprobado su solicitud de licencia')
+                                ->success()
+                                ->sendToDatabase($solicitud->asociado);
+
                             $this->redirect('edit', Solicitud::find($record->idSolicitud));
                         }
                     })
                     ->requiresConfirmation()
-                    ->disabled(function($record) {
+                    ->disabled(function ($record) {
                         if ($record->Estado == 0) {
-                            if ($record->idAprobador == Auth::user()->id){
+                            if ($record->idAprobador == Auth::user()->id) {
                                 return false;
-                            } else{
+                            } else {
                                 return true;
                             }
                         } else {
                             return true;
                         }
 
+                    }),
+                Tables\Actions\Action::make('rechazar')
+                    ->button()
+                    ->color('danger')
+                    ->icon('heroicon-s-x-mark')
+                    ->action(function ($record) {
+                        $record->Estado = 2;
+                        $record->FechaAprobacion = date('Y-m-d');
+                        $record->save();
+
+                        $solicitud = Solicitud::find($record->idSolicitud);
+                        $solicitud->Estado = 2;
+                        $solicitud->save();
+
+                        Notification::make()
+                            ->title('Solicitud Rechazada')
+                            ->warning()
+                            ->icon('heroicon-s-x-mark')
+                            ->send();
+
+                        Notification::make()
+                            ->title('Solicitud Rechazada')
+                            ->body('Se ha rechazado su solicitud de licencia')
+                            ->warning()
+                            ->sendToDatabase($solicitud->asociado);
+
+                        $this->redirect('edit', Solicitud::find($record->idSolicitud));
+
+                    })
+                    ->requiresConfirmation()
+                    ->disabled(function ($record) {
+                        if ($record->Estado == 0) {
+                            if ($record->idAprobador == Auth::user()->id) {
+                                return false;
+                            } else {
+                                return true;
+                            }
+                        } else {
+                            return true;
+                        }
                     }),
 
                 Tables\Actions\EditAction::make()

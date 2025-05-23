@@ -234,7 +234,7 @@ class SolicitudesLicenciaResource extends Resource
                         ->label('Tipo Solicitud'),
 
                     Tables\Columns\TextColumn::make('Estado')
-                        ->state(fn($record) => ($record->Estado === 0) ? 'Pendiente' : 'Aprobado')
+                        ->state(fn($record) => ($record->Estado === 0) ? 'Pendiente' : (($record->Estado === 2) ? 'Cancelado' : 'Aprobado'))
                         ->badge()
                         ->color(fn($state) => $state == 'Aprobado' ? 'success' : 'danger')
                         ->icon(fn($state) => $state == 'Aprobado' ? 'heroicon-s-check' : 'heroicon-o-clock')
