@@ -34,6 +34,11 @@ class SolicitudesLicenciaResource extends Resource
     protected static ?string $pluralLabel = 'Solicitudes Licencias';
     protected static ?int $navigationSort = 2;
 
+    public static function canAccess(): bool
+    {
+        return true;
+    }
+
     public static function form(Form $form): Form
     {
         return $form
