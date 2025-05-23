@@ -90,7 +90,8 @@ class CuotasRelationManager extends RelationManager
                             ->downloadable()
                             ->previewable()
                             ->deletable(false)
-                            ->label('Comprobante de Pago'),
+                            ->label('Comprobante de Pago')
+                            ->required(),
                     ])->columns()
             ]);
     }
