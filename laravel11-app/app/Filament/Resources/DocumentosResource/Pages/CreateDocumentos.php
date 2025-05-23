@@ -39,7 +39,7 @@ class CreateDocumentos extends CreateRecord
 
         Notification::make()
             ->title('Nuevo documento publicado')
-            ->body('Se ha publicado un nuevo documento en el sistema. ' . $data["Nombre"])
+            ->body('Se ha publicado un nuevo documento en el sistema. "' . $data["Nombre"] .'"')
             ->actions([
                     Action::make('Descargar')
                     ->url(Storage::disk('public')->url($data["Path"]))
