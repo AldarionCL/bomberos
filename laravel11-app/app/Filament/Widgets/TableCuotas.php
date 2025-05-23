@@ -18,7 +18,7 @@ class TableCuotas extends BaseWidget
         return $table
             ->query(
                 Cuota::query()->where('idUser', auth()->id())
-                    ->where('FechaPago', null)
+                    ->where('Estado', 1)
             )
 //            ->description('Listado de cuotas pendientes')
             ->defaultPaginationPageOption(5)
