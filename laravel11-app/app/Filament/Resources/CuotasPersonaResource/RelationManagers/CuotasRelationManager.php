@@ -150,7 +150,7 @@ class CuotasRelationManager extends RelationManager
                     ->label('Ingresar Pago')
                     ->button()
                     ->color('info')
-                    ->disabled(fn($record) => $record->Estado == 2 ? true : false),
+                    ->disabled(fn($record) => (($record->Estado == 2) || !(Auth::user()->isRole('Administrador') || Auth::user()->isCargo('Tesorero'))) ? true : false),
 //                Tables\Actions\DeleteAction::make(),
                 Tables\Actions\Action::make('AprobarPago')
                     ->action(function ($record) {
