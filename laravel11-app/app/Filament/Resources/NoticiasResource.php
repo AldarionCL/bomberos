@@ -60,7 +60,8 @@ class NoticiasResource extends Resource
                 Forms\Components\Section::make('Documento')
                     ->relationship('documento')
                     ->schema([
-                        Forms\Components\TextInput::make('Nombre'),
+                        Forms\Components\TextInput::make('Nombre')
+                            ->required(),
                         Forms\Components\TextInput::make('Descripcion'),
                         Forms\Components\Select::make('TipoDocumento')
                             ->options(fn() => DocumentosTipo::where('Clasificacion', 'publico')->pluck('Tipo', 'id')->toArray())
@@ -69,7 +70,8 @@ class NoticiasResource extends Resource
                             ->disk('public')
                             ->label('Archivo')
                             ->downloadable()
-                            ->deletable(false),
+                            ->deletable(false)
+                            ->required(),
                     ])
 
             ]);
@@ -90,7 +92,7 @@ class NoticiasResource extends Resource
                         ->badge()
                         ->icon(fn($record) => $record->Estado == 1 ? 'fas-check-circle' : 'fas-x-circle')
                         ->color(fn($record) => $record->Estado == 1 ? 'info' : 'warning')
-                    ->grow(false),
+                        ->grow(false),
                     Tables\Columns\TextColumn::make('FechaPublicacion')
                         ->sortable()
                         ->grow(false)
@@ -105,7 +107,7 @@ class NoticiasResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                ->button(),
+                    ->button(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
