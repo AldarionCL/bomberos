@@ -19,6 +19,7 @@ use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
 
@@ -35,6 +36,14 @@ class SolicitudesLicenciaResource extends Resource
     protected static ?int $navigationSort = 2;
 
     public static function canAccess(): bool
+    {
+        return true;
+    }
+    public static function canEdit(Model $record): bool
+    {
+        return true;
+    }
+    public static function canCreate(): bool
     {
         return true;
     }
