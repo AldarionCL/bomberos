@@ -205,6 +205,11 @@ class SolicitudesLicenciaResource extends Resource
     {
         return $table
             ->modifyQueryUsing(function ($query) {
+                if(!Auth::user()->isRole('Administrador')) {
+                    $query->whereHas('asociado', function ($query) {
+                        $query->where('id', Auth::user()->id);
+                    });
+                }
                 return $query->whereIn('TipoSolicitud', [3, 4]);
             })
             ->columns([
