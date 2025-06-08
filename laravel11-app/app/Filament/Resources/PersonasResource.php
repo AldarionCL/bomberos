@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Imports\PersonasImporter;
 use App\Filament\Resources\PersonasResource\Pages;
 use App\Filament\Resources\PersonasResource\RelationManagers;
 use App\Models\DocumentosTipo;
@@ -219,6 +220,13 @@ class PersonasResource extends Resource
                 ])
 
 
+            ])
+            ->headerActions([
+                Tables\Actions\ImportAction::make()
+                    ->importer(PersonasImporter::class)
+                    ->color('success')
+                    ->visible(fn() => Auth::user()->isRole('Administrador'))
+                ,
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('idCargo')
