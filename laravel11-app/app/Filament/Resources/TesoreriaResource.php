@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Exports\CuotasExporter;
 use App\Filament\Resources\TesoreriaResource\Pages;
 use App\Filament\Resources\TesoreriaResource\RelationManagers;
 use App\Models\Cuota;
@@ -30,7 +31,8 @@ class TesoreriaResource extends Resource
     protected static ?string $label = 'Cuota';
     protected static ?string $pluralLabel = 'Cuotas';
 
-    public static function canAccess(): bool{
+    public static function canAccess(): bool
+    {
         return Auth::user()->isRole('Administrador') || Auth::user()->isCargo('Tesorero');
     }
 
@@ -60,12 +62,12 @@ class TesoreriaResource extends Resource
                             ->required(),
 
                         Select::make('TipoCuota')
-                         ->options([
-                            'Cuota Mensual' => 'Cuota Mensual',
-                            'Cuota Extraordinaria' => 'Cuota Extraordinaria',
-                         ])
-                        ->required()
-                        ->default('cuota_mensual'),
+                            ->options([
+                                'Cuota Mensual' => 'Cuota Mensual',
+                                'Cuota Extraordinaria' => 'Cuota Extraordinaria',
+                            ])
+                            ->required()
+                            ->default('cuota_mensual'),
 
                         Select::make('Estado')
                             ->options(fn() => \App\Models\CuotasEstados::all()->pluck('Estado', 'id'))
@@ -73,7 +75,7 @@ class TesoreriaResource extends Resource
                             ->label('Estado'),
 
                         Flatpickr::make('FechaPago')->label('Fecha de Pago')
-                        ->default(fn () => Carbon::today()->format('Y-m-d')),
+                            ->default(fn() => Carbon::today()->format('Y-m-d')),
 
                         Forms\Components\TextInput::make('Documento')
                             ->label('N° Documento'),
@@ -154,19 +156,32 @@ class TesoreriaResource extends Resource
                     ->relationship('user', 'name')
                     ->searchable()
             ])
+            ->headerActions([
+                Tables\Actions\ExportAction::make()
+                    ->modalContent(view("filament.cuotas-exporter-modal"))
+                    ->exporter(CuotasExporter::class)
+                    ->columnMapping(false)
+                    ->color('primary'),
+
+            ])
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\ExportBulkAction::make()
+                        ->modalContent(view("filament.cuotas-exporter-modal"))
+                        ->exporter(CuotasExporter::class)
+                        ->columnMapping(false)
+                        ->color('primary'),
                 ]),
             ])
             ->groups([
                 Tables\Grouping\Group::make('user.name')
-                ->label('Nombre'),
+                    ->label('Nombre'),
                 Tables\Grouping\Group::make('estadocuota.Estado')
-                ->label('Estado')
+                    ->label('Estado')
             ])
             ->defaultGroup('user.name')
             ->defaultSort(fn($query) => $query->orderBy('idUser', 'desc')->orderBy('FechaPeriodo', 'asc'))

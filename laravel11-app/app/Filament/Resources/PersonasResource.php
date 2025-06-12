@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Exports\PersonasExporter;
 use App\Filament\Imports\PersonasImporter;
 use App\Filament\Resources\PersonasResource\Pages;
 use App\Filament\Resources\PersonasResource\RelationManagers;
@@ -225,8 +226,12 @@ class PersonasResource extends Resource
                 Tables\Actions\ImportAction::make()
                     ->importer(PersonasImporter::class)
                     ->color('success')
-                    ->visible(fn() => Auth::user()->isRole('Administrador'))
-                ,
+                    ->visible(fn() => Auth::user()->isRole('Administrador')),
+                Tables\Actions\ExportAction::make()
+                    ->exporter(PersonasExporter::class)
+                    ->columnMapping(false)
+                    ->color('primary')
+                    ->visible(fn() => Auth::user()->isRole('Administrador')),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('idCargo')
