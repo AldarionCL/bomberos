@@ -23,18 +23,39 @@ class PersonasImporter extends Importer
                 ->label('Email')
                 ->requiredMapping(), // Ensure email is unique
             ImportColumn::make('Rut')
-                ->relationship('persona', 'Rut')
-                ->label('Rut')
-                ->requiredMapping(),
-//            ImportColumn::make('password')
-//                ->requiredMapping()
-//                ->label('Password'),
+                ->label('Rut'),
+            ImportColumn::make('Cargo')
+                ->castStateUsing(function ($state) {
+                    if (blank($state)) {
+                        return 11;
+                    } else {
+                        $cargo = \App\Models\PersonaCargo::where('Cargo', $state)->first();
+                        if ($cargo) return $cargo->id; else return 11;
+                    }
+                })
+                ->requiredMapping()
+                ->label('Cargo'),
+            ImportColumn::make('FechaNacimiento')
+                ->label('Fecha de Nacimiento'),
+            ImportColumn::make('Sexo')
+                ->label('Sexo'),
+            ImportColumn::make('Telefono')
+                ->label('Teléfono'),
+            ImportColumn::make('EstadoCivil')
+                ->label('Estado Civil'),
+            ImportColumn::make('Nacionalidad')
+                ->label('Nacionalidad'),
+            ImportColumn::make('GrupoSanguineo')
+                ->label('Grupo Sanguíneo'),
+            ImportColumn::make('Direccion')
+                ->label('Dirección'),
+
         ];
+
     }
 
     public function resolveRecord(): ?User
     {
-//        dump($this->data);
 
         $registro = User::firstOrCreate([
             'email' => $this->data['email']
@@ -45,33 +66,63 @@ class PersonasImporter extends Importer
             'idRole' => 2
         ]);
 
-
-        if ($registro) {
-            if (!Persona::where('idUsuario', $registro->id)->first()) {
-                $persona = Persona::create([
-                    'idUsuario' => $registro->id,
-                    'idCargo' => 11, // Assuming a default cargo
-                    'idEstado' => 1, // Assuming a default state
-                    'Activo' => 1, // Assuming new users are active by default
-                    'Rut' => $this->data['Rut'] ?? '1-9',
-                ]);
-                Log::info("Created new Persona for user ID: " . $registro->id);
-
-            } else {
-                Log::info("Persona already exists for user ID: " . $registro->id);
+        $persona = Persona::firstOrCreate([
+            'idUsuario' => $registro->id
+        ], [
+            'idUsuario' => $registro->id,
+            'idCargo' => $this->data['Cargo'], // Voluntario
+            'idEstado' => 1, // Assuming a default state
+            'Activo' => 1, // Assuming new users are active by default
+            'Rut' => $this->data['Rut'] ?? '1-9',
+        ]);
+        if ($persona) {
+            if (isset($this->data['FechaNacimiento'])) {
+                $persona->FechaNacimiento = \Carbon\Carbon::parse($this->data['FechaNacimiento']);
+            }
+            if (isset($this->data['Sexo'])) {
+                $persona->Sexo = $this->data['Sexo'];
+            }
+            if (isset($this->data['Telefono'])) {
+                $persona->Telefono = $this->data['Telefono'];
+            }
+            if (isset($this->data['EstadoCivil'])) {
+                $persona->EstadoCivil = $this->data['EstadoCivil'];
+            }
+            if (isset($this->data['Nacionalidad'])) {
+                $persona->Nacionalidad = $this->data['Nacionalidad'];
+            }
+            if (isset($this->data['GrupoSanguineo'])) {
+                $persona->GrupoSanguineo = $this->data['GrupoSanguineo'];
             }
 
+            if (isset($this->data['Direccion'])) {
+                $persona->Direccion = $this->data['Direccion'];
+            }
         }
+        unset($this->data['Rut']);
+        unset($this->data['Cargo']);
+        unset($this->data['FechaNacimiento']);
+        unset($this->data['Sexo']);
+        unset($this->data['Telefono']);
+        unset($this->data['EstadoCivil']);
+        unset($this->data['Nacionalidad']);
+        unset($this->data['GrupoSanguineo']);
+        unset($this->data['Direccion']);
+        $persona->save();
+
 
         return $registro;
+
+//        return new User();
     }
+
 
     public static function getCompletedNotificationBody(Import $import): string
     {
-        $body = 'Your import has completed and ' . number_format($import->successful_rows) . ' ' . str('row')->plural($import->successful_rows) . ' imported.';
+        $body = 'La importacion ha sido completada con : ' . number_format($import->successful_rows) . ' ' . str('row')->plural($import->successful_rows) . ' importados.';
 
         if ($failedRowsCount = $import->getFailedRowsCount()) {
-            $body .= ' ' . number_format($failedRowsCount) . ' ' . str('row')->plural($failedRowsCount) . ' failed to import.';
+            $body .= ' ' . number_format($failedRowsCount) . ' ' . str('row')->plural($failedRowsCount) . ' fallaron la importacion.';
         }
 
         return $body;
