@@ -12,5 +12,4 @@ Route::get('/sincCuotas', [\App\Http\Controllers\CuotasController::class, 'sincr
 Route::get('/sincPersonas', [\App\Http\Controllers\CuotasController::class, 'sincronizarUserPersona'] );
 
 Route::get('/filament/exports/{export}/download', DownloadExport::class)
-    ->name('filament.exports.download')
-    ->middleware(['web', 'auth:admin']);
+    ->name('filament.exports.download');
