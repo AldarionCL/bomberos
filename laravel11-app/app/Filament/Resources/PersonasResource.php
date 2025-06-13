@@ -230,6 +230,7 @@ class PersonasResource extends Resource
                 Tables\Actions\ExportAction::make()
                     ->exporter(PersonasExporter::class)
                     ->columnMapping(false)
+                    ->fileDisk('exports')
                     ->color('primary')
                     ->visible(fn() => Auth::user()->isRole('Administrador')),
             ])
