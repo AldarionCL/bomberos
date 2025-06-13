@@ -160,7 +160,7 @@ class TesoreriaResource extends Resource
                 Tables\Actions\ExportAction::make()
                     ->modalContent(view("filament.cuotas-exporter-modal"))
                     ->exporter(CuotasExporter::class)
-                    ->fileDisk("public")
+                    ->fileDisk("exports")
                     ->columnMapping(false)
                     ->color('primary'),
 
@@ -174,7 +174,7 @@ class TesoreriaResource extends Resource
                     Tables\Actions\ExportBulkAction::make()
                         ->modalContent(view("filament.cuotas-exporter-modal"))
                         ->exporter(CuotasExporter::class)
-                        ->fileDisk("public")
+                        ->fileDisk("exports")
                         ->columnMapping(false)
                         ->color('primary'),
                 ]),
