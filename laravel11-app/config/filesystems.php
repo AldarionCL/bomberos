@@ -53,7 +53,7 @@ return [
             'owner' => env('APP_OWNER', 'www-data'),
             'permissions' => [
                 'file' => [
-                    'public' => 0644,
+                    'public' => 0777,
                     'private' => 0600,
                 ],
                 'dir' => [
