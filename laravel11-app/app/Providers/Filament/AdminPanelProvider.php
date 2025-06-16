@@ -41,7 +41,7 @@ class AdminPanelProvider extends PanelProvider
             ->font('Roboto')
             ->sideBarWidth(300)
             ->sidebarCollapsibleOnDesktop()
-            ->viteTheme('resources/css/filament/admin/theme.css')
+//            ->viteTheme('resources/css/filament/admin/theme.css')
             ->plugin(
                 \Hasnayeen\Themes\ThemesPlugin::make()
                     ->canViewThemesPage(fn() => auth()->user()?->isRole('Administrador') ?? false),
