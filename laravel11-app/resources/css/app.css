@@ -2,3 +2,5 @@
 @tailwind components;
 @tailwind utilities;
 @tailwind variants;
+
+@import "resources/css/filament/admin/theme.css";
