@@ -21,6 +21,7 @@ class Cuota extends Model
         'Pendiente',
         'Recaudado',
         'TipoCuota',
+        'AprobadoPor',
     ];
 
     protected $dates = [
@@ -35,5 +36,9 @@ class Cuota extends Model
 
     public function estadocuota(){
         return $this->hasOne(CuotasEstados::class, 'id', 'Estado');
+    }
+
+    public function aprobador(){
+        return $this->hasOne(User::class, 'id', 'AprobadoPor');
     }
 }

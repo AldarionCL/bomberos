@@ -128,6 +128,7 @@ class CuotasPersonaResource extends Resource
             'create' => Pages\CreateCuotasPersona::route('/create'),
             'edit' => Pages\EditCuotasPersona::route('/{record}/edit'),
             'view' => Pages\ViewCuotasPersona::route('/{record}/view'),
+            'comprobante' => Pages\Comprobante::route('/{record}/comprobante'),
         ];
     }
 }

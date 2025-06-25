@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\CuotasPersonaResource\RelationManagers;
 
+use App\Filament\Resources\CuotasPersonaResource;
 use Carbon\Carbon;
 use Coolsam\FilamentFlatpickr\Forms\Components\Flatpickr;
 use Filament\Actions\Action;
@@ -54,7 +55,7 @@ class CuotasRelationManager extends RelationManager
                                 ->action(function ($record, $set) {
                                     $set('Recaudado', $record->Pendiente);
                                     $set('Pendiente', 0);
-                                    $set('Estado', 2);
+//                                    $set('Estado', 2);
                                 })
                             )
                             ->readOnly()
@@ -71,17 +72,18 @@ class CuotasRelationManager extends RelationManager
 
                                 $monto = $record->Monto - $state;
                                 $set('Pendiente', $monto);
-                                if ($get('Pendiente') == 0) {
+                                /*if ($get('Pendiente') == 0) {
                                     $set('Estado', 2);
                                 } else {
                                     $set('Estado', 1);
-                                }
+                                }*/
                             }),
 
 
                         Flatpickr::make('FechaPago')
                             ->label('Fecha de Pago')
-                            ->default(fn() => Carbon::today()->format('Y-m-d')),
+                            ->default(fn() => Carbon::today()->format('Y-m-d'))
+                            ->required(),
 
                         Forms\Components\TextInput::make('Documento')
                             ->label('N° Documento'),
@@ -168,6 +170,7 @@ class CuotasRelationManager extends RelationManager
                 Tables\Actions\Action::make('AprobarPago')
                     ->action(function ($record) {
                         $record->update(['Estado' => 2]);
+                        $record->update(['AprobadoPor' => Auth::user()->id]);
 
                         Notification::make()
                             ->title('Pago Aprobado')
@@ -185,6 +188,7 @@ class CuotasRelationManager extends RelationManager
                     ->button()
                     ->color('success')
                     ->icon('heroicon-s-check')
+                    ->visible(fn($record) => $record->Estado != 2)
                     ->disabled(function ($record) {
 
                         if (Auth::user()->isRole('Administrador') || Auth::user()->isCargo('Tesorero')) {
@@ -198,7 +202,21 @@ class CuotasRelationManager extends RelationManager
                         }
 
                     })
-                    ->requiresConfirmation()
+                    ->requiresConfirmation(),
+                /*Tables\Actions\Action::make('ComprobantePago')
+                    ->url(fn($record) => route('cuotas.invoice', ['cuota' => $record]))
+                    ->openUrlInNewTab()
+                    ->visible(fn($record) => $record->Estado == 2)
+                    ->button()
+                    ->color('success')
+                    ->icon('heroicon-s-document-text'),*/
+                Tables\Actions\Action::make('VerComprobante')
+                    ->url(fn($record) => CuotasPersonaResource::getUrl('comprobante', ['record' => $record->id]))
+                    ->openUrlInNewTab()
+                    ->button()
+                    ->visible(fn($record) => $record->Estado == 2)
+                    ->color('success')
+                    ->icon('heroicon-s-document-text')
 
             ])
             ->bulkActions([
