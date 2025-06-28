@@ -41,6 +41,7 @@ return new class extends Migration
             $table->string('TallaSombrero')->nullable();
 
             $table->text('Observaciones')->nullable();
+            $table->string('TipoVoluntario', 50)->default('voluntario')->nullable();
 
             $table->boolean('Activo')->default(1);
 

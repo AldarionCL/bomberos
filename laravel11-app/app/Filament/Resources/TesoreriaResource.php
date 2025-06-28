@@ -13,6 +13,7 @@ use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
@@ -45,6 +46,7 @@ class TesoreriaResource extends Resource
                         Select::make('idUser')
                             ->relationship('user', 'name')
                             ->label('Persona')
+                            ->reactive()
                             ->required(),
 
                         Forms\Components\TextInput::make('Monto')
@@ -62,10 +64,39 @@ class TesoreriaResource extends Resource
                             ->required(),
 
                         Select::make('TipoCuota')
-                            ->options([
-                                'Cuota Mensual' => 'Cuota Mensual',
-                                'Cuota Extraordinaria' => 'Cuota Extraordinaria',
-                            ])
+                            ->options(function ($record, $get)  {
+                                $usuario = $get('idUser');
+                                if ($usuario) {
+                                    $user = \App\Models\User::find($usuario);
+                                    $tipoVoluntario = $user->persona->TipoVoluntario ?? null;
+                                    $fechaNacimiento = $user->persona->FechaNacimiento ?? null;
+                                    $fechaNacimiento = Carbon::parse($fechaNacimiento);
+                                    $edad = Carbon::now()->diffInYears($fechaNacimiento) * -1;
+
+                                    if($edad < 50) {
+                                        if ($tipoVoluntario == 'voluntario') {
+                                            $options = [
+                                                'cuota_mensual' => 'Cuota Mensual',
+                                                'cuota_extraordinaria' => 'Cuota Extraordinaria',
+                                            ];
+                                        } else {
+                                            $options = [
+                                                'cuota_extraordinaria' => 'Cuota Extraordinaria',
+                                            ];
+                                        }
+                                    } else {
+                                        Notification::make()
+                                            ->title('Atención')
+                                            ->body('El usuario es mayor de 50 años, esta exedente de cuota mensual.')
+                                            ->warning()
+                                            ->send();
+
+                                        $options = [];
+                                    }
+                                }
+                                return $options ?? [];
+
+                            })
                             ->required()
                             ->default('cuota_mensual'),
 
@@ -74,17 +105,21 @@ class TesoreriaResource extends Resource
                             ->default(1)
                             ->label('Estado'),
 
+
                         Flatpickr::make('FechaPago')->label('Fecha de Pago')
-                            ->default(fn() => Carbon::today()->format('Y-m-d')),
+                            ->default(fn() => Carbon::today()->format('Y-m-d'))
+                            ->visibleOn('edit'),
 
                         Forms\Components\TextInput::make('Documento')
-                            ->label('N° Documento'),
+                            ->label('N° Documento')
+                            ->visibleOn('edit'),
 
                         Forms\Components\FileUpload::make('DocumentoArchivo')
                             ->downloadable()
                             ->deletable(false)
                             ->previewable()
-                            ->label('Archivo'),
+                            ->label('Archivo')
+                            ->visibleOn('edit'),
 
                     ])->columns()
             ]);

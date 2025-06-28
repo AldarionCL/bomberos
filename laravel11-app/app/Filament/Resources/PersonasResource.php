@@ -80,9 +80,17 @@ class PersonasResource extends Resource
                                     ->label('Estado')
                                     ->options(fn() => PersonaEstado::all()->pluck('Estado', 'id'))
                                     ->default(1),
+                                Select::make('TipoVoluntario')
+                                    ->options([
+                                        "voluntario" => "Voluntario",
+                                        "voluntario_honorario" => "Voluntario Honorario",
+                                        "miembro_honorario" => "Miembro Honorario",
+                                    ])
+                                    ->default('voluntario'),
                                 Forms\Components\Toggle::make('Activo')
                                     ->inline(false)
                                     ->default(true)
+                                    ->visible(fn() => Auth::user()->isRole('Administrador'))
                             ])->columns()
                                 ->icon('fas-user-pen'),
                             Tabs\Tab::make('Datos Personales')->schema([

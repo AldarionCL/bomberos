@@ -176,6 +176,15 @@
       <excludeFolder url="file://$MODULE_DIR$/laravel11-app/vendor/savannabits/filament-flatpickr" />
       <excludeFolder url="file://$MODULE_DIR$/laravel11-app/vendor/owenvoke/blade-fontawesome" />
       <excludeFolder url="file://$MODULE_DIR$/laravel11-app/vendor/_laravel_idea" />
+      <excludeFolder url="file://$MODULE_DIR$/laravel11-app/vendor/torgodly/html2media" />
+      <excludeFolder url="file://$MODULE_DIR$/laravel11-app/vendor/arielmejiadev/filament-printable" />
+      <excludeFolder url="file://$MODULE_DIR$/laravel11-app/vendor/barryvdh/laravel-dompdf" />
+      <excludeFolder url="file://$MODULE_DIR$/laravel11-app/vendor/dompdf/dompdf" />
+      <excludeFolder url="file://$MODULE_DIR$/laravel11-app/vendor/dompdf/php-font-lib" />
+      <excludeFolder url="file://$MODULE_DIR$/laravel11-app/vendor/dompdf/php-svg-lib" />
+      <excludeFolder url="file://$MODULE_DIR$/laravel11-app/vendor/laravel-lang/moonshine" />
+      <excludeFolder url="file://$MODULE_DIR$/laravel11-app/vendor/laravel-lang/starter-kits" />
+      <excludeFolder url="file://$MODULE_DIR$/laravel11-app/vendor/sabberworm/php-css-parser" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

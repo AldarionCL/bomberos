@@ -38,6 +38,7 @@ class Persona extends Model
         'TallaCamisa',
         'TallaChaqueta',
         'TallaSombrero',
+        'TipoVoluntario',
         'Activo',
     ];
 

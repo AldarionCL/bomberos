@@ -192,6 +192,15 @@
       <path value="$PROJECT_DIR$/laravel11-app/vendor/hasnayeen/themes" />
       <path value="$PROJECT_DIR$/laravel11-app/vendor/owenvoke/blade-fontawesome" />
       <path value="$PROJECT_DIR$/laravel11-app/vendor/_laravel_idea" />
+      <path value="$PROJECT_DIR$/laravel11-app/vendor/laravel-lang/moonshine" />
+      <path value="$PROJECT_DIR$/laravel11-app/vendor/laravel-lang/starter-kits" />
+      <path value="$PROJECT_DIR$/laravel11-app/vendor/arielmejiadev/filament-printable" />
+      <path value="$PROJECT_DIR$/laravel11-app/vendor/dompdf/dompdf" />
+      <path value="$PROJECT_DIR$/laravel11-app/vendor/dompdf/php-svg-lib" />
+      <path value="$PROJECT_DIR$/laravel11-app/vendor/sabberworm/php-css-parser" />
+      <path value="$PROJECT_DIR$/laravel11-app/vendor/dompdf/php-font-lib" />
+      <path value="$PROJECT_DIR$/laravel11-app/vendor/barryvdh/laravel-dompdf" />
+      <path value="$PROJECT_DIR$/laravel11-app/vendor/torgodly/html2media" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.2" />

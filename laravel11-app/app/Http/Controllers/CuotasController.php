@@ -25,55 +25,71 @@ class CuotasController extends Controller
             $fechaIngreso = Carbon::parse($persona->FechaReclutamiento);
             $fechaHoy = Carbon::now();
             $fechaFinAnio = Carbon::now()->endOfYear();
+            $fechaNacimiento = Carbon::parse($persona->FechaNacimiento);
+            $edad = $fechaHoy->diffInYears($fechaNacimiento) * -1;
+            $tipoVoluntario = $persona->TipoVoluntario ?? null;
 
-            // Trae ultima cuota creada
-            $cuota = Cuota::select('FechaPeriodo')
-                ->where('idUser', $persona->idUsuario)
-                ->orderBy('FechaPeriodo', 'desc')
-                ->first();
+            if ($edad < 50) {
+                // Trae ultima cuota creada
+                $cuota = Cuota::select('FechaPeriodo')
+                    ->where('idUser', $persona->idUsuario)
+                    ->orderBy('FechaPeriodo', 'desc')
+                    ->first();
 
-            if ($cuota) {
-                $ultimaFechaCuota = Carbon::parse($cuota->FechaPeriodo);
-            } else {
-                $ultimaFechaCuota = $fechaIngreso;
-            }
+                if ($cuota) {
+                    $ultimaFechaCuota = Carbon::parse($cuota->FechaPeriodo);
+                } else {
+                    $ultimaFechaCuota = $fechaIngreso;
+                }
 
-            if($ultimaFechaCuota < $fechaFinAnio) {
+                if ($ultimaFechaCuota < $fechaFinAnio) {
 
 //                print($persona->idUsuario);
-                $diffMeses = round($ultimaFechaCuota->diffInMonths($fechaFinAnio));
+                    $diffMeses = round($ultimaFechaCuota->diffInMonths($fechaFinAnio));
 //                dump($diffMeses);
-                for ($i = 0; $i <= $diffMeses; $i++) {
-                    $fechaPeriodo = $ultimaFechaCuota->copy()->addMonths($i);
-                    $fechaVencimiento = $fechaPeriodo->copy()->addMonths(1);
+                    for ($i = 0; $i <= $diffMeses; $i++) {
+                        $fechaPeriodo = $ultimaFechaCuota->copy()->addMonths($i);
+                        $fechaVencimiento = $fechaPeriodo->copy()->addMonths(1);
 //                    print($fechaPeriodo->format("Y-m-d"). " ". $fechaVencimiento->format("Y-m-d"));
 
-                    $cuota = Cuota::create([
-                        'idUser' => $persona->idUsuario,
-                        'FechaPeriodo' => $fechaPeriodo->format('Y-m-01'),
-                        'FechaVencimiento' => $fechaVencimiento->format('Y-m-05'),
-                        'Estado' => 1,
-                        'Monto' => $monto,
-                        'Pendiente' => $monto,
-                        'Recaudado' => 0,
-                    ]);
+                        if($tipoVoluntario == 'voluntario')
+                        {
+                            $tipoCuota = 'cuota_mensual';
+                            $monto = 7000;
+                        } else {
+                            $tipoCuota = 'cuota_extraordinaria';
+                            $monto = 15000;
+                        }
+
+                        $cuota = Cuota::create([
+                            'idUser' => $persona->idUsuario,
+                            'FechaPeriodo' => $fechaPeriodo->format('Y-m-01'),
+                            'FechaVencimiento' => $fechaVencimiento->format('Y-m-05'),
+                            'Estado' => 1,
+                            'Monto' => $monto,
+                            'TipoCuota' => $tipoCuota,
+                            'Pendiente' => $monto,
+                            'Recaudado' => 0,
+                        ]);
+                    }
                 }
             }
         }
     }
 
-    public function sincronizarUserPersona(){
+    public function sincronizarUserPersona()
+    {
         $users = User::all();
         foreach ($users as $user) {
-            if($user->persona){
+            if ($user->persona) {
                 dump($user->persona);
-            }else{
+            } else {
                 $nuevo = Persona::create([
                     'idUsuario' => $user->id,
                     'idCargo' => 1,
                     'idEstado' => 1,
-                    'FechaReclutamiento' => Carbon::today()->subDays(rand(0,350))->format('Y-m-d'),
-                    'Rut' => rand(11111111, 99999999) . "-". rand(1,9),
+                    'FechaReclutamiento' => Carbon::today()->subDays(rand(0, 350))->format('Y-m-d'),
+                    'Rut' => rand(11111111, 99999999) . "-" . rand(1, 9),
                     'Activo' => 1,
                 ]);
                 dump($nuevo);

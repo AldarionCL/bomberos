@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Pages\ComprobantePago;
 use App\Filament\Resources\CuotasPersonaResource\Pages;
 use App\Filament\Resources\CuotasPersonaResource\RelationManagers;
 use App\Models\CuotasPersona;
@@ -68,15 +69,24 @@ class CuotasPersonaResource extends Resource
             ->columns([
                 Tables\Columns\Layout\Split::make([
 
-                    TextColumn::make('Rut')
-                        ->searchable()
-                        ->sortable()
-                        ->visibleFrom('md'),
-                    TextColumn::make('user.name')
-//                        ->description(fn($record) => $record->Rut)
-                        ->label('Nombre')
-                        ->searchable()
-                        ->sortable(),
+                        Tables\Columns\Layout\Split::make([
+                            Tables\Columns\ImageColumn::make('Foto')
+                                ->defaultImageUrl(url('/storage/fotosPersonas/placeholderAvatar.png'))
+                                ->circular()
+                                ->grow(false),
+
+                            Tables\Columns\Layout\Stack::make([
+                                Tables\Columns\TextColumn::make('user.name')
+                                    ->label('Nombre')
+                                    ->searchable()
+                                    ->sortable(),
+
+                                Tables\Columns\TextColumn::make('Rut')
+                                    ->label('Rut')
+                                    ->searchable()
+                                    ->sortable(),
+                            ]),
+                        ]),
                     TextColumn::make('estado.Estado')
                         ->visibleFrom('md')
                         ->grow(false),
@@ -128,7 +138,6 @@ class CuotasPersonaResource extends Resource
             'create' => Pages\CreateCuotasPersona::route('/create'),
             'edit' => Pages\EditCuotasPersona::route('/{record}/edit'),
             'view' => Pages\ViewCuotasPersona::route('/{record}/view'),
-            'comprobante' => Pages\Comprobante::route('/{record}/comprobante'),
         ];
     }
 }

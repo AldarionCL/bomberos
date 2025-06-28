@@ -2,7 +2,11 @@
 
 namespace App\Filament\Resources\CuotasPersonaResource\RelationManagers;
 
+use App\Filament\Pages\ComprobantePago;
 use App\Filament\Resources\CuotasPersonaResource;
+use App\Livewire\ComprobanteCuota;
+use App\Models\Cuota;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Coolsam\FilamentFlatpickr\Forms\Components\Flatpickr;
 use Filament\Actions\Action;
@@ -17,6 +21,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
+use Torgodly\Html2Media\Tables\Actions\Html2MediaAction;
 
 class CuotasRelationManager extends RelationManager
 {
@@ -203,20 +208,45 @@ class CuotasRelationManager extends RelationManager
 
                     })
                     ->requiresConfirmation(),
-                /*Tables\Actions\Action::make('ComprobantePago')
-                    ->url(fn($record) => route('cuotas.invoice', ['cuota' => $record]))
-                    ->openUrlInNewTab()
-                    ->visible(fn($record) => $record->Estado == 2)
+
+/*                Tables\Actions\Action::make('comprobante')
+                    ->url(fn($record) => route(ComprobantePago::getRouteName()))
                     ->button()
-                    ->color('success')
-                    ->icon('heroicon-s-document-text'),*/
-                Tables\Actions\Action::make('VerComprobante')
-                    ->url(fn($record) => CuotasPersonaResource::getUrl('comprobante', ['record' => $record->id]))
-                    ->openUrlInNewTab()
-                    ->button()
-                    ->visible(fn($record) => $record->Estado == 2)
-                    ->color('success')
+                    ->color('primary')
                     ->icon('heroicon-s-document-text')
+                    ->visible(fn($record) => $record->Estado == 2),*/
+
+                Tables\Actions\Action::make('VerComprobante')
+                    ->label('Emitir comprobante')
+                    ->url(fn($record) => route('comprobante-cuota', $record->id))
+//                        ->view('filament.pages.comprobanteFilament', fn($record) => ['record' => $record->id])
+                    ->openUrlInNewTab()
+                    ->button()
+                    ->visible(fn($record) => $record->Estado == 2)
+                    ->color('success')
+                    ->icon('heroicon-s-document-text'),
+
+
+                /*Tables\Actions\Action::make('pdf')
+                    ->action(function ($record) {
+                        $pdf = Pdf::loadView('livewire.comprobante-cuota', ['record' => $record->id]);
+//                        dd($pdf);
+                        $pdf->setOption(['dpi' => 150,
+                            'defaultFont' => 'DejaVu Sans',
+                            'isPhpEnabled' => true,
+                            'isHtml5ParserEnabled' => true,
+                            'isRemoteEnabled' => true]);
+//                        return $pdf->download('invoice.pdf');
+                        return response()->streamDownload(function () use ($pdf) {
+                            echo $pdf->stream();
+                        }, 'ComprobanteCuota.pdf');
+                    })
+                    ->button()
+                    ->color('primary')
+                    ->icon('heroicon-s-document-text')
+                    ->visible(fn($record) => $record->Estado == 2)
+                    ->openUrlInNewTab(),*/
+
 
             ])
             ->bulkActions([
