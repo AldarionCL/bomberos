@@ -11,6 +11,7 @@ class ComprobantePago extends Page
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static string $view = 'filament.pages.comprobante-pago';
+    protected static bool $shouldRegisterNavigation = false;
 
     public $record;
     public $cuota;
