@@ -84,6 +84,8 @@ class PersonasResource extends Resource
                                     ->options([
                                         "voluntario" => "Voluntario",
                                         "voluntario_honorario" => "Voluntario Honorario",
+                                        "voluntario_jubilado" => "Voluntario Jubilado",
+                                        "voluntario_estudiante" => "Voluntario Estudiante",
                                         "miembro_honorario" => "Miembro Honorario",
                                     ])
                                     ->default('voluntario'),
