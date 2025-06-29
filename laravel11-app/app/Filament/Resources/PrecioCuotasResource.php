@@ -19,6 +19,11 @@ class PrecioCuotasResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    protected static ?string $navigationGroup = 'Administracion';
+    protected static ?string $navigationLabel = 'Valor Cuotas';
+    protected static ?string $label = 'Valor Cuota';
+    protected static ?string $pluralLabel = 'Valores Cuotas';
+
     public static function form(Form $form): Form
     {
         return $form
