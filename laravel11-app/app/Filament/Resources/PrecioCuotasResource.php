@@ -62,11 +62,11 @@ class PrecioCuotasResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('id')->label('ID'),
-                Tables\Columns\TextColumn::make('TipoCuota')
-                    ->label('Tipo de Cuota'),
                 Tables\Columns\TextColumn::make('TipoVoluntario')
                     ->label('Tipo de Voluntario'),
+                Tables\Columns\TextColumn::make('TipoCuota')
+                    ->label('Tipo de Cuota'),
+
                 Tables\Columns\TextColumn::make('Monto')
                     ->label('Monto')
                     ->prefix('$')
