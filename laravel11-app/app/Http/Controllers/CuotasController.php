@@ -54,8 +54,7 @@ class CuotasController extends Controller
                         $fechaVencimiento = $fechaPeriodo->copy()->addMonths(1);
 //                    print($fechaPeriodo->format("Y-m-d"). " ". $fechaVencimiento->format("Y-m-d"));
 
-                        if($tipoVoluntario == 'voluntario')
-                        {
+                        if ($tipoVoluntario == 'voluntario') {
                             $tipoCuota = 'cuota_ordinaria';
                         } else {
                             $tipoCuota = 'cuota_extraordinaria';
@@ -66,16 +65,18 @@ class CuotasController extends Controller
                             ->first();
                         $monto = $cuotaMonto->Monto ?? $monto;
 
-                        $cuota = Cuota::create([
-                            'idUser' => $persona->idUsuario,
-                            'FechaPeriodo' => $fechaPeriodo->format('Y-m-01'),
-                            'FechaVencimiento' => $fechaVencimiento->format('Y-m-05'),
-                            'Estado' => 1,
-                            'Monto' => $monto,
-                            'TipoCuota' => $tipoCuota,
-                            'Pendiente' => $monto,
-                            'Recaudado' => 0,
-                        ]);
+                        if ($monto > 0) {
+                            $cuota = Cuota::create([
+                                'idUser' => $persona->idUsuario,
+                                'FechaPeriodo' => $fechaPeriodo->format('Y-m-01'),
+                                'FechaVencimiento' => $fechaVencimiento->format('Y-m-05'),
+                                'Estado' => 1,
+                                'Monto' => $monto,
+                                'TipoCuota' => $tipoCuota,
+                                'Pendiente' => $monto,
+                                'Recaudado' => 0,
+                            ]);
+                        }
                     }
                 }
             }
