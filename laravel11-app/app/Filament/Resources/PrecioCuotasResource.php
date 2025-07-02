@@ -31,7 +31,7 @@ class PrecioCuotasResource extends Resource
                 Forms\Components\Select::make('TipoCuota')
                     ->label('Tipo de Cuota')
                     ->options([
-                        'cuota_mensual' => 'Cuota Mensual',
+                        'cuota_ordinaria' => 'Cuota Ordinaria',
                         'cuota_extraordinaria' => 'Cuota Extraordinaria',
                     ])
                     ->required(),

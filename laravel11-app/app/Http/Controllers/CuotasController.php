@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Filament\Resources\PrecioCuotasResource;
 use App\Models\Cuota;
 use App\Models\Persona;
+use App\Models\PrecioCuotas;
 use App\Models\User;
 use App\Models\UserRole;
 use Carbon\Carbon;
@@ -54,12 +56,15 @@ class CuotasController extends Controller
 
                         if($tipoVoluntario == 'voluntario')
                         {
-                            $tipoCuota = 'cuota_mensual';
-                            $monto = 7000;
+                            $tipoCuota = 'cuota_ordinaria';
                         } else {
                             $tipoCuota = 'cuota_extraordinaria';
-                            $monto = 15000;
                         }
+
+                        $cuotaMonto = PrecioCuotas::where('TipoVoluntario', $tipoVoluntario)
+                            ->where('TipoCuota', $tipoCuota)
+                            ->first();
+                        $monto = $cuotaMonto->Monto ?? $monto;
 
                         $cuota = Cuota::create([
                             'idUser' => $persona->idUsuario,

@@ -21,15 +21,15 @@ class ListTesorerias extends ListRecords
             Actions\CreateAction::make(),
             Actions\Action::make('generarCuotas')
                 ->label('Generar Cuotas Anual')
-                ->form([
+                /*->form([
                         TextInput::make('Monto')
                             ->hint('Ingrese el monto de las cuotas')
                             ->numeric()
                             ->required(),
-                    ])
+                    ])*/
                 ->action(function ($data) {
                     $cuotasController = new \App\Http\Controllers\CuotasController();
-                    $cuotasController->sincronizarCuotas($data['Monto']);
+                    $cuotasController->sincronizarCuotas();
 
                     Notification::make()
                     ->success()

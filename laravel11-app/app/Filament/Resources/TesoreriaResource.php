@@ -76,7 +76,7 @@ class TesoreriaResource extends Resource
                                     if($edad < 50) {
                                         if ($tipoVoluntario == 'voluntario') {
                                             $options = [
-                                                'cuota_mensual' => 'Cuota Mensual',
+                                                'cuota_ordinaria' => 'Cuota Ordinaria',
                                                 'cuota_extraordinaria' => 'Cuota Extraordinaria',
                                             ];
                                         } else {
@@ -98,7 +98,7 @@ class TesoreriaResource extends Resource
 
                             })
                             ->required()
-                            ->default('cuota_mensual'),
+                            ->default('cuota_ordinaria'),
 
                         Select::make('Estado')
                             ->options(fn() => \App\Models\CuotasEstados::all()->pluck('Estado', 'id'))
