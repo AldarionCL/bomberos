@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Models\UserRole;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class CuotasController extends Controller
 {
@@ -113,6 +114,11 @@ class CuotasController extends Controller
             $cuota->Estado = 0;
             $cuota->save();
         }
+    }
+
+    public static function exportResumen($idUsuario){
+
+        return Excel::download(new \App\Exports\ResumenCuotas($idUsuario), 'resumen-cuotas.xlsx');
     }
 
 }

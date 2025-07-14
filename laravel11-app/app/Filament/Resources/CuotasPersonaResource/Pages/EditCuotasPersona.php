@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\CuotasPersonaResource\Pages;
 
 use App\Filament\Resources\CuotasPersonaResource;
+use App\Http\Controllers\CuotasController;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
@@ -14,6 +15,11 @@ class EditCuotasPersona extends EditRecord
     {
         return [
 //            Actions\DeleteAction::make(),
+            Actions\Action::make('resumenCuotas')
+                ->action(function ($record) {
+                   return CuotasController::exportResumen($record->idUsuario);
+                })
+
         ];
     }
 }

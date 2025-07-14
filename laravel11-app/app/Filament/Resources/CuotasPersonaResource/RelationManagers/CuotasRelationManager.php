@@ -274,4 +274,5 @@ class CuotasRelationManager extends RelationManager
             ->icon('heroicon-s-check')
             ->sendToDatabase($this->ownerRecord->user);
     }
+
 }

@@ -201,6 +201,12 @@
       <path value="$PROJECT_DIR$/laravel11-app/vendor/dompdf/php-font-lib" />
       <path value="$PROJECT_DIR$/laravel11-app/vendor/barryvdh/laravel-dompdf" />
       <path value="$PROJECT_DIR$/laravel11-app/vendor/torgodly/html2media" />
+      <path value="$PROJECT_DIR$/laravel11-app/vendor/maennchen/zipstream-php" />
+      <path value="$PROJECT_DIR$/laravel11-app/vendor/phpoffice/phpspreadsheet" />
+      <path value="$PROJECT_DIR$/laravel11-app/vendor/maatwebsite/excel" />
+      <path value="$PROJECT_DIR$/laravel11-app/vendor/markbaker/matrix" />
+      <path value="$PROJECT_DIR$/laravel11-app/vendor/markbaker/complex" />
+      <path value="$PROJECT_DIR$/laravel11-app/vendor/ezyang/htmlpurifier" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="8.2" />

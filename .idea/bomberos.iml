@@ -185,6 +185,12 @@
       <excludeFolder url="file://$MODULE_DIR$/laravel11-app/vendor/laravel-lang/moonshine" />
       <excludeFolder url="file://$MODULE_DIR$/laravel11-app/vendor/laravel-lang/starter-kits" />
       <excludeFolder url="file://$MODULE_DIR$/laravel11-app/vendor/sabberworm/php-css-parser" />
+      <excludeFolder url="file://$MODULE_DIR$/laravel11-app/vendor/ezyang/htmlpurifier" />
+      <excludeFolder url="file://$MODULE_DIR$/laravel11-app/vendor/maatwebsite/excel" />
+      <excludeFolder url="file://$MODULE_DIR$/laravel11-app/vendor/maennchen/zipstream-php" />
+      <excludeFolder url="file://$MODULE_DIR$/laravel11-app/vendor/markbaker/complex" />
+      <excludeFolder url="file://$MODULE_DIR$/laravel11-app/vendor/markbaker/matrix" />
+      <excludeFolder url="file://$MODULE_DIR$/laravel11-app/vendor/phpoffice/phpspreadsheet" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

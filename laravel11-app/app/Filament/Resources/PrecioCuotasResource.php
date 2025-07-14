@@ -13,7 +13,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class PrecioCuotasResource extends Resource
+class   PrecioCuotasResource extends Resource
 {
     protected static ?string $model = PrecioCuotas::class;
 
