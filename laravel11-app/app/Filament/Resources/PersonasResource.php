@@ -46,7 +46,9 @@ class PersonasResource extends Resource
                         Forms\Components\TextInput::make('name')
                             ->label('Nombre')
                             ->required(),
-                        Forms\Components\TextInput::make('email')->required(),
+                        Forms\Components\TextInput::make('email')
+                            ->unique()
+                            ->required(),
                         Forms\Components\TextInput::make('password')
                             ->password()
                             ->autocomplete(false)
