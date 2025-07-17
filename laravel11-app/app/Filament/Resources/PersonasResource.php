@@ -11,6 +11,7 @@ use App\Models\PersonaCargo;
 use App\Models\PersonaEstado;
 use App\Models\User;
 use App\Models\UserRole;
+use Carbon\Carbon;
 use Coolsam\FilamentFlatpickr\Forms\Components\Flatpickr;
 use Faker\Provider\Text;
 use Filament\Forms;
@@ -55,6 +56,7 @@ class PersonasResource extends Resource
                             ->label('Rol')
                             ->options(fn() => UserRole::all()->pluck('Rol', 'id'))
                             ->visible(fn() => Auth::user()->isRole('Administrador'))
+                            ->default(2)
                     ])->columns(),
 
                 Forms\Components\Section::make()
@@ -65,19 +67,37 @@ class PersonasResource extends Resource
                             Tabs\Tab::make('Datos Generales')->schema([
 
                                 Forms\Components\TextInput::make('Rut')
+                                    ->unique()
                                     ->required(),
-                                Forms\Components\TextInput::make('Telefono'),
+                                Forms\Components\TextInput::make('Telefono')
+                                    ->mask('+56 (9) 9999-9999')
+                                    ->placeholder('+56 (9) 1234-5678')
+                                    ->label('Teléfono'),
                                 Flatpickr::make('FechaNacimiento')
                                     ->label('Fecha Nacimiento')
+                                    ->live()
+                                    ->afterStateUpdated(function ($state, $set, $get, $record) {
+                                        $fechaNacimiento = $state;
+                                        if ($fechaNacimiento) {
+                                            $fecha = \Carbon\Carbon::parse($fechaNacimiento);
+                                            $edad = round($fecha->diffInYears(Carbon::now()));
+                                            $set('Edad', $edad);
+                                        } else {
+                                            $set('Edad', null);
+                                        }
+
+                                    })
                                     ->required(),
-                                TextInput::make('Edad'),
-                                TextInput::make('Nacionalidad'),
+                                TextInput::make('Edad')
+                                    ->readOnly()
+                                    ->reactive(),
                                 Select::make('idCargo')
                                     ->options(fn() => PersonaCargo::where('Activo', 1)->pluck('Cargo', 'id'))
                                     ->label('Cargo')
                                     ->required(),
+                                TextInput::make('Nacionalidad'),
                                 Select::make('idEstado')
-                                    ->label('Estado')
+                                    ->label('Estado voluntario')
                                     ->options(fn() => PersonaEstado::all()->pluck('Estado', 'id'))
                                     ->default(1),
                                 Select::make('TipoVoluntario')
@@ -227,7 +247,8 @@ class PersonasResource extends Resource
                         ->date("d/m/Y")
                         ->description('Fecha Creacion', position: 'above')
                         ->label('Creado')
-                        ->visibleFrom('md'),
+                        ->visibleFrom('md')
+                        ->sortable(),
                 ])
 
 
