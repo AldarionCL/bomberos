@@ -16,7 +16,7 @@ class EditPersonas extends EditRecord
         return [
             Actions\DeleteAction::make()
             ->before(function ($record) {
-                Cuota::where('id_persona', $record->id)->delete();
+                Cuota::where('idUser', $record->user->id)->delete();
             }),
         ];
     }
