@@ -125,7 +125,6 @@ class CuotasPersonaResource extends Resource
                     ->label('Ver cuotas')
                     ->icon('heroicon-s-eye')
                     ->button()
-                    ->visible(fn($record) => $record->Edad > 50 ? 0 : 1),
 //                Tables\Actions\ViewAction::make(),
             ])
             ->bulkActions([
