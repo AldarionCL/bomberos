@@ -11,7 +11,9 @@ use Carbon\Carbon;
 use Coolsam\FilamentFlatpickr\Forms\Components\Flatpickr;
 use Filament\Actions\Action;
 use Filament\Forms;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\RelationManagers\RelationManager;
@@ -33,8 +35,8 @@ class CuotasRelationManager extends RelationManager
             ->schema([
                 Forms\Components\Section::make('Informacion Cuota')
                     ->schema([
-                        Forms\Components\Placeholder::make('Monto')
-                            ->content(fn($record) => "$" . $record->Monto),
+//                        Forms\Components\Placeholder::make('Monto')
+//                            ->content(fn($record) => "$" . $record->Monto),
 
 //                    DatePicker::make('fechaPeriodo')->label('Fecha de Periodo'),
                         Forms\Components\Placeholder::make('FechaPeriodo')
@@ -50,9 +52,13 @@ class CuotasRelationManager extends RelationManager
                             ->disabled(fn($record) => !Auth::user()->isRole('Administrador'))
                             ->required()
                             ->label('Estado'),
-                    ])->columns(),
+                    ])->columns(3),
                 Forms\Components\Section::make('Pago')
                     ->schema([
+                        TextInput::make('Monto')
+                            ->label('Monto de cuota')
+                            ->prefix('$')
+                            ->readOnly(),
                         Forms\Components\TextInput::make('Pendiente')
                             ->prefix('$')
                             ->suffixAction(Forms\Components\Actions\Action::make('aplicar')
@@ -60,46 +66,63 @@ class CuotasRelationManager extends RelationManager
                                 ->action(function ($record, $set) {
                                     $set('Recaudado', $record->Pendiente);
                                     $set('Pendiente', 0);
+                                    $set('SaldoFavor', 0);
 //                                    $set('Estado', 2);
                                 })
+                                ->disabled(fn($record) => $record->Estado != 1)
                             )
                             ->readOnly()
                             ->reactive(),
                         Forms\Components\TextInput::make('Recaudado')
                             ->prefix('$')
-                            ->reactive()
                             ->live(onBlur: true)
+                            ->hint('Ingrese el monto recaudado')
+                            ->hintColor('warning')
                             ->afterStateUpdated(function ($state, $set, $get, $record) {
-                                if ($state > $record->Monto) {
+                                /*if ($state > $record->Monto) {
                                     $state = $record->Monto;
                                     $set('Recaudado', $record->Monto);
-                                }
+                                }*/
 
                                 $monto = $record->Monto - $state;
-                                $set('Pendiente', $monto);
+                                $saldo = $state - $record->Monto;
+                                $set('Pendiente', max($monto, 0));
+                                $set('SaldoFavor', max($saldo, 0));
                                 /*if ($get('Pendiente') == 0) {
                                     $set('Estado', 2);
                                 } else {
                                     $set('Estado', 1);
                                 }*/
                             }),
+                        Forms\Components\TextInput::make('SaldoFavor')
+                            ->prefix('$')
+                            ->reactive()
+                            ->readOnly()
+                            ->default(fn($record) => $record->Recaudado - $record->Monto),
 
+                    ])->columns(),
 
-                        Flatpickr::make('FechaPago')
-                            ->label('Fecha de Pago')
-                            ->default(fn() => Carbon::today()->format('Y-m-d'))
-                            ->required(),
-
+                Section::make('Comprobante')
+                    ->schema([
                         Forms\Components\TextInput::make('Documento')
-                            ->label('N° Documento'),
-
+                            ->label('N° Documento')
+                            ->required()
+                            ->visibleOn('edit'),
+                        Flatpickr::make('FechaPago')->label('Fecha de Pago')
+                            ->default(fn() => Carbon::today()->format('Y-m-d'))
+                            ->required()
+                            ->visibleOn('edit'),
                         Forms\Components\FileUpload::make('DocumentoArchivo')
-                            ->downloadable()
-                            ->previewable()
+                            ->label('Archivo Comprobante')
+                            ->required()
+                            ->disk('public')
+                            ->directory('comprobantesCuotas')
                             ->deletable(false)
-                            ->label('Comprobante de Pago')
-                            ->required(),
-                    ])->columns()
+                            ->previewable()
+                            ->visibleOn('edit')
+                        ->columnSpanFull(),
+
+                    ])->columns(),
             ]);
     }
 
@@ -209,12 +232,12 @@ class CuotasRelationManager extends RelationManager
                     })
                     ->requiresConfirmation(),
 
-/*                Tables\Actions\Action::make('comprobante')
-                    ->url(fn($record) => route(ComprobantePago::getRouteName()))
-                    ->button()
-                    ->color('primary')
-                    ->icon('heroicon-s-document-text')
-                    ->visible(fn($record) => $record->Estado == 2),*/
+                /*                Tables\Actions\Action::make('comprobante')
+                                    ->url(fn($record) => route(ComprobantePago::getRouteName()))
+                                    ->button()
+                                    ->color('primary')
+                                    ->icon('heroicon-s-document-text')
+                                    ->visible(fn($record) => $record->Estado == 2),*/
 
                 Tables\Actions\Action::make('VerComprobante')
                     ->label('Emitir comprobante')
