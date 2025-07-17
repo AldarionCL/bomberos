@@ -47,7 +47,7 @@ class PersonasResource extends Resource
                             ->label('Nombre')
                             ->required(),
                         Forms\Components\TextInput::make('email')
-                            ->unique()
+//                            ->unique()
                             ->required(),
                         Forms\Components\TextInput::make('password')
                             ->password()
@@ -69,7 +69,7 @@ class PersonasResource extends Resource
                             Tabs\Tab::make('Datos Generales')->schema([
 
                                 Forms\Components\TextInput::make('Rut')
-                                    ->unique()
+//                                    ->unique()
                                     ->required(),
                                 Forms\Components\TextInput::make('Telefono')
                                     ->mask('+56 (9) 9999-9999')

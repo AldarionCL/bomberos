@@ -90,6 +90,7 @@ class CuotasPersonaResource extends Resource
                     TextColumn::make('estado.Estado')
                         ->visibleFrom('md')
                         ->grow(false),
+
                     Tables\Columns\Layout\Stack::make([
                         TextColumn::make('contCuotas')
                             ->badge()
