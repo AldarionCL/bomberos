@@ -49,20 +49,6 @@ class TesoreriaResource extends Resource
                             ->reactive()
                             ->required(),
 
-                        Forms\Components\TextInput::make('Monto')
-                            ->numeric()
-                            ->prefix('$')
-                            ->required(),
-
-//                    DatePicker::make('fechaPeriodo')->label('Fecha de Periodo'),
-                        Flatpickr::make('FechaPeriodo')
-                            ->label('Periodo Desde')
-                            ->required(),
-
-                        Flatpickr::make('FechaVencimiento')
-                            ->label('Fecha de Vencimiento')
-                            ->required(),
-
                         Select::make('TipoCuota')
                             ->options(function ($record, $get)  {
                                 $usuario = $get('idUser');
@@ -97,13 +83,46 @@ class TesoreriaResource extends Resource
                                 return $options ?? [];
 
                             })
-                            ->required()
-                            ->default('cuota_ordinaria'),
+                            ->live(onBlur: true)
+                            ->afterStateUpdated(function ($state, $set, $get, $record){
+                                $tipoCuota = $state;
+                                if ($tipoCuota) {
+                                    $cuotaMonto = \App\Models\PrecioCuotas::where('TipoCuota', $tipoCuota)
+                                        ->first();
+
+                                    if ($cuotaMonto) {
+                                        $set('Monto', $cuotaMonto->Monto);
+                                    } else {
+                                        Notification::make()
+                                            ->title('Atención')
+                                            ->body('No se encontró el monto para la cuota seleccionada. Ingresela manualmente')
+                                            ->danger()
+                                            ->send();
+                                    }
+                                }
+                            })
+                            ->required(),
+
+                        Forms\Components\TextInput::make('Monto')
+                            ->numeric()
+                            ->prefix('$')
+                            ->required(),
 
                         Select::make('Estado')
                             ->options(fn() => \App\Models\CuotasEstados::all()->pluck('Estado', 'id'))
                             ->default(1)
-                            ->label('Estado'),
+                            ->label('Estado')
+                        ->disabled(),
+
+//                    DatePicker::make('fechaPeriodo')->label('Fecha de Periodo'),
+                        Flatpickr::make('FechaPeriodo')
+                            ->label('Periodo Desde')
+                            ->required(),
+
+                        Flatpickr::make('FechaVencimiento')
+                            ->label('Fecha de Vencimiento')
+                            ->required(),
+
 
 
                         Flatpickr::make('FechaPago')->label('Fecha de Pago')
