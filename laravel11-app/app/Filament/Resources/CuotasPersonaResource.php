@@ -69,28 +69,29 @@ class CuotasPersonaResource extends Resource
             ->columns([
                 Tables\Columns\Layout\Split::make([
 
-                        Tables\Columns\Layout\Split::make([
-                            Tables\Columns\ImageColumn::make('Foto')
-                                ->defaultImageUrl(url('/storage/fotosPersonas/placeholderAvatar.png'))
-                                ->circular()
-                                ->grow(false),
+                    Tables\Columns\Layout\Split::make([
+                        Tables\Columns\ImageColumn::make('Foto')
+                            ->defaultImageUrl(url('/storage/fotosPersonas/placeholderAvatar.png'))
+                            ->circular()
+                            ->grow(false),
 
-                            Tables\Columns\Layout\Stack::make([
-                                Tables\Columns\TextColumn::make('user.name')
-                                    ->label('Nombre')
-                                    ->searchable()
-                                    ->sortable(),
+                        Tables\Columns\Layout\Stack::make([
+                            Tables\Columns\TextColumn::make('user.name')
+                                ->label('Nombre')
+                                ->searchable()
+                                ->sortable(),
 
-                                Tables\Columns\TextColumn::make('Rut')
-                                    ->label('Rut')
-                                    ->searchable()
-                                    ->sortable(),
-                            ]),
-                        ]),
-                    TextColumn::make('estado.Estado')
-                        ->visibleFrom('md')
-                        ->grow(false),
-
+                            Tables\Columns\TextColumn::make('Rut')
+                                ->label('Rut')
+                                ->searchable()
+                                ->sortable(),
+                        ])->grow(),
+                    ]),
+                    Tables\Columns\Layout\Stack::make([
+                        TextColumn::make('estado.Estado')
+                            ->visibleFrom('md')
+                            ->grow(false),
+                    ]),
                     Tables\Columns\Layout\Stack::make([
                         TextColumn::make('contCuotas')
                             ->badge()
@@ -103,8 +104,16 @@ class CuotasPersonaResource extends Resource
                             ->default(fn($record) => $record->cuotas->where('Estado', 1)->sum('Monto'))
                             ->prefix('$')
                             ->money('CLP')
-                        ->grow(false),
-                    ])->alignment(Alignment::End),
+                            ->grow(false),
+                    ])->alignment(Alignment::End)
+                        ->visible(fn($record) => ($record->Edad ?? 0) < 50),
+
+                    Tables\Columns\TextColumn::make('Exento')
+                        ->icon('heroicon-s-check-circle')
+                        ->color('danger')
+                        ->default(fn($record) => $record->Edad >= 50 ? 'Exento' : '')
+                        ->visible(fn($record) => ($record->Edad ?? 0) >= 50)
+                    ->alignment(Alignment::End),
 
                 ])
             ])
@@ -115,7 +124,8 @@ class CuotasPersonaResource extends Resource
                 Tables\Actions\EditAction::make()
                     ->label('Ver cuotas')
                     ->icon('heroicon-s-eye')
-                    ->button(),
+                    ->button()
+                    ->visible(fn($record) => $record->Edad > 50 ? 0 : 1),
 //                Tables\Actions\ViewAction::make(),
             ])
             ->bulkActions([
