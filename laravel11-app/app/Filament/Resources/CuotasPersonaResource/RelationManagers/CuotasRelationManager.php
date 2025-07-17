@@ -16,6 +16,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
+use Filament\Resources\Components\Tab;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Support\Enums\Alignment;
 use Filament\Tables;
@@ -296,6 +297,18 @@ class CuotasRelationManager extends RelationManager
             ->success()
             ->icon('heroicon-s-check')
             ->sendToDatabase($this->ownerRecord->user);
+    }
+
+    public function getTabs(): array
+    {
+        return [
+            'Pendientes' => Tab::make()
+                ->modifyQueryUsing(fn(Builder $query) => $query->where('Estado', 1)),
+            'Pagados' => Tab::make()
+                ->modifyQueryUsing(fn(Builder $query) => $query->where('Estado', '>', 1)),
+            'Todos' => Tab::make(),
+
+        ];
     }
 
 }
