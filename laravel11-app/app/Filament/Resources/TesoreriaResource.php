@@ -83,20 +83,28 @@ class TesoreriaResource extends Resource
                             ->live(onBlur: true)
                             ->afterStateUpdated(function ($state, $set, $get, $record) {
                                 $tipoCuota = $state;
-                                if ($tipoCuota) {
-                                    $cuotaMonto = \App\Models\PrecioCuotas::where('TipoCuota', $tipoCuota)
-                                        ->first();
+                                $usuario = $get('idUser');
+                                if ($usuario) {
+                                    $user = \App\Models\User::find($usuario);
+                                    $tipoVoluntario = $user->persona->TipoVoluntario ?? null;
+                                    if ($tipoCuota) {
+                                        $cuotaMonto = \App\Models\PrecioCuotas::where('TipoCuota', $tipoCuota)
+                                            ->where('TipoVoluntario', $tipoVoluntario)
+                                            ->first();
 
-                                    if ($cuotaMonto) {
-                                        $set('Monto', $cuotaMonto->Monto);
-                                    } else {
-                                        Notification::make()
-                                            ->title('Atención')
-                                            ->body('No se encontró el monto para la cuota seleccionada. Ingresela manualmente')
-                                            ->danger()
-                                            ->send();
+                                        if ($cuotaMonto) {
+                                            $set('Monto', $cuotaMonto->Monto);
+                                        } else {
+                                            Notification::make()
+                                                ->title('Atención')
+                                                ->body('No se encontró el monto para la cuota seleccionada. Ingrésela manualmente')
+                                                ->danger()
+                                                ->send();
+                                        }
                                     }
                                 }
+
+
                             })
                             ->required(),
 
