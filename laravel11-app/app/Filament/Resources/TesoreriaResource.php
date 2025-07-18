@@ -113,6 +113,15 @@ class TesoreriaResource extends Resource
                             ->numeric()
                             ->prefix('$')
                             ->required(),
+                        Forms\Components\TextInput::make('Pendiente')
+                            ->numeric()
+                            ->prefix('$')
+                            ->required(),
+                        Forms\Components\TextInput::make('Recaudado')
+                            ->numeric()
+                            ->prefix('$')
+                            ->required(),
+
 
                         Select::make('Estado')
                             ->options(fn() => \App\Models\CuotasEstados::all()->pluck('Estado', 'id'))
