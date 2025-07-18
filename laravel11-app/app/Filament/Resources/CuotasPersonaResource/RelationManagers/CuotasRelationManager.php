@@ -65,7 +65,7 @@ class CuotasRelationManager extends RelationManager
                             ->suffixAction(Forms\Components\Actions\Action::make('aplicar')
                                 ->icon('heroicon-m-arrow-right-circle')
                                 ->action(function ($record, $set) {
-                                    $set('Recaudado', $record->Pendiente);
+                                    $set('Recaudado', $record->Pendiente + $record->Recaudado);
                                     $set('Pendiente', 0);
                                     $set('SaldoFavor', 0);
 //                                    $set('Estado', 2);
