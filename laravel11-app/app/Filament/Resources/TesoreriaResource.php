@@ -51,7 +51,7 @@ class TesoreriaResource extends Resource
                             ->required(),
 
                         Select::make('TipoCuota')
-                            ->options(function ($record, $get) {
+                            ->options(function ($record, $get,$set) {
                                 $usuario = $get('idUser');
                                 if ($usuario) {
                                     $user = \App\Models\User::find($usuario);
@@ -73,6 +73,7 @@ class TesoreriaResource extends Resource
                                             ->body('El usuario es mayor de 50 años, esta exedente de cuota mensual.')
                                             ->warning()
                                             ->send();
+                                        $set('Monto', 0);
 
                                         $options = [];
                                     }
