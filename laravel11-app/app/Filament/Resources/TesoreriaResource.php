@@ -6,6 +6,7 @@ use App\Filament\Exports\CuotasExporter;
 use App\Filament\Resources\TesoreriaResource\Pages;
 use App\Filament\Resources\TesoreriaResource\RelationManagers;
 use App\Models\Cuota;
+use App\Models\PrecioCuotas;
 use Carbon\Carbon;
 use Coolsam\FilamentFlatpickr\Forms\Components\Flatpickr;
 use Faker\Provider\Text;
@@ -50,7 +51,7 @@ class TesoreriaResource extends Resource
                             ->required(),
 
                         Select::make('TipoCuota')
-                            ->options(function ($record, $get)  {
+                            ->options(function ($record, $get) {
                                 $usuario = $get('idUser');
                                 if ($usuario) {
                                     $user = \App\Models\User::find($usuario);
@@ -59,16 +60,12 @@ class TesoreriaResource extends Resource
                                     $fechaNacimiento = Carbon::parse($fechaNacimiento);
                                     $edad = Carbon::now()->diffInYears($fechaNacimiento) * -1;
 
-                                    if($edad < 50) {
-                                        if ($tipoVoluntario == 'voluntario') {
-                                            $options = [
-                                                'cuota_ordinaria' => 'Cuota Ordinaria',
-                                                'cuota_extraordinaria' => 'Cuota Extraordinaria',
-                                            ];
-                                        } else {
-                                            $options = [
-                                                'cuota_extraordinaria' => 'Cuota Extraordinaria',
-                                            ];
+                                    if ($edad < 50) {
+                                        $tiposCuotas = PrecioCuotas::where('TipoVoluntario', $tipoVoluntario)
+                                            ->where('Monto', '>', 0)
+                                            ->get();
+                                        foreach ($tiposCuotas as $tipoCuota) {
+                                            $options[$tipoCuota->TipoCuota] = ucwords(str_replace('_', ' ', strtolower($tipoCuota->TipoCuota)));;
                                         }
                                     } else {
                                         Notification::make()
@@ -84,7 +81,7 @@ class TesoreriaResource extends Resource
 
                             })
                             ->live(onBlur: true)
-                            ->afterStateUpdated(function ($state, $set, $get, $record){
+                            ->afterStateUpdated(function ($state, $set, $get, $record) {
                                 $tipoCuota = $state;
                                 if ($tipoCuota) {
                                     $cuotaMonto = \App\Models\PrecioCuotas::where('TipoCuota', $tipoCuota)
@@ -112,7 +109,7 @@ class TesoreriaResource extends Resource
                             ->options(fn() => \App\Models\CuotasEstados::all()->pluck('Estado', 'id'))
                             ->default(1)
                             ->label('Estado')
-                        ->disabled(),
+                            ->disabled(),
 
 //                    DatePicker::make('fechaPeriodo')->label('Fecha de Periodo'),
                         Flatpickr::make('FechaPeriodo')
@@ -122,7 +119,6 @@ class TesoreriaResource extends Resource
                         Flatpickr::make('FechaVencimiento')
                             ->label('Fecha de Vencimiento')
                             ->required(),
-
 
 
                         Flatpickr::make('FechaPago')->label('Fecha de Pago')
