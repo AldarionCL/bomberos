@@ -142,7 +142,7 @@ class SolicitudesLicenciaResource extends Resource
                         TextInput::make('DiasHabiles')
                             ->live()
                             ->label('Total Dias')
-                            ->disabled()
+                            ->readOnly()
                             ->required(),
 
                     ])->columns(3),
