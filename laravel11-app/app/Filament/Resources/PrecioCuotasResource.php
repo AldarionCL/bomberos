@@ -65,6 +65,11 @@ class   PrecioCuotasResource extends Resource
                 Tables\Columns\TextColumn::make('TipoVoluntario')
                     ->label('Tipo de Voluntario'),
                 Tables\Columns\TextColumn::make('TipoCuota')
+                    ->formatStateUsing(fn ($state) => match ($state) {
+                        'cuota_ordinaria' => 'Cuota Ordinaria',
+                        'cuota_extraordinaria' => 'Cuota Extraordinaria',
+                        default => ucwords(str_replace('_', ' ', strtolower($state))),
+                    })
                     ->label('Tipo de Cuota'),
 
                 Tables\Columns\TextColumn::make('Monto')

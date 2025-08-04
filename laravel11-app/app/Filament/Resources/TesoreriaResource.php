@@ -178,7 +178,11 @@ class TesoreriaResource extends Resource
                     ->date('d/m/Y'),
 
                 TextColumn::make('TipoCuota')
-                    ->label('Tipo Cuota'),
+                ->formatStateUsing(fn ($state) => match ($state) {
+                    'cuota_ordinaria' => 'Cuota Ordinaria',
+                    'cuota_extraordinaria' => 'Cuota Extraordinaria',
+                    default => ucwords(str_replace('_', ' ', strtolower($state))),
+                }),
 
                 Tables\Columns\TextColumn::make('estadocuota.Estado')
                     ->badge()

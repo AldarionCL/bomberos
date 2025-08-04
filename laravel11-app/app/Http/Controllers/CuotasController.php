@@ -30,7 +30,7 @@ class CuotasController extends Controller
             $fechaFinAnio = Carbon::now()->endOfYear();
             $fechaNacimiento = Carbon::parse($persona->FechaNacimiento);
             $edad = $fechaHoy->diffInYears($fechaNacimiento) * -1;
-            $tipoVoluntario = $persona->TipoVoluntario ?? null;
+            $tipoVoluntario = $persona->TipoVoluntario ?? 'voluntario';
 
             if ($edad < 50) {
                 // Trae ultima cuota creada
@@ -39,45 +39,38 @@ class CuotasController extends Controller
                     ->orderBy('FechaPeriodo', 'desc')
                     ->first();
 
-                if ($cuota) {
-                    $ultimaFechaCuota = Carbon::parse($cuota->FechaPeriodo);
-                } else {
-                    $ultimaFechaCuota = $fechaIngreso;
-                }
+                $ultimaFechaCuota = ($cuota) ? Carbon::parse($cuota->FechaPeriodo) : $fechaIngreso;
 
                 if ($ultimaFechaCuota < $fechaFinAnio) {
 
-//                print($persona->idUsuario);
+                    $tiposCuota = PrecioCuotas::where('TipoVoluntario', $tipoVoluntario)
+                        ->get();
+
                     $diffMeses = round($ultimaFechaCuota->diffInMonths($fechaFinAnio));
-//                dump($diffMeses);
                     for ($i = 0; $i <= $diffMeses; $i++) {
                         $fechaPeriodo = $ultimaFechaCuota->copy()->addMonths($i);
                         $fechaVencimiento = $fechaPeriodo->copy()->addMonths(1);
-//                    print($fechaPeriodo->format("Y-m-d"). " ". $fechaVencimiento->format("Y-m-d"));
 
-                        if ($tipoVoluntario == 'voluntario') {
-                            $tipoCuota = 'cuota_ordinaria';
-                        } else {
-                            $tipoCuota = 'cuota_extraordinaria';
+                        foreach ($tiposCuota as $tipo) {
+                            if ($tipo->Monto > 0) {
+                                $monto = $tipo->Monto;
+                                $tipoCuota = $tipo->TipoCuota;
+
+                                if ($monto > 0) {
+                                    $cuota = Cuota::create([
+                                        'idUser' => $persona->idUsuario,
+                                        'FechaPeriodo' => $fechaPeriodo->format('Y-m-01'),
+                                        'FechaVencimiento' => $fechaVencimiento->format('Y-m-05'),
+                                        'Estado' => 1,
+                                        'Monto' => $monto,
+                                        'TipoCuota' => $tipoCuota,
+                                        'Pendiente' => $monto,
+                                        'Recaudado' => 0,
+                                    ]);
+                                }
+                            }
                         }
 
-                        $cuotaMonto = PrecioCuotas::where('TipoVoluntario', $tipoVoluntario)
-                            ->where('TipoCuota', $tipoCuota)
-                            ->first();
-                        $monto = $cuotaMonto->Monto ?? $monto;
-
-                        if ($monto > 0) {
-                            $cuota = Cuota::create([
-                                'idUser' => $persona->idUsuario,
-                                'FechaPeriodo' => $fechaPeriodo->format('Y-m-01'),
-                                'FechaVencimiento' => $fechaVencimiento->format('Y-m-05'),
-                                'Estado' => 1,
-                                'Monto' => $monto,
-                                'TipoCuota' => $tipoCuota,
-                                'Pendiente' => $monto,
-                                'Recaudado' => 0,
-                            ]);
-                        }
                     }
                 }
             }
@@ -116,7 +109,8 @@ class CuotasController extends Controller
         }
     }
 
-    public static function exportResumen($idUsuario){
+    public static function exportResumen($idUsuario)
+    {
 
         return Excel::download(new \App\Exports\ResumenCuotas($idUsuario), 'resumen-cuotas.xlsx');
     }
