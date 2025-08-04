@@ -22,5 +22,12 @@
       <jdbc-url>jdbc:sqlserver://192.168.1.34;database=BUD01</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="bomberosdb@172.20.20.38" uuid="f3b7dbff-3462-4d13-870b-b3f164265d82">
+      <driver-ref>mysql.8</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://172.20.20.38:3306/bomberosdb</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>
