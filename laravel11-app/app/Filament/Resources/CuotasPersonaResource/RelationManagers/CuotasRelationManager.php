@@ -120,6 +120,7 @@ class CuotasRelationManager extends RelationManager
                             ->directory('comprobantesCuotas')
                             ->deletable(false)
                             ->previewable()
+                            ->downloadable()
                             ->visibleOn('edit')
                         ->columnSpanFull(),
 

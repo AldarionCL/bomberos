@@ -112,8 +112,9 @@ class CuotasPersonaResource extends Resource
                         ->icon('heroicon-s-check-circle')
                         ->color('danger')
                         ->default(fn($record) => $record->Edad >= 50 ? 'Exento' : '')
+                        ->tooltip('Exento de pago por edad')
                         ->visible(fn($record) => ($record->Edad ?? 0) >= 50)
-                    ->alignment(Alignment::End),
+                        ->alignment(Alignment::End),
 
                 ])
             ])
