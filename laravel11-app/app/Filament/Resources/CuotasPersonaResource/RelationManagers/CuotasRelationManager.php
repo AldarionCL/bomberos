@@ -149,7 +149,12 @@ class CuotasRelationManager extends RelationManager
                     ]),
                     Tables\Columns\Layout\Stack::make([
                         Tables\Columns\TextColumn::make('TipoCuota')
-                            ->description('Tipo de Cuota', position: 'above'),
+//                            ->description('Tipo de Cuota', position: 'above')
+                            ->formatStateUsing(fn(string $state): string => match ($state) {
+                                'cuota_ordinaria' => 'Cuota Ordinaria',
+                                'cuota_extraordinaria' => 'Cuota Extraordinaria',
+                                default => $state,
+                            }),
                         Tables\Columns\TextColumn::make('Pendiente')
                             ->prefix("Pendiente : $")
                             ->color('warning'),
