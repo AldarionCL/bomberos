@@ -148,6 +148,8 @@ class CuotasRelationManager extends RelationManager
                         ]),
                     ]),
                     Tables\Columns\Layout\Stack::make([
+                        Tables\Columns\TextColumn::make('TipoCuota')
+                            ->description('Tipo de Cuota', position: 'above'),
                         Tables\Columns\TextColumn::make('Pendiente')
                             ->prefix("Pendiente : $")
                             ->color('warning'),

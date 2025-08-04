@@ -158,7 +158,11 @@ class SolicitudesLicenciaResource extends Resource
                             ->label('Voluntario')
                             ->searchable()
                             ->hint('Seleccione un Voluntario para asociar a esta solicitud')
-                            ->required(),
+                            ->required()
+                        ->default(fn() => Auth::user()->id)
+                        ->disabled(fn($record) => !Auth::user()->isRole('Administrador')),
+
+
                         Forms\Components\RichEditor::make('Observaciones')
                     ]),
 
