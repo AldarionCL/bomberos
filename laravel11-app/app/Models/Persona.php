@@ -71,6 +71,12 @@ class Persona extends Model
     {
         return $this->hasMany(Cuota::class, 'idUser', 'idUsuario');
     }
+    public function cuotasMes()
+    {
+        return $this->hasMany(Cuota::class, 'idUser', 'idUsuario')
+            ->whereMonth('FechaPeriodo', now()->month)
+            ->whereYear('FechaPeriodo', now()->year);
+    }
 
     public function documentos(){
         return $this->hasMany(Documentos::class, 'AsociadoA', 'id');

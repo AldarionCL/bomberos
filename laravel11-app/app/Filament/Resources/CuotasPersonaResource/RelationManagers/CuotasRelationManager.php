@@ -6,6 +6,7 @@ use App\Filament\Pages\ComprobantePago;
 use App\Filament\Resources\CuotasPersonaResource;
 use App\Livewire\ComprobanteCuota;
 use App\Models\Cuota;
+use App\Models\Documentos;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Coolsam\FilamentFlatpickr\Forms\Components\Flatpickr;
@@ -107,12 +108,10 @@ class CuotasRelationManager extends RelationManager
                     ->schema([
                         Forms\Components\TextInput::make('Documento')
                             ->label('N° Documento')
-                            ->required()
-                            ->visibleOn('edit'),
+                            ->required(),
                         Flatpickr::make('FechaPago')->label('Fecha de Pago')
                             ->default(fn() => Carbon::today()->format('Y-m-d'))
-                            ->required()
-                            ->visibleOn('edit'),
+                            ->required(),
                         Forms\Components\FileUpload::make('DocumentoArchivo')
                             ->label('Archivo Comprobante')
                             ->required()
@@ -121,8 +120,7 @@ class CuotasRelationManager extends RelationManager
                             ->deletable(false)
                             ->previewable()
                             ->downloadable()
-                            ->visibleOn('edit')
-                        ->columnSpanFull(),
+                            ->columnSpanFull(),
 
                     ])->columns(),
             ]);
@@ -203,6 +201,9 @@ class CuotasRelationManager extends RelationManager
                             }
                         }
                     ),
+                Tables\Actions\ViewAction::make()
+                ->button()
+                ->color('info'),
 //                Tables\Actions\DeleteAction::make(),
                 Tables\Actions\Action::make('AprobarPago')
                     ->action(function ($record) {
@@ -227,7 +228,6 @@ class CuotasRelationManager extends RelationManager
                     ->icon('heroicon-s-check')
                     ->visible(fn($record) => $record->Estado != 2)
                     ->disabled(function ($record) {
-
                         if (Auth::user()->isRole('Administrador') || Auth::user()->isCargo('Tesorero')) {
                             if (($record->Recaudado == $record->Monto)) {
                                 return false;
@@ -237,7 +237,6 @@ class CuotasRelationManager extends RelationManager
                         } else {
                             return true;
                         }
-
                     })
                     ->requiresConfirmation(),
 
@@ -282,10 +281,122 @@ class CuotasRelationManager extends RelationManager
 
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-//                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
+                Tables\Actions\BulkAction::make('AprobarMasivo')
+                    ->label('Pagar cuota(s) seleccionada(s)')
+                    ->form(function ($records) {
+                        $montoPendiente = $records->sum('Pendiente');
+                        $records = $records->sort(function ($a, $b) {
+                            // Primero por tipo: ordinaria antes que extraordinaria
+                            if ($a->TipoCuota !== $b->TipoCuota) {
+                                return $a->TipoCuota === 'cuota_extraordinaria' ? 1 : -1;
+                            }
+
+                            // Luego por fecha de vencimiento
+                            return $a->fecha_vencimiento <=> $b->fecha_vencimiento;
+                        });
+
+                        return [
+                            Forms\Components\Placeholder::make('')
+                                ->content('Se van a pagar ' . $records->count() . ' cuota(s) con un monto total pendiente de $' . number_format($montoPendiente, 0, ',', '.')),
+
+                            Section::make()
+                                ->schema([
+                                    TextInput::make('MontoPendiente')
+                                        ->label('Monto Pendiente')
+                                        ->prefix('$')
+                                        ->default(fn($record) => $montoPendiente)
+                                        ->disabled()
+                                        ->suffixAction(Forms\Components\Actions\Action::make('aplicar')
+                                            ->icon('heroicon-m-arrow-right-circle')
+                                            ->label('Aplicar Monto Pendiente')
+                                            ->action(function ($record, $set) use ($montoPendiente) {
+                                                $set('MontoPagar', $montoPendiente);
+                                            })
+                                        ),
+                                    TextInput::make('MontoPagar')
+                                        ->label('Monto a Pagar')
+                                        ->prefix('$')
+                                        ->required()
+                                        ->live(onBlur: true)
+                                ])->columns(),
+                            Section::make('Documentos')
+                                ->schema([
+                                    TextInput::make('Documento')
+                                        ->label('N° Documento')
+                                        ->required(),
+                                    Flatpickr::make('FechaPago')->label('Fecha de Pago')
+                                        ->default(fn() => Carbon::today()->format('Y-m-d'))
+                                        ->required(),
+                                    Forms\Components\FileUpload::make('DocumentoArchivo')
+                                        ->label('Archivo Comprobante')
+                                        ->required()
+                                        ->disk('public')
+                                        ->directory('comprobantesCuotas')
+                                        ->deletable(false)
+                                        ->previewable()
+                                        ->downloadable()
+                                        ->columnSpanFull()
+                                ])->columns(),
+                            Forms\Components\Placeholder::make('')
+                            ->content('El sistema aplicará el monto ingresado a las cuotas seleccionadas, comenzando por las cuotas ordinarias más antiguas. Si el monto pagado excede el total pendiente, se generará un saldo a favor en la ultima cuota saldada. Si el monto es insuficiente, se aplicará hasta agotar el monto ingresado y las cuotas restantes quedarán pendientes.')
+
+                        ];
+                    })
+                    ->action(function (array $data, $records) {
+                        $saldo = $data['MontoPagar'];
+
+                        /*$documento = Documentos::create([
+                            'TipoDocumento' => 1, // Asumimos que es un comprobante de pago
+                            'Nombre' => $data['Documento'],
+                            'Path' => $data['DocumentoArchivo'],
+                            'Descripcion' => 'Comprobante de pago de cuota',
+                            'AsosiadoA' => Auth::user()->id,
+                        ]);*/
+                        $records = $records->sort(function ($a, $b) {
+                            // Primero por tipo: ordinaria antes que extraordinaria
+                            if ($a->TipoCuota !== $b->TipoCuota) {
+                                return $a->TipoCuota === 'cuota_extraordinaria' ? 1 : -1;
+                            }
+
+                            // Luego por fecha de vencimiento
+                            return $a->fecha_vencimiento <=> $b->fecha_vencimiento;
+                        });
+
+                        foreach ($records as $record) {
+                            $montoPagar = $record->Pendiente;
+                            $montoCuota = $record->Monto;
+                            $record->Documento = $data['Documento'];
+                            $record->DocumentoArchivo = $data['DocumentoArchivo'];
+                            $record->FechaPago = $data['FechaPago'];
+
+                            if ($montoPagar < $saldo) {
+                                $record->Pendiente = 0;
+                                $record->Recaudado = $montoCuota;
+                                $saldo = $saldo - $montoPagar;
+
+                            } else {
+                                $record->Pendiente = $montoPagar - $saldo;
+                                $record->Recaudado = $saldo;
+                                $saldo = 0;
+                                break;
+                            }
+
+                            $record->save();
+                        }
+                        if ($saldo > 0) {
+                            Notification::make()
+                                ->title('Saldo a favor')
+                                ->body('Se ha generado un saldo a favor de $' . number_format($saldo, 0, ',', '.'))
+                                ->success()
+                                ->icon('heroicon-s-check')
+                                ->send();
+                            $records->last()->update(['SaldoFavor' => $saldo]);
+                        }
+//                            return redirect()->route('filament.resources.recaudacion.index');
+
+                    })
+                    ->deselectRecordsAfterCompletion(),
+            ])->checkIfRecordIsSelectableUsing(fn($record) => $record->Estado == 1 && $record->Pendiente > 0);
     }
 
     protected function afterSave(): void

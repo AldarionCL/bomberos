@@ -7,11 +7,13 @@ use App\Filament\Resources\CuotasPersonaResource\Pages;
 use App\Filament\Resources\CuotasPersonaResource\RelationManagers;
 use App\Models\CuotasPersona;
 use App\Models\Persona;
+use Carbon\Carbon;
 use Faker\Provider\Text;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\IconPosition;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -67,66 +69,56 @@ class CuotasPersonaResource extends Resource
                 }
             })
             ->columns([
-                Tables\Columns\Layout\Split::make([
+                Tables\Columns\ImageColumn::make('Foto')
+                    ->defaultImageUrl(url('/storage/fotosPersonas/placeholderAvatar.png'))
+                    ->circular()
+                    ->grow(false),
 
-                    Tables\Columns\Layout\Split::make([
-                        Tables\Columns\ImageColumn::make('Foto')
-                            ->defaultImageUrl(url('/storage/fotosPersonas/placeholderAvatar.png'))
-                            ->circular()
-                            ->grow(false),
+                Tables\Columns\TextColumn::make('user.name')
+                    ->label('Nombre')
+                    ->description(fn($record) => $record->estado->Estado)
+                    ->searchable()
+                    ->sortable()
+                    ->grow(false),
 
-                        Tables\Columns\Layout\Stack::make([
-                            Tables\Columns\TextColumn::make('user.name')
-                                ->label('Nombre')
-                                ->searchable()
-                                ->sortable(),
+                Tables\Columns\TextColumn::make('Rut')
+                    ->label('Rut')
+                    ->searchable()
+                    ->sortable(),
 
-                            Tables\Columns\TextColumn::make('Rut')
-                                ->label('Rut')
-                                ->searchable()
-                                ->sortable(),
-                        ])->grow(),
-                    ]),
-                    Tables\Columns\Layout\Stack::make([
-                        TextColumn::make('estado.Estado')
-                            ->visibleFrom('md')
-                            ->grow(false),
-                    ]),
-                    Tables\Columns\Layout\Stack::make([
-                        TextColumn::make('contCuotas')
-                            ->badge()
-                            ->color(fn($record) => $record->cuotas->where('Estado', '1')->count() > 0 ? 'logoYellow' : 'logoBlue')
-                            ->prefix("Cuotas Pendientes: ")
-                            ->default(fn($record) => $record->cuotas->where('Estado', '1')->count())
-                            ->label('Cuotas Pendientes')
-                            ->grow(false),
-                        TextColumn::make('montoPendiente')
-                            ->default(fn($record) => $record->cuotas->where('Estado', 1)->sum('Monto'))
-                            ->prefix('$')
-                            ->money('CLP')
-                            ->grow(false),
-                    ])->alignment(Alignment::End)
-                        ->visible(fn($record) => ($record->Edad ?? 0) < 50),
+                TextColumn::make('contCuotas')
+                    ->badge()
+                    ->color(fn($record) => $record->cuotasMes->where('Estado', '1')->count() > 0 ? 'logoYellow' : 'logoBlue')
+                    ->prefix("Cuotas Pendientes: ")
+                    ->state(fn($record) => $record->cuotasMes->where('Estado', '1')->count())
+                    ->label('Cuotas Pendientes Mes')
+                    ->grow(false),
 
-                    Tables\Columns\TextColumn::make('Exento')
-                        ->icon('heroicon-s-check-circle')
-                        ->color('danger')
-                        ->default(fn($record) => $record->Edad >= 50 ? 'Exento' : '')
-                        ->tooltip('Exento de pago por edad')
-                        ->visible(fn($record) => ($record->Edad ?? 0) >= 50)
-                        ->alignment(Alignment::End),
+                TextColumn::make('montoPendiente')
+                    ->label('Monto Pendiente Mes')
+                    ->default(fn($record) => $record->cuotasMes->where('Estado', 1)->sum('Monto'))
+                    ->prefix('$')
+                    ->money('CLP')
+                    ->grow(false),
+//                    ->visible(fn($record) => ($record->Edad ?? 0) < 50),
 
-                ])
+                Tables\Columns\TextColumn::make('Exento')
+                    ->icon('heroicon-s-check-circle')
+                    ->color('danger')
+                    ->default(fn($record) => $record->Edad >= 50 ? 'Exento' : '')
+                    ->tooltip('Exento de pago por edad')
+//                    ->visible(fn($record) => ($record->Edad ?? 0) >= 50),
+
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make()
+                /*Tables\Actions\EditAction::make()
                     ->label('Ver cuotas')
                     ->icon('heroicon-s-eye')
-                    ->button()
-//                Tables\Actions\ViewAction::make(),
+                    ->button(),*/
+                Tables\Actions\ViewAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

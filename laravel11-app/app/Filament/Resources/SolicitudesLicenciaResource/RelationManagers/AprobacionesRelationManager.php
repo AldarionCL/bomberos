@@ -100,7 +100,7 @@ class AprobacionesRelationManager extends RelationManager
                             $solicitud = Solicitud::find($record->idSolicitud);
                             $solicitud->Estado = 1;
 
-                            $solicitud->asociado->persona->Activo = false;
+//                            $solicitud->asociado->persona->Activo = false;
                             $solicitud->asociado->persona->idEstado = 3;
                             $solicitud->asociado->persona->save();
 

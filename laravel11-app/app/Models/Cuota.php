@@ -41,4 +41,10 @@ class Cuota extends Model
     public function aprobador(){
         return $this->hasOne(User::class, 'id', 'AprobadoPor');
     }
+
+    public function scopeThisMonth($query,$mes=null)
+    {
+        return $query->whereMonth('FechaPeriodo', now()->month)
+                     ->whereYear('FechaPeriodo', now()->year);
+    }
 }
