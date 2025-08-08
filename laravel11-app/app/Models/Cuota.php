@@ -20,6 +20,7 @@ class Cuota extends Model
         'Monto',
         'Pendiente',
         'Recaudado',
+        'SaldoFavor',
         'TipoCuota',
         'AprobadoPor',
     ];
@@ -40,6 +41,16 @@ class Cuota extends Model
 
     public function aprobador(){
         return $this->hasOne(User::class, 'id', 'AprobadoPor');
+    }
+
+    public function documentos()
+    {
+        return $this->belongsToMany(
+            Documentos::class,          // Modelo relacionado
+            'documentos_cuotas',       // Tabla intermedia
+            'idCuota',                // FK en tabla intermedia que apunta a Cuota
+            'idDocumento'             // FK en tabla intermedia que apunta a Documento
+        );
     }
 
     public function scopeThisMonth($query,$mes=null)

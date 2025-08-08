@@ -56,7 +56,11 @@ class CuotasPersonaResource extends Resource
                         Forms\Components\Placeholder::make('contCuotas')
                             ->content(fn($record) => $record->cuotas->where('Estado', 1)->count())
                             ->label('Cuotas Pendientes'),
-                    ])->columns()
+                        Forms\Components\Placeholder::make('SaldoFavor')
+                            ->content(fn($record) => '$' . number_format($record->cuotas->where('SaldoFavor','>', 0)->sum('SaldoFavor'), 0, ',', '.'))
+                            ->label('Saldo Favor')
+                        ->extraAttributes(['class' => 'text-lg font-bold text-yellow-500']),
+                    ])->columns(3)
             ]);
     }
 
@@ -111,7 +115,7 @@ class CuotasPersonaResource extends Resource
 
             ])
             ->filters([
-                //
+
             ])
             ->actions([
                 /*Tables\Actions\EditAction::make()

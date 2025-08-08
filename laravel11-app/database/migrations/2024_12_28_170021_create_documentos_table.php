@@ -21,6 +21,7 @@ return new class extends Migration
             $table->string('Path')->nullable();
             $table->bigInteger('AsociadoA')->unsigned()->nullable();
             $table->bigInteger('idSolicitud')->unsigned()->nullable();
+            $table->bigInteger('idCuota')->unsigned()->nullable();
 
             $table->timestamps();
         });

@@ -33,4 +33,14 @@ class Documentos extends Model
     {
         return $this->belongsTo(Solicitud::class, 'idSolicitud', 'id');
     }
+
+    public function cuotas()
+    {
+        return $this->belongsToMany(
+            Cuota::class,
+            'documentos_cuotas',
+            'idDocumento',
+            'idCuota'
+        );
+    }
 }

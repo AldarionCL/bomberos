@@ -21,8 +21,11 @@ return new class extends Migration
             $table->integer('Monto');
             $table->integer('Pendiente')->nullable();
             $table->integer('Recaudado')->nullable();
+            $table->integer('SaldoFavor')->nullable();
             $table->string('Documento')->nullable();
             $table->string('DocumentoArchivo')->nullable();
+            $table->string('TipoCuota', 50)->nullable();
+            $table->bigInteger('AprobadoPor')->unsigned();
 
             $table->foreign('idUser')->references('id')->on('users');
             $table->timestamps();
