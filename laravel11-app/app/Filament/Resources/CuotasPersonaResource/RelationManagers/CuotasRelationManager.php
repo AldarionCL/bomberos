@@ -110,15 +110,19 @@ class CuotasRelationManager extends RelationManager
                     }),
 
                 Tables\Columns\TextColumn::make('FechaPeriodo')
+                    ->label('Periodo')
                     ->date("d/m/Y"),
 
                 Tables\Columns\TextColumn::make('FechaVencimiento')
+                    ->label('Vencimiento')
                     ->date("d/m/Y"),
 
                 Tables\Columns\TextColumn::make('Pendiente')
+                    ->money('CLP', locale: 'es_CL')
                     ->color('warning'),
 
                 Tables\Columns\TextColumn::make('Recaudado')
+                    ->money('CLP', locale: 'es_CL')
                     ->color('success'),
 
                 Tables\Columns\TextColumn::make('estadocuota.Estado')
