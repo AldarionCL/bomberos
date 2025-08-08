@@ -80,7 +80,7 @@ class CuotasPersonaResource extends Resource
 
                 Tables\Columns\TextColumn::make('user.name')
                     ->label('Nombre')
-                    ->description(fn($record) => $record->estado->Estado)
+//                    ->description(fn($record) => $record->estado->Estado)
                     ->searchable()
                     ->sortable()
                     ->grow(false),

@@ -12,6 +12,7 @@ use Coolsam\FilamentFlatpickr\Forms\Components\Flatpickr;
 use Faker\Provider\Text;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
@@ -143,18 +144,32 @@ class TesoreriaResource extends Resource
                             ->default(fn() => Carbon::today()->format('Y-m-d'))
                             ->visibleOn('edit'),
 
-                        Forms\Components\TextInput::make('Documento')
-                            ->label('N° Documento')
-                            ->visibleOn('edit'),
-
-                        Forms\Components\FileUpload::make('DocumentoArchivo')
-                            ->downloadable()
-                            ->deletable(false)
-                            ->previewable()
-                            ->label('Archivo')
-                            ->visibleOn('edit'),
-
-                    ])->columns()
+                    ])->columns(),
+                Section::make('Comprobantes')
+                    ->schema([
+                        Forms\Components\Repeater::make('Comprobante')
+                            ->relationship('documentos')
+                            ->label('')
+                            ->schema([
+                                Forms\Components\Placeholder::make('Ndocumento')
+                                    ->label('N° Documento')
+                                    ->content(fn($record) => $record->Nombre),
+                                Forms\Components\Placeholder::make('FechaPago')
+                                    ->label('Fecha de Pago')
+                                    ->content(fn($record) => Carbon::parse($record->FechaPago)->format('d/m/Y')),
+                                Forms\Components\FileUpload::make('Path')
+                                    ->label('Archivo Comprobante')
+                                    ->required()
+                                    ->disk('public')
+                                    ->directory('comprobantesCuotas')
+                                    ->deletable(false)
+                                    ->previewable()
+                                    ->downloadable()
+                                    ->columnSpanFull(),
+                            ])
+                            ->columns()
+                            ->grid(),
+                    ]),
             ]);
     }
 
@@ -205,21 +220,17 @@ class TesoreriaResource extends Resource
                             ->label('Total')
                     ]),*/
                 TextColumn::make('Pendiente')
-                    ->prefix("$")
-                    ->money('CLP')
+                    ->money('CLP', locale: 'es_CL')
                     ->summarize([
                         Tables\Columns\Summarizers\Sum::make()
-                            ->prefix('$')
-                            ->money('CLP')
+                            ->money('CLP', locale: 'es_CL')
                             ->label('Total')
                     ]),
                 TextColumn::make('Recaudado')
-                    ->prefix("$")
-                    ->money('CLP')
+                    ->money('CLP', locale: 'es_CL')
                     ->summarize([
                         Tables\Columns\Summarizers\Sum::make()
-                            ->prefix('$')
-                            ->money('CLP')
+                            ->money('CLP', locale: 'es_CL')
                             ->label('Total')
                     ]),
             ])
