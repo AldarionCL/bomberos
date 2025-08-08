@@ -91,18 +91,18 @@ class CuotasPersonaResource extends Resource
                     ->sortable(),
 
                 TextColumn::make('contCuotas')
-                    ->badge()
+//                    ->badge()
                     ->color(fn($record) => $record->cuotasMes->where('Estado', '1')->count() > 0 ? 'logoYellow' : 'logoBlue')
-                    ->prefix("Cuotas Pendientes: ")
+//                    ->prefix("Cuotas Pendientes: ")
                     ->state(fn($record) => $record->cuotasMes->where('Estado', '1')->count())
                     ->label('Cuotas Pendientes Mes')
+                    ->alignCenter()
                     ->grow(false),
 
                 TextColumn::make('montoPendiente')
                     ->label('Monto Pendiente Mes')
                     ->default(fn($record) => $record->cuotasMes->where('Estado', 1)->sum('Monto'))
-                    ->prefix('$')
-                    ->money('CLP')
+                    ->money('CLP', locale: 'es-CL')
                     ->grow(false),
 //                    ->visible(fn($record) => ($record->Edad ?? 0) < 50),
 
@@ -122,7 +122,9 @@ class CuotasPersonaResource extends Resource
                     ->label('Ver cuotas')
                     ->icon('heroicon-s-eye')
                     ->button(),*/
-                Tables\Actions\ViewAction::make(),
+                Tables\Actions\ViewAction::make()
+                ->button()
+                ->color('info'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

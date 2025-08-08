@@ -206,6 +206,7 @@ class TesoreriaResource extends Resource
                         'Aprobado' => 'success',
                         'Rechazado' => 'danger',
                         'Cancelado' => 'danger',
+                        'Pendiente Aprobacion' => 'warning',
                         default => 'gray',
                     })
                     ->label('Estado'),
@@ -249,7 +250,9 @@ class TesoreriaResource extends Resource
 
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                ->button()
+                ->color('info'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

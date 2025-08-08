@@ -68,6 +68,9 @@ class CuotasRelationManager extends RelationManager
                         Forms\Components\Placeholder::make('SaldoFavor')
                             ->label('Saldo a Favor')
                             ->content(fn($record) => "$" . number_format($record->SaldoFavor, 0, ',', '.')),
+                        Forms\Components\Placeholder::make('TipoCuota')
+                            ->label('Tipo de Cuota')
+                            ->content(fn($record) => $record->TipoCuota == 'cuota_ordinaria' ? 'Cuota Ordinaria' : 'Cuota Extraordinaria'),
                     ])->columns(3),
 
                 Section::make('Comprobantes')
@@ -126,6 +129,7 @@ class CuotasRelationManager extends RelationManager
                     ->color('success'),
 
                 Tables\Columns\TextColumn::make('estadocuota.Estado')
+                    ->label('Estado cuota')
                     ->badge()
                     ->grow(false)
                     ->color(fn(string $state): string => match ($state) {
@@ -133,6 +137,7 @@ class CuotasRelationManager extends RelationManager
                         'Aprobado' => 'success',
                         'Rechazado' => 'danger',
                         'Cancelado' => 'danger',
+                        'Pendiente Aprobacion' => 'warning',
                         default => 'gray',
                     })->visibleFrom('md'),
 
@@ -184,11 +189,11 @@ class CuotasRelationManager extends RelationManager
                 Tables\Actions\ViewAction::make()
                     ->button()
                     ->color('info'),
-//                Tables\Actions\DeleteAction::make(),
+
                 Tables\Actions\Action::make('AprobarPago')
+                    ->label('Aprobar')
                     ->action(function ($record) {
-                        $record->update(['Estado' => 2]);
-                        $record->update(['AprobadoPor' => Auth::user()->id]);
+                        $record->update(['Estado' => 2, 'AprobadoPor' => Auth::user()->id]);
 
                         Notification::make()
                             ->title('Pago Aprobado')
@@ -381,6 +386,7 @@ class CuotasRelationManager extends RelationManager
                                 $record->Recaudado = $montoCuota;
                                 $saldo = $saldo - $montoPagar;
 
+                                $record->Estado = 5; // Estado 5, pendiente de aprobacion
 
                                 Notification::make()
                                     ->title('Cuota Pagada')
@@ -456,9 +462,9 @@ class CuotasRelationManager extends RelationManager
     {
         return [
             'Cuotas Pendientes' => Tab::make()
-                ->modifyQueryUsing(fn(Builder $query) => $query->where('Estado', 1)),
+                ->modifyQueryUsing(fn(Builder $query) => $query->whereIn('Estado', [1,5])),
             'Cuotas Aprobadas' => Tab::make()
-                ->modifyQueryUsing(fn(Builder $query) => $query->where('Estado', '>', 1)),
+                ->modifyQueryUsing(fn(Builder $query) => $query->where('Estado', 2)),
             'Todas' => Tab::make(),
 
         ];
