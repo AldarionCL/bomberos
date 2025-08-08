@@ -74,6 +74,7 @@ class CuotasRelationManager extends RelationManager
                     ->schema([
                         Forms\Components\Repeater::make('Comprobante')
                             ->relationship('documentos')
+                            ->label('')
                             ->schema([
                                 Forms\Components\Placeholder::make('Ndocumento')
                                     ->label('N° Documento')
@@ -90,8 +91,9 @@ class CuotasRelationManager extends RelationManager
                                     ->previewable()
                                     ->downloadable()
                                     ->columnSpanFull(),
-                            ])->columns(),
-                    ])->columns(),
+                            ])->columns()
+                            ->grid(),
+                    ]),
             ]);
     }
 
@@ -100,51 +102,39 @@ class CuotasRelationManager extends RelationManager
         return $table
             ->recordTitleAttribute('Cuotas')
             ->columns([
+                Tables\Columns\TextColumn::make('TipoCuota')
+                    ->formatStateUsing(fn(string $state): string => match ($state) {
+                        'cuota_ordinaria' => 'Ordinaria',
+                        'cuota_extraordinaria' => 'Extraordinaria',
+                        default => $state,
+                    }),
 
-                Tables\Columns\Layout\Split::make([
+                Tables\Columns\TextColumn::make('FechaPeriodo')
+                    ->date("d/m/Y"),
 
-                    Tables\Columns\Layout\Panel::make([
-                        Tables\Columns\Layout\Stack::make([
-                            Tables\Columns\TextColumn::make('FechaPeriodo')
-                                ->description('Periodo', position: 'above')
-                                ->date("d/m/Y"),
-//                                ->prefix("Periodo: "),
-                            Tables\Columns\TextColumn::make('FechaVencimiento')
-                                ->description('Fecha Vencimiento', position: 'above')
-                                ->date("d/m/Y")
-//                                ->prefix("Vencimiento: "),
-                        ]),
-                    ]),
-                    Tables\Columns\Layout\Stack::make([
-                        Tables\Columns\TextColumn::make('TipoCuota')
-//                            ->description('Tipo de Cuota', position: 'above')
-                            ->formatStateUsing(fn(string $state): string => match ($state) {
-                                'cuota_ordinaria' => 'Cuota Ordinaria',
-                                'cuota_extraordinaria' => 'Cuota Extraordinaria',
-                                default => $state,
-                            }),
-                        Tables\Columns\TextColumn::make('Pendiente')
-                            ->prefix("Pendiente : $")
-                            ->color('warning'),
-                        Tables\Columns\TextColumn::make('Recaudado')
-                            ->prefix("Recaudado : $")
-                            ->color('success'),
-                    ]),
-                    Tables\Columns\TextColumn::make('estadocuota.Estado')
-                        ->badge()
-                        ->grow(false)
-                        ->color(fn(string $state): string => match ($state) {
-                            'Pendiente' => 'badgeAlert',
-                            'Aprobado' => 'success',
-                            'Rechazado' => 'danger',
-                            'Cancelado' => 'danger',
-                            default => 'gray',
-                        })->visibleFrom('md'),
-                    Tables\Columns\TextColumn::make('FechaPago')
-                        ->description('Fecha de Pago', position: 'above')
-                        ->date("d/m/Y")
-                        ->visibleFrom('md'),
-                ])
+                Tables\Columns\TextColumn::make('FechaVencimiento')
+                    ->date("d/m/Y"),
+
+                Tables\Columns\TextColumn::make('Pendiente')
+                    ->color('warning'),
+
+                Tables\Columns\TextColumn::make('Recaudado')
+                    ->color('success'),
+
+                Tables\Columns\TextColumn::make('estadocuota.Estado')
+                    ->badge()
+                    ->grow(false)
+                    ->color(fn(string $state): string => match ($state) {
+                        'Pendiente' => 'badgeAlert',
+                        'Aprobado' => 'success',
+                        'Rechazado' => 'danger',
+                        'Cancelado' => 'danger',
+                        default => 'gray',
+                    })->visibleFrom('md'),
+
+                Tables\Columns\TextColumn::make('FechaPago')
+                    ->date("d/m/Y")
+                    ->visibleFrom('md'),
             ])
             ->filters([
                 // filtro por fecha de vencimiento de la cuota con select filter
