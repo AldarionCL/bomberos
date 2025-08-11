@@ -55,10 +55,10 @@
                 <div class="text-gray-700 font-bold text-xl">${{$cuota->Recaudado ?? ''}}</div>
             </div>
             <div class="border-t2 border-gray-100 mb-8 md:w-1/2 sm:w-3/4">
-                <div class="text-gray-700 mb-2">Firma del recaudador: ___________________________</div>
+                <div class="text-gray-700 mb-2">Firma del tesorero: ___________________________</div>
                 <div class="text-gray-700 mb-2 right text-center">{{$cuota->aprobador->name ?? ''}}</div>
             </div>
-            <div class="border-t-2 border-gray-300 pt-8 mb-8">
+            {{--<div class="border-t-2 border-gray-300 pt-8 mb-8">
                 <div class="text-gray-700 mb-2">Pago por concepto de cuota mensual, o cuota extraordinaria</div>
                 <div class="text-gray-700 mb-2">Cualquier duda, comunicarse con el tesorero</div>
                 <div class="text-gray-700">
@@ -66,7 +66,7 @@
                     © bomba macul e-mail: correo@bombamacul.cl- fono: +56 22 2839660
 
                 </div>
-            </div>
+            </div>--}}
         </div>
     </div>
 
