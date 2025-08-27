@@ -169,8 +169,178 @@ class CuotasRelationManager extends RelationManager
 //                Tables\Actions\CreateAction::make(),
             ])
             ->actions([
+                Tables\Actions\Action::make('Pagar')
+                    ->label('Pagar cuota')
+                    ->form(function ($records) {
+                        $saldoFavor = Cuota::where('idUser', $records->first()->idUser)
+                            ->where('SaldoFavor', '>', 0)
+                            ->sum('SaldoFavor');
+
+                        $montoPendiente = $records->sum('Pendiente');
+                        $montoTotalPendiente = $montoPendiente - $saldoFavor;
+
+                        $records = $records->sort(function ($a, $b) {
+                            // Primero por tipo: ordinaria antes que extraordinaria
+                            if ($a->TipoCuota !== $b->TipoCuota) {
+                                return $a->TipoCuota === 'cuota_extraordinaria' ? 1 : -1;
+                            }
+
+                            // Luego por fecha de vencimiento
+                            return $a->fecha_vencimiento <=> $b->fecha_vencimiento;
+                        });
+
+                        return [
+                            Forms\Components\Placeholder::make('')
+                                ->content('Se van a pagar ' . $records->count() . ' cuota(s) con un monto total pendiente de $' . number_format($montoPendiente, 0, ',', '.')),
+                            Forms\Components\Placeholder::make('')
+                                ->content('Usted posee un saldo a favor de $' . number_format($saldoFavor, 0, ',', '.')
+                                    . ' por lo que el monto a pagar es de $' . number_format($montoTotalPendiente, 0, ',', '.'))
+                                ->visible($saldoFavor > 0),
+
+                            Section::make()
+                                ->schema([
+                                    TextInput::make('MontoPendiente')
+                                        ->label('Monto Pendiente')
+                                        ->prefix('$')
+                                        ->default(fn($record) => $montoTotalPendiente)
+                                        ->disabled()
+                                        ->suffixAction(Forms\Components\Actions\Action::make('aplicar')
+                                            ->icon('heroicon-m-arrow-right-circle')
+                                            ->label('Aplicar Monto Pendiente')
+                                            ->action(function ($record, $set) use ($montoTotalPendiente) {
+                                                $set('MontoPagar', $montoTotalPendiente);
+                                            })
+                                        ),
+                                    TextInput::make('MontoPagar')
+                                        ->label('Monto a Pagar')
+                                        ->prefix('$')
+                                        ->required()
+                                        ->live(onBlur: true)
+                                ])->columns(),
+                            Section::make('Documentos')
+                                ->schema([
+                                    TextInput::make('Documento')
+                                        ->label('N° Documento')
+                                        ->required(),
+                                    Flatpickr::make('FechaPago')->label('Fecha de Pago')
+                                        ->default(fn() => Carbon::today()->format('Y-m-d'))
+                                        ->required(),
+                                    Forms\Components\FileUpload::make('DocumentoArchivo')
+                                        ->label('Archivo Comprobante')
+                                        ->required()
+                                        ->disk('public')
+                                        ->directory('comprobantesCuotas')
+                                        ->deletable(false)
+                                        ->previewable()
+                                        ->downloadable()
+                                        ->columnSpanFull()
+                                ])->columns(),
+                            Forms\Components\Placeholder::make('')
+                                ->content('El sistema aplicará el monto ingresado a las cuotas seleccionadas, comenzando por las cuotas ordinarias. Si el monto ingresado excede el total pendiente, se generará un saldo a favor en la ultima cuota saldada. ')
+
+                        ];
+                    })
+                    ->action(function (array $data, $records) {
+                        $saldo = $data['MontoPagar'];
+                        $saldoFavor = Cuota::where('idUser', $records->first()->idUser)
+                            ->where('SaldoFavor', '>', 0)
+                            ->first();
+
+                        $documento = Documentos::create([
+                            'TipoDocumento' => 1, // Asumimos que es un comprobante de pago
+                            'Nombre' => $data['Documento'],
+                            'Path' => $data['DocumentoArchivo'],
+                            'Descripcion' => 'Comprobante de pago de cuota',
+//                            'AsosiadoA' => Auth::user()->id,
+                        ]);
+
+                        // Ordenar las cuotas seleccionadas por tipo y fecha de vencimiento
+                        $records = $records->sort(function ($a, $b) {
+                            if ($a->TipoCuota !== $b->TipoCuota) {
+                                return $a->TipoCuota === 'cuota_extraordinaria' ? 1 : -1;
+                            }
+                            return $a->fecha_vencimiento <=> $b->fecha_vencimiento;
+                        });
+
+                        foreach ($records as $record) {
+                            $montoPagar = $record->Pendiente;
+                            $montoCuota = $record->Monto;
+                            $record->FechaPago = $data['FechaPago'];
+
+                            // uso del saldo a favor
+                            if ($saldoFavor) {
+                                if ($montoPagar >= $saldoFavor->SaldoFavor) {
+                                    $montoPagar = $montoPagar - $saldoFavor->SaldoFavor;
+                                    $saldoFavor->SaldoFavor = 0;
+                                    $saldoFavor->save();
+
+                                    Notification::make()
+                                        ->title('Saldo a Favor Aplicado')
+                                        ->body('Se ha aplicado un saldo a favor de $' . number_format($saldoFavor->SaldoFavor, 0, ',', '.'))
+                                        ->success()
+                                        ->icon('heroicon-s-check')
+                                        ->send();
+                                }
+                            }
+
+                            // el monto es suficiente para saldar la cuota por completo
+                            if ($montoPagar <= $saldo) {
+                                $record->Pendiente = 0;
+                                $record->Recaudado = $montoCuota;
+                                $saldo = $saldo - $montoPagar;
+
+                                $record->Estado = 5; // Estado 5, pendiente de aprobacion
+
+                                Notification::make()
+                                    ->title('Cuota Pagada')
+                                    ->body('Se ha pagado la cuota del periodo ' . Carbon::parse($record->FechaPeriodo)->format('d/m/Y'))
+                                    ->success()
+                                    ->duration(5000)
+                                    ->icon('heroicon-s-check')
+                                    ->send();
+
+                                $record->save();
+
+
+                            } else {
+                                $record->Pendiente = $montoPagar - $saldo;
+                                $record->Recaudado = $record->Recaudado + $saldo;
+                                $saldo = 0;
+
+                                Notification::make()
+                                    ->title('Cuota Abonada')
+                                    ->body('Se ha abonado la cuota del periodo ' . Carbon::parse($record->FechaPeriodo)->format('d/m/Y'))
+                                    ->success()
+                                    ->duration(5000)
+                                    ->icon('heroicon-s-check')
+                                    ->send();
+
+                                $record->save();
+
+                                break;
+                            }
+
+                            DocumentosCuotas::create([
+                                'idCuota' => $record->id,
+                                'idDocumento' => $documento->id,
+                            ]);
+
+                        }
+                        if ($saldo > 0) {
+                            Notification::make()
+                                ->title('Saldo a favor')
+                                ->body('Se ha generado un saldo a favor de $' . number_format($saldo, 0, ',', '.'))
+                                ->success()
+                                ->icon('heroicon-s-check')
+                                ->send();
+                            $records->last()->update(['SaldoFavor' => $saldo]);
+                        }
+                        return redirect(request()->header('Referer'));
+
+                    }),
+
                 Tables\Actions\EditAction::make()
-                    ->label('Ingresar Pago')
+                    ->label('Editar')
                     ->button()
                     ->color('info')
                     ->disabled(
@@ -359,6 +529,8 @@ class CuotasRelationManager extends RelationManager
                             return $a->fecha_vencimiento <=> $b->fecha_vencimiento;
                         });
 
+                        $cuotaAnterior = null;
+
                         foreach ($records as $record) {
                             $montoPagar = $record->Pendiente;
                             $montoCuota = $record->Monto;
@@ -397,22 +569,20 @@ class CuotasRelationManager extends RelationManager
                                     ->send();
 
                                 $record->save();
-
+                                $cuotaAnterior = $record;
 
                             } else {
-                                $record->Pendiente = $montoPagar - $saldo;
-                                $record->Recaudado = $record->Recaudado + $saldo;
-                                $saldo = 0;
-
-                                Notification::make()
-                                    ->title('Cuota Abonada')
-                                    ->body('Se ha abonado la cuota del periodo ' . Carbon::parse($record->FechaPeriodo)->format('d/m/Y'))
-                                    ->success()
-                                    ->duration(5000)
-                                    ->icon('heroicon-s-check')
-                                    ->send();
-
-                                $record->save();
+                                if($cuotaAnterior){
+                                    $cuotaAnterior->SaldoFavor = $saldo;
+                                    $saldo = 0;
+                                    $cuotaAnterior->save();
+                                    Notification::make()
+                                        ->title('Saldo a favor')
+                                        ->body('Se ha generado un saldo a favor de $' . number_format($saldo, 0, ',', '.'))
+                                        ->success()
+                                        ->icon('heroicon-s-check')
+                                        ->send();
+                                }
 
                                 break;
                             }
@@ -421,8 +591,8 @@ class CuotasRelationManager extends RelationManager
                                 'idCuota' => $record->id,
                                 'idDocumento' => $documento->id,
                             ]);
-
                         }
+
                         if ($saldo > 0) {
                             Notification::make()
                                 ->title('Saldo a favor')
@@ -432,6 +602,8 @@ class CuotasRelationManager extends RelationManager
                                 ->send();
                             $records->last()->update(['SaldoFavor' => $saldo]);
                         }
+
+
                         return redirect(request()->header('Referer'));
 
                     })
