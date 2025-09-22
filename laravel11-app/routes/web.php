@@ -14,5 +14,5 @@ Route::get('/sincPersonas', [\App\Http\Controllers\CuotasController::class, 'sin
 Route::get('/filament/exports/{export}/download', DownloadExport::class)
     ->name('filament.exports.download');
 
-Route::get('/comprobante/{record}', \App\Livewire\ComprobanteCuota::class)
+Route::get('/comprobante/{idDocumento}', \App\Livewire\ComprobanteCuota::class)
     ->name('comprobante-cuota');

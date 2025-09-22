@@ -7,13 +7,19 @@ use Livewire\Component;
 class ComprobanteCuota extends Component
 {
 
-    public $record;
+    public $records;
     public $cuota;
+    public $documento;
+    public $user;
+    public $aprobador;
 
-    public function mount($record)
+    public function mount($idDocumento)
     {
-        $this->record = $record;
-        $this->cuota = \App\Models\Cuota::find($record);
+        $this->records = \App\Models\Cuota::where('idDocumento', $idDocumento)->get();
+        $this->cuota = $this->records[0];
+        $this->documento = $this->cuota->documento;
+        $this->user = $this->cuota->user;
+        $this->aprobador = $this->cuota->aprobador;
     }
 
     public function render()
@@ -26,10 +32,17 @@ class ComprobanteCuota extends Component
         return $pdf->stream('comprobante-cuota.pdf');
     }*/
 
-    public static function getHtml($id){
-        $cuota = \App\Models\Cuota::find($id);
+    public static function getHtml($idDocumento){
+        $records = \App\Models\Cuota::where('idDocumento', $idDocumento)->get();
+        $cuota = $records[0];
 
-        return view('livewire.comprobante-cuota', ['cuota' => $cuota]);
+        return view('livewire.comprobante-cuota', [
+            'cuota' => $cuota,
+            'records' => $records,
+            'documento' => $cuota->documento,
+            'user' => $cuota->user,
+            'aprobador' => $cuota->aprobador,
+        ])->render();
     }
 
 }

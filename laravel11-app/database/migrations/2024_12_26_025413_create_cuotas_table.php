@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('cuotas', function (Blueprint $table) {
             $table->id();
             $table->bigInteger('idUser')->unsigned();
+            $table->bigInteger('idDocumento')->unsigned()->nullable();
             $table->dateTime('FechaPeriodo')->nullable();
             $table->dateTime('FechaVencimiento')->nullable();
             $table->dateTime('FechaPago')->nullable();

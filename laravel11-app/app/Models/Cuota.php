@@ -17,6 +17,7 @@ class Cuota extends Model
         'Estado',
         'Documento',
         'DocumentoArchivo',
+        'idDocumento',
         'Monto',
         'Pendiente',
         'Recaudado',
@@ -41,6 +42,10 @@ class Cuota extends Model
 
     public function aprobador(){
         return $this->hasOne(User::class, 'id', 'AprobadoPor');
+    }
+
+    public function documento(){
+        return $this->hasOne(Documentos::class, 'id', 'idDocumento');
     }
 
     public function documentos()
