@@ -317,7 +317,7 @@ class CuotasRelationManager extends RelationManager
                                         ->url(route('comprobante-cuota', $documento->id), shouldOpenInNewTab: true),
                                 ])
                                 ->send()
-                                ->sendToDatabase(Auth::user());
+                                ->sendToDatabase($record->user);
 
 
                         } else {
@@ -611,7 +611,7 @@ class CuotasRelationManager extends RelationManager
                                     ->url(route('comprobante-cuota', $documento->id), shouldOpenInNewTab: true),
                             ])
                             ->send()
-                            ->sendToDatabase(Auth::user());
+                            ->sendToDatabase($records[0]->user);
 
                         return redirect(request()->header('Referer'));
 
