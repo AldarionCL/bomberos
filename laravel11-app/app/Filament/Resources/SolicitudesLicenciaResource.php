@@ -164,7 +164,7 @@ class SolicitudesLicenciaResource extends Resource
 //                            ->relationship('asociado', 'name')
                                 ->options(fn() => \App\Models\User::whereHas('persona', function ($query) {
                                     $query->where('Activo', 1);
-                                    if (!Auth::user()->isRole('Administrador') && !Auth::user()->isCargo('Director') && !Auth::user()->isCargo('Capitan')) {
+                                    if (!Auth::user()->isRole('Administrador') && !Auth::user()->isCargo('Director') && !Auth::user()->isCargo('Capitan')  && !Auth::user()->isCargo('Capitán')) {
                                         $query->where('id', Auth::user()->id);
                                     }
                                 })->pluck('name', 'id'))
