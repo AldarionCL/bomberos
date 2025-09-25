@@ -37,7 +37,7 @@ class CuotasRelationManager extends RelationManager
             ->schema([
                 Forms\Components\Actions::make([
                     Forms\Components\Actions\Action::make('comprobante')
-                        ->label('Ver Comprobante')
+                        ->label('Ver Recibo de Pago')
                         ->url(fn($record) => route('comprobante-cuota', $record->idDocumento))
                         ->openUrlInNewTab()
                         ->icon('heroicon-s-document-text')
@@ -142,6 +142,7 @@ class CuotasRelationManager extends RelationManager
                     })->visibleFrom('md'),
 
                 Tables\Columns\TextColumn::make('documento.Nombre')
+                    ->label('Comprobante')
                     ->badge()
                     ->color('info')
                     ->icon('heroicon-s-document-text')
@@ -389,11 +390,11 @@ class CuotasRelationManager extends RelationManager
                     ->color('success')
                     ->icon('heroicon-s-check')
                     ->disabled(fn($record) => $record->Pendiente > 0)
-                    ->visible(fn($record) => (Auth::user()->isRole('Administrador') || Auth::user()->isRole('Tesorero')) && $record->Estado == 5)
+                    ->visible(fn($record) => (Auth::user()->isRole('Administrador') || Auth::user()->isCargo('Tesorero')) && $record->Estado == 5)
                     ->requiresConfirmation(),
 
                 Tables\Actions\Action::make('VerComprobante')
-                    ->label('Emitir comprobante')
+                    ->label('Recibo de Pago')
                     ->url(fn($record) => route('comprobante-cuota', $record->idDocumento))
 //                        ->view('filament.pages.comprobanteFilament', fn($record) => ['record' => $record->id])
                     ->openUrlInNewTab()
