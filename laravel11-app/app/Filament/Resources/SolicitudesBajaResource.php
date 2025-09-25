@@ -157,6 +157,7 @@ class SolicitudesBajaResource extends Resource
                 ])
 
             ])
+            ->defaultSort('Fecha_registro', 'desc')
             ->filters([
                 //
             ])

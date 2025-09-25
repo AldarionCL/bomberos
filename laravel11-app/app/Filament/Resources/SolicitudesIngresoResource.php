@@ -209,6 +209,7 @@ class SolicitudesIngresoResource extends Resource
                 ])
 
             ])
+            ->defaultSort('Fecha_registro', 'desc')
             ->filters([
                 //
             ])

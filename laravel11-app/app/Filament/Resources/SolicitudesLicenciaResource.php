@@ -285,6 +285,7 @@ class SolicitudesLicenciaResource extends Resource
                         ->label('Estado'),
                 ])
             ])
+            ->defaultSort('Fecha_registro', 'desc')
             ->filters([
                 //
             ])
