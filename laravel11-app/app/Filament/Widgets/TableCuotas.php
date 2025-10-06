@@ -37,7 +37,7 @@ class TableCuotas extends BaseWidget
                 Tables\Columns\TextColumn::make('vencimiento')
                     ->default(fn($record) => (Carbon::parse($record->FechaVencimiento)->isPast()) ? 'Vencida' : Carbon::parse($record->FechaVencimiento)->diffForHumans())
                     ->badge()
-                    ->color(fn($record) => (Carbon::parse($record->FechaVencimiento)->isPast()) ? 'danger' : 'success'),
+                    ->color(fn($record) => (Carbon::parse($record->FechaVencimiento)->isPast()) ? 'danger' : 'warning'),
 
                 /*Tables\Columns\TextColumn::make('estadocuota.Estado')->label('Estado')
                     ->badge()
