@@ -153,10 +153,10 @@ class TesoreriaResource extends Resource
                             ->schema([
                                 Forms\Components\Placeholder::make('Ndocumento')
                                     ->label('N° Documento')
-                                    ->content(fn($record) => $record->Nombre),
+                                    ->content(fn($record) => $record->Nombre ?? ''),
                                 Forms\Components\Placeholder::make('FechaPago')
                                     ->label('Fecha de Pago')
-                                    ->content(fn($record) => Carbon::parse($record->FechaPago)->format('d/m/Y')),
+                                    ->content(fn($record) => Carbon::parse($record->FechaPago ?? '')->format('d/m/Y')),
                                 Forms\Components\FileUpload::make('Path')
                                     ->label('Archivo Comprobante')
                                     ->required()
