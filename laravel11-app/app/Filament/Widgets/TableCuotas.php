@@ -23,6 +23,12 @@ class TableCuotas extends BaseWidget
 //            ->description('Listado de cuotas pendientes')
             ->defaultPaginationPageOption(5)
             ->columns([
+                Tables\Columns\TextColumn::make('TipoCuota')->label('Tipo Cuota')
+                    ->formatStateUsing(fn ($state) => match ($state) {
+                        'cuota_ordinaria' => 'Cuota Ordinaria',
+                        'cuota_extraordinaria' => 'Cuota Extraordinaria',
+                        default => ucwords(str_replace('_', ' ', strtolower($state))),
+                    }),
                 Tables\Columns\TextColumn::make('FechaPeriodo')->label('Periodo')->date('d/m/Y'),
                 Tables\Columns\TextColumn::make('Monto')->label('Monto')->money('CLP'),
                 Tables\Columns\TextColumn::make('FechaVencimiento')->label('Fecha Vencimiento')->date('d/m/Y'),
