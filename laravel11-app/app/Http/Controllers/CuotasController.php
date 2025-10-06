@@ -15,7 +15,7 @@ use Maatwebsite\Excel\Facades\Excel;
 class CuotasController extends Controller
 {
 
-    public function sincronizarCuotas($monto = 20000)
+    public function sincronizarCuotas()
     {
 
         // Trae las personas activas
@@ -49,7 +49,7 @@ class CuotasController extends Controller
                     $diffMeses = round($ultimaFechaCuota->diffInMonths($fechaFinAnio));
                     for ($i = 0; $i <= $diffMeses; $i++) {
                         $fechaPeriodo = $ultimaFechaCuota->copy()->addMonths($i);
-                        $fechaVencimiento = $fechaPeriodo->copy()->addMonths(1);
+                        $fechaVencimiento = $fechaPeriodo->copy()->lastOfMonth();
 
                         foreach ($tiposCuota as $tipo) {
                             if ($tipo->Monto > 0) {
@@ -60,7 +60,7 @@ class CuotasController extends Controller
                                     $cuota = Cuota::create([
                                         'idUser' => $persona->idUsuario,
                                         'FechaPeriodo' => $fechaPeriodo->format('Y-m-01'),
-                                        'FechaVencimiento' => $fechaVencimiento->format('Y-m-05'),
+                                        'FechaVencimiento' => $fechaVencimiento->format('Y-m-d'),
                                         'Estado' => 1,
                                         'Monto' => $monto,
                                         'TipoCuota' => $tipoCuota,
