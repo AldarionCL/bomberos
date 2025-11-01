@@ -25,7 +25,8 @@ class CuotasController extends Controller
 
 
         foreach ($personas as $persona) {
-            $fechaIngreso = Carbon::parse($persona->FechaReclutamiento);
+            $fechaIngreso = Carbon::parse('2025-01-01');
+//            $fechaIngreso = Carbon::parse($persona->FechaReclutamiento);
             $fechaHoy = Carbon::now();
             $fechaFinAnio = Carbon::now()->addYear()->endOfYear();
             $fechaNacimiento = Carbon::parse($persona->FechaNacimiento);
@@ -39,7 +40,8 @@ class CuotasController extends Controller
                     ->orderBy('FechaPeriodo', 'desc')
                     ->first();
 
-                $ultimaFechaCuota = ($cuota) ? Carbon::parse($cuota->FechaPeriodo) : $fechaIngreso;
+                $ultimaFechaCuota = $fechaIngreso;
+//                $ultimaFechaCuota = ($cuota) ? Carbon::parse($cuota->FechaPeriodo) : $fechaIngreso;
 
                 if ($ultimaFechaCuota < $fechaFinAnio) {
 
@@ -57,16 +59,24 @@ class CuotasController extends Controller
                                 $tipoCuota = $tipo->TipoCuota;
 
                                 if ($monto > 0) {
-                                    $cuota = Cuota::create([
-                                        'idUser' => $persona->idUsuario,
-                                        'FechaPeriodo' => $fechaPeriodo->format('Y-m-01'),
-                                        'FechaVencimiento' => $fechaVencimiento->format('Y-m-d'),
-                                        'Estado' => 1,
-                                        'Monto' => $monto,
-                                        'TipoCuota' => $tipoCuota,
-                                        'Pendiente' => $monto,
-                                        'Recaudado' => 0,
-                                    ]);
+                                    $existeCuota = Cuota::where('idUser', $persona->idUsuario)
+                                        ->where('FechaPeriodo', $fechaPeriodo->format('Y-m-01'))
+                                        ->where('TipoCuota', $tipoCuota)
+                                        ->first();
+
+                                    if(!$existeCuota) {
+                                        $cuota = Cuota::Create(
+                                            [
+                                                'idUser' => $persona->idUsuario,
+                                                'FechaPeriodo' => $fechaPeriodo->format('Y-m-01'),
+                                                'FechaVencimiento' => $fechaVencimiento->format('Y-m-d'),
+                                                'Estado' => 1,
+                                                'Monto' => $monto,
+                                                'TipoCuota' => $tipoCuota,
+                                                'Pendiente' => $monto,
+                                                'Recaudado' => 0,
+                                            ]);
+                                    }
                                 }
                             }
                         }
