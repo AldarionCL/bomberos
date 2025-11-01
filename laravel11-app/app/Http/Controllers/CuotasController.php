@@ -27,7 +27,7 @@ class CuotasController extends Controller
         foreach ($personas as $persona) {
             $fechaIngreso = Carbon::parse($persona->FechaReclutamiento);
             $fechaHoy = Carbon::now();
-            $fechaFinAnio = Carbon::now()->endOfYear();
+            $fechaFinAnio = Carbon::now()->addYear()->endOfYear();
             $fechaNacimiento = Carbon::parse($persona->FechaNacimiento);
             $edad = $fechaHoy->diffInYears($fechaNacimiento) * -1;
             $tipoVoluntario = $persona->TipoVoluntario ?? 'voluntario';
