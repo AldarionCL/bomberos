@@ -86,7 +86,7 @@ class DocumentosResource extends Resource
                 return $query->orderBy('created_at', 'desc');
             })
             ->columns([
-                Tables\Columns\Layout\Split::make([
+//                Tables\Columns\Layout\Split::make([
                     Tables\Columns\IconColumn::make('')
                         ->icon(function ($record) {
                             if($record->Path) {
@@ -108,12 +108,14 @@ class DocumentosResource extends Resource
                         })
                         ->default(1)
                         ->grow(false),
-                    Tables\Columns\TextColumn::make('Nombre')->searchable()
+                    Tables\Columns\TextColumn::make('Nombre')
+                        ->grow()
+                        ->searchable()
                         ->description(fn($record) => $record->tipo->Tipo)
                     ,
 //                Tables\Columns\TextColumn::make('tipo.Tipo')->searchable(),
 
-                    Tables\Columns\Layout\Stack::make([
+//                    Tables\Columns\Layout\Stack::make([
                         TextColumn::make('tipo.Clasificacion')
                             ->label('Acceso')
                             ->badge()
@@ -122,17 +124,18 @@ class DocumentosResource extends Resource
                                 'publico' => 'success',
                                 default => 'gray',
                             })
+                            ->grow(false)
                             ->visible(fn() => Auth::user()->isRole('Administrador')),
 
                         TextColumn::make('asociado.name')
                             ->visible(fn() => Auth::user()->isRole('Administrador')),
-                    ])->alignment(Alignment::End),
+//                    ])->alignment(Alignment::End),
 
                     Tables\Columns\TextColumn::make('created_at')
                         ->label('Fecha Creacion')
                         ->date("d/m/Y")
                         ->weight(FontWeight::Thin),
-                ])
+//                ])
             ])
             ->recordUrl(function ($record) {
                 return APP::make('url')->to('storage/' . $record->Path);
