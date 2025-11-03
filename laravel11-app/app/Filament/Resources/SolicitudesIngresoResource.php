@@ -84,12 +84,12 @@ class SolicitudesIngresoResource extends Resource
                                     Flatpickr::make('FechaNacimientoPostulante')
                                         ->label('Fecha Nacimiento')
                                         ->required(),
-                                    TextInput::make('EdadPostulante'),
+//                                    TextInput::make('EdadPostulante'),
                                     TextInput::make('NacionalidadPostulante'),
                                     Select::make('idCargo')
                                         ->options(fn() => PersonaCargo::where('Activo', 1)->pluck('Cargo', 'id'))
                                         ->label('Cargo')
-                                        ->required()
+                                        ->required(),
                                 ])->icon('fas-user-pen')
                                     ->columns(),
                                 Tabs\Tab::make('Datos Personales')->schema([

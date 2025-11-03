@@ -90,14 +90,14 @@ class PersonasResource extends Resource
 
                                     })
                                     ->required(),
-                                TextInput::make('Edad')
+                                /*TextInput::make('Edad')
                                     ->readOnly()
-                                    ->reactive(),
+                                    ->reactive(),*/
+                                TextInput::make('Nacionalidad'),
                                 Select::make('idCargo')
                                     ->options(fn() => PersonaCargo::where('Activo', 1)->pluck('Cargo', 'id'))
                                     ->label('Cargo')
                                     ->required(),
-                                TextInput::make('Nacionalidad'),
                                 Select::make('idEstado')
                                     ->label('Estado voluntario')
                                     ->options(fn() => PersonaEstado::all()->pluck('Estado', 'id'))
@@ -114,7 +114,11 @@ class PersonasResource extends Resource
                                 Forms\Components\Toggle::make('Activo')
                                     ->inline(false)
                                     ->default(true)
-                                    ->visible(fn() => Auth::user()->isRole('Administrador'))
+                                    ->visible(fn() => Auth::user()->isRole('Administrador')),
+
+                                Flatpickr::make('FechaReclutamiento')
+                                    ->label('Fecha Reclutamiento')
+                                    ->required(),
                             ])->columns()
                                 ->icon('fas-user-pen'),
                             Tabs\Tab::make('Datos Personales')->schema([
