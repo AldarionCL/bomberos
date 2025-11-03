@@ -26,11 +26,13 @@ class CuotasController extends Controller
         foreach ($personas as $persona) {
             $fechaHoy = Carbon::now();
             $fechaNacimiento = Carbon::parse($persona->FechaNacimiento);
+            $fechaReclutamiento = Carbon::parse($persona->FechaReclutamiento);
             $edad = $fechaHoy->diffInYears($fechaNacimiento) * -1;
             $tipoVoluntario = $persona->TipoVoluntario ?? 'voluntario';
+            $antiguedad = $fechaReclutamiento->diffInYears(Carbon::now()) * -1;
 
             $exento = false;
-            if ($edad >= 50) $exento = true;
+            if ($antiguedad >= 50) $exento = true;
 
             if (!$exento) {
                 // Trae ultima cuota creada
