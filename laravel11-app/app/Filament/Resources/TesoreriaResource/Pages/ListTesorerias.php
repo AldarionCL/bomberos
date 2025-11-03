@@ -3,7 +3,11 @@
 namespace App\Filament\Resources\TesoreriaResource\Pages;
 
 use App\Filament\Resources\TesoreriaResource;
+use Carbon\Carbon;
 use Filament\Actions;
+use Filament\Forms\Components\Checkbox;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
@@ -21,27 +25,35 @@ class ListTesorerias extends ListRecords
             Actions\CreateAction::make(),
             Actions\Action::make('generarCuotas')
                 ->label('Generar Cuotas Anual')
-                /*->form([
-                        TextInput::make('Monto')
-                            ->hint('Ingrese el monto de las cuotas')
-                            ->numeric()
-                            ->required(),
-                    ])*/
+                ->form([
+                    DatePicker::make('fechaInicio')
+                        ->default(Carbon::now()->startOfYear())
+                        ->inlineLabel()
+                        ->required(),
+                    DatePicker::make('fechaFin')
+                        ->default(Carbon::now()->lastOfYear())
+                        ->inlineLabel()
+                        ->required(),
+                    Checkbox::make('actualizaMonto')
+                    ->inlineLabel()
+                    ->default(false)
+                ])
                 ->action(function ($data) {
                     $cuotasController = new \App\Http\Controllers\CuotasController();
-                    $cuotasController->sincronizarCuotas();
+//                    $cuotasController->sincronizarCuotas();
+                    $cuotasController->sincronizarCuotas($data['fechaInicio'], $data['fechaFin'], $data['actualizaMonto']);
 
                     Notification::make()
-                    ->success()
-                    ->title('Cuotas generadas')
-                    ->send();
+                        ->success()
+                        ->title('Cuotas generadas para el rango: ' . Carbon::parse($data['fechaInicio'])->format('d/m/Y') . ' a ' . Carbon::parse($data['fechaFin'])->format('d/m/Y'))
+                        ->send();
 
                     return true;
                 })
                 ->color('warning')
                 ->requiresConfirmation()
                 ->modalHeading('Generar Cuotas')
-                ->modalDescription('Esta seguro que desea generar las cuotas del año completo?'),
+                ->modalDescription('Esta seguro que desea generar las cuotas para el rango seleccionado?'),
         ];
     }
 

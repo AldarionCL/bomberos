@@ -15,7 +15,7 @@ use Maatwebsite\Excel\Facades\Excel;
 class CuotasController extends Controller
 {
 
-    public function sincronizarCuotas()
+    public function sincronizarCuotas($fechaInicio, $fechaFin, $actualizaMontos = false)
     {
 
         // Trae las personas activas
@@ -23,71 +23,78 @@ class CuotasController extends Controller
             ->orderBy('FechaReclutamiento', 'asc')
             ->get();
 
-
         foreach ($personas as $persona) {
-            $fechaIngreso = Carbon::parse('2025-01-01');
-//            $fechaIngreso = Carbon::parse($persona->FechaReclutamiento);
             $fechaHoy = Carbon::now();
-            $fechaFinAnio = Carbon::now()->addYear()->endOfYear();
             $fechaNacimiento = Carbon::parse($persona->FechaNacimiento);
             $edad = $fechaHoy->diffInYears($fechaNacimiento) * -1;
             $tipoVoluntario = $persona->TipoVoluntario ?? 'voluntario';
 
-            if ($edad < 50) {
+            $exento = false;
+            if ($edad >= 50) $exento = true;
+
+            if (!$exento) {
                 // Trae ultima cuota creada
-                $cuota = Cuota::select('FechaPeriodo')
-                    ->where('idUser', $persona->idUsuario)
-                    ->orderBy('FechaPeriodo', 'desc')
-                    ->first();
+                $tiposCuota = PrecioCuotas::where('TipoVoluntario', $tipoVoluntario)
+                    ->get();
 
-                $ultimaFechaCuota = $fechaIngreso;
-//                $ultimaFechaCuota = ($cuota) ? Carbon::parse($cuota->FechaPeriodo) : $fechaIngreso;
+                $fechaInicioProceso = Carbon::parse($fechaInicio)->firstOfMonth();
+                $fechaFinProceso = Carbon::parse($fechaFin)->lastOfMonth();
+                $diffMeses = round($fechaFinProceso->diffInMonths($fechaInicioProceso)) * -1;
 
-                if ($ultimaFechaCuota < $fechaFinAnio) {
+                for ($i = 0; $i <= $diffMeses; $i++) {
 
-                    $tiposCuota = PrecioCuotas::where('TipoVoluntario', $tipoVoluntario)
-                        ->get();
+                    // calcula fecha periodo y vencimiento, agregando
+                    $fechaPeriodo = $fechaInicioProceso->copy()->addMonth();
+                    $fechaVencimiento = $fechaPeriodo->copy()->lastOfMonth();
 
-                    $diffMeses = round($ultimaFechaCuota->diffInMonths($fechaFinAnio));
-                    for ($i = 0; $i <= $diffMeses; $i++) {
-                        $fechaPeriodo = $ultimaFechaCuota->copy()->addMonths($i);
-                        $fechaVencimiento = $fechaPeriodo->copy()->lastOfMonth();
+                    // por cada tipo de cuota
+                    foreach ($tiposCuota as $tipo) {
+                        // si el tipo de cuota tiene monto asignado
+                        if ($tipo->Monto > 0) {
+                            $monto = $tipo->Monto;
+                            $tipoCuota = $tipo->TipoCuota;
 
-                        foreach ($tiposCuota as $tipo) {
-                            if ($tipo->Monto > 0) {
-                                $monto = $tipo->Monto;
-                                $tipoCuota = $tipo->TipoCuota;
+                            $existeCuota = Cuota::where('idUser', $persona->idUsuario)
+                                ->where('FechaPeriodo', $fechaPeriodo->format('Y-m-01'))
+                                ->where('TipoCuota', $tipoCuota)
+                                ->exists();
 
-                                if ($monto > 0) {
-                                    $existeCuota = Cuota::where('idUser', $persona->idUsuario)
+                            if (!$existeCuota) {
+                                $cuota = Cuota::Create(
+                                    [
+                                        'idUser' => $persona->idUsuario,
+                                        'FechaPeriodo' => $fechaPeriodo->format('Y-m-01'),
+                                        'FechaVencimiento' => $fechaVencimiento->format('Y-m-d'),
+                                        'Estado' => 1,
+                                        'Monto' => $monto,
+                                        'TipoCuota' => $tipoCuota,
+                                        'Pendiente' => $monto,
+                                        'Recaudado' => 0,
+                                    ]);
+                            } else {
+                                if ($actualizaMontos) {
+                                    // Actualiza monto en caso de que haya cambiado
+                                    Cuota::where('idUser', $persona->idUsuario)
                                         ->where('FechaPeriodo', $fechaPeriodo->format('Y-m-01'))
                                         ->where('TipoCuota', $tipoCuota)
-                                        ->first();
-
-                                    if(!$existeCuota) {
-                                        $cuota = Cuota::Create(
+                                        ->where('Estado', 1)
+                                        ->update(
                                             [
-                                                'idUser' => $persona->idUsuario,
-                                                'FechaPeriodo' => $fechaPeriodo->format('Y-m-01'),
-                                                'FechaVencimiento' => $fechaVencimiento->format('Y-m-d'),
-                                                'Estado' => 1,
                                                 'Monto' => $monto,
-                                                'TipoCuota' => $tipoCuota,
-                                                'Pendiente' => $monto,
-                                                'Recaudado' => 0,
+                                                'FechaVencimiento' => $fechaPeriodo->lastOfMonth()->format('Y-m-d'),
                                             ]);
-                                    }
                                 }
                             }
                         }
-
                     }
                 }
             }
         }
     }
 
-    public function sincronizarUserPersona()
+
+    public
+    function sincronizarUserPersona()
     {
         $users = User::all();
         foreach ($users as $user) {
@@ -107,7 +114,8 @@ class CuotasController extends Controller
         }
     }
 
-    public function revisaCuotasVencidas()
+    public
+    function revisaCuotasVencidas()
     {
         $cuotas = Cuota::where('Estado', 1)
             ->where('FechaVencimiento', '<', Carbon::now())
@@ -119,7 +127,8 @@ class CuotasController extends Controller
         }
     }
 
-    public static function exportResumen($idUsuario)
+    public
+    static function exportResumen($idUsuario)
     {
 
         return Excel::download(new \App\Exports\ResumenCuotas($idUsuario), 'resumen-cuotas.xlsx');

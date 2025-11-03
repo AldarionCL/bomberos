@@ -114,7 +114,8 @@ class CuotasRelationManager extends RelationManager
 
                 Tables\Columns\TextColumn::make('FechaPeriodo')
                     ->label('Periodo')
-                    ->date("d/m/Y"),
+                    ->date("d/m/Y")
+                    ->sortable(),
 
                 Tables\Columns\TextColumn::make('FechaVencimiento')
                     ->label('Vencimiento')
@@ -153,6 +154,7 @@ class CuotasRelationManager extends RelationManager
                     ->date("d/m/Y")
                     ->visibleFrom('md'),
             ])
+            ->defaultSort(fn($query) => $query->orderBy('FechaPeriodo', 'asc')->orderBy('TipoCuota', 'desc'))
             ->filters([
                 // filtro por fecha de vencimiento de la cuota con select filter
                 Tables\Filters\Filter::make('FechaVencimiento')
