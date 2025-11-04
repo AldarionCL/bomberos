@@ -63,13 +63,10 @@ class   PrecioCuotasResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('TipoVoluntario')
+                    ->formatStateUsing(fn ($state) => ucwords(str_replace('_', ' ', strtolower($state))))
                     ->label('Tipo de Voluntario'),
                 Tables\Columns\TextColumn::make('TipoCuota')
-                    ->formatStateUsing(fn ($state) => match ($state) {
-                        'cuota_ordinaria' => 'Cuota Ordinaria',
-                        'cuota_extraordinaria' => 'Cuota Extraordinaria',
-                        default => ucwords(str_replace('_', ' ', strtolower($state))),
-                    })
+                    ->formatStateUsing(fn ($state) =>ucwords(str_replace('_', ' ', strtolower($state))))
                     ->label('Tipo de Cuota'),
 
                 Tables\Columns\TextColumn::make('Monto')
@@ -78,8 +75,12 @@ class   PrecioCuotasResource extends Resource
                     ->numeric(),
             ])
             ->filters([
-                //
-            ])
+                Tables\Filters\SelectFilter::make('TipoVoluntario')
+                ->options(fn() => PrecioCuotas::distinct()->pluck('TipoVoluntario', 'TipoVoluntario')->toArray()),
+
+                Tables\Filters\SelectFilter::make('TipoCuota')
+                ->options(fn() => PrecioCuotas::distinct()->pluck('TipoCuota', 'TipoCuota')->toArray())
+            ], Tables\Enums\FiltersLayout::AboveContent)
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])

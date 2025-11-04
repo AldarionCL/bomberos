@@ -20,6 +20,7 @@ class PrecioCuotas extends Model
         'periodo' => 'date',
     ];
 
+
     public function scopeTipoVoluntario($query, $tipo)
     {
         return $query->where('TipoVoluntario', $tipo);
