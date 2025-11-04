@@ -14,16 +14,10 @@ class CuotasPersonasPolicy
         //
     }
 
-    public function view(User $user)
+    public function viewAny(User $user)
     {
         //
-        return $user->isRole('Administrador') || $user->isCargo('Tesorero') || $record->idUsuario == $user->id;
-    }
-
-    public function viewAny(User $user, $record)
-    {
-        //
-        return $user->isRole('Administrador') || $user->isCargo('Tesorero');
+        return true;
     }
 
     public function create(User $user)
