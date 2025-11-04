@@ -238,8 +238,13 @@ class CuotasRelationManager extends RelationManager
                                         ->downloadable()
                                         ->columnSpanFull()
                                 ])->columns(),
-                            Forms\Components\Placeholder::make('')
-                                ->content('El sistema aplicará el monto ingresado a las cuotas seleccionadas, comenzando por las cuotas ordinarias. Si el monto ingresado excede el total pendiente, se generará un saldo a favor en la ultima cuota saldada. ')
+
+
+                            Forms\Components\Checkbox::make('checkAprobar')
+                                ->label('Marcar cuota como aprobada automáticamente (solo Admin y Tesorero)')
+                                ->helperText('Si se selecciona esta opción, la cuota pagada se marcará automáticamente como aprobada.')
+                                ->default(false)
+                                ->visible(fn() => Auth::user()->isRole('Administrador') || Auth::user()->isCargo('Tesorero')),
 
                         ];
                     })
@@ -276,6 +281,10 @@ class CuotasRelationManager extends RelationManager
                             $saldo = $saldo - $montoPagar;
 
                             $record->Estado = 5; // Estado 5, pendiente de aprobacion
+                            if($data['checkAprobar']){
+                                $record->Estado = 2; // Estado 2, aprobado
+                                $record->AprobadoPor = Auth::user()->id;
+                            }
 
                             Notification::make()
                                 ->title('Cuota Pagada')
