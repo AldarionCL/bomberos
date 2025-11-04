@@ -76,6 +76,9 @@ class CuotasRelationManager extends RelationManager
                         Forms\Components\Placeholder::make('TipoCuota')
                             ->label('Tipo de Cuota')
                             ->content(fn($record) => $record->TipoCuota == 'cuota_ordinaria' ? 'Cuota Ordinaria' : 'Cuota Extraordinaria'),
+                        Forms\Components\Placeholder::make('AprobadoPor')
+                            ->label('Aprobado Por')
+                            ->content(fn($record) => $record->aprobador ? $record->aprobador->name : 'Sin aprobacion'),
                     ])->columns(3),
 
                 Section::make('Comprobantes de Pago')
