@@ -60,8 +60,9 @@ class TesoreriaResource extends Resource
                                     $fechaNacimiento = $user->persona->FechaNacimiento ?? null;
                                     $fechaNacimiento = Carbon::parse($fechaNacimiento);
                                     $edad = Carbon::now()->diffInYears($fechaNacimiento) * -1;
+                                    $antiguedad = Carbon::now()->diffInYears($record->FechaReclutamiento) * -1;
 
-                                    if ($edad < 50) {
+                                    if ($antiguedad < 50) {
                                         $tiposCuotas = PrecioCuotas::where('TipoVoluntario', $tipoVoluntario)
                                             ->where('Monto', '>', 0)
                                             ->get();
@@ -71,7 +72,7 @@ class TesoreriaResource extends Resource
                                     } else {
                                         Notification::make()
                                             ->title('Atención')
-                                            ->body('El usuario es mayor de 50 años, esta exedente de cuota mensual.')
+                                            ->body('El usuario tiene una antiguedad de 50 años o mas, esta exedente de cuota mensual.')
                                             ->warning()
                                             ->send();
                                         $set('Monto', 0);

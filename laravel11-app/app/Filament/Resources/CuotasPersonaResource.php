@@ -104,15 +104,6 @@ class CuotasPersonaResource extends Resource
                     ->default(fn($record) => $record->cuotasMes->where('Estado', 1)->sum('Monto'))
                     ->money('CLP', locale: 'es-CL')
                     ->grow(false),
-//                    ->visible(fn($record) => ($record->Edad ?? 0) < 50),
-
-                Tables\Columns\TextColumn::make('Exento')
-                    ->icon('heroicon-s-check-circle')
-                    ->color('danger')
-                    ->default(fn($record) => $record->Edad >= 50 ? 'Exento' : '')
-                    ->tooltip('Exento de pago por edad')
-//                    ->visible(fn($record) => ($record->Edad ?? 0) >= 50),
-
             ])
             ->filters([
 

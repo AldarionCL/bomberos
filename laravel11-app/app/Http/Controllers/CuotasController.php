@@ -24,10 +24,7 @@ class CuotasController extends Controller
             ->get();
 
         foreach ($personas as $persona) {
-            $fechaHoy = Carbon::now();
-            $fechaNacimiento = Carbon::parse($persona->FechaNacimiento);
-            $fechaReclutamiento = Carbon::parse($persona->FechaReclutamiento);
-            $edad = $fechaHoy->diffInYears($fechaNacimiento) * -1;
+            $fechaReclutamiento = ($persona->FechaReclutamiento!='') ? Carbon::parse($persona->FechaReclutamiento) : Carbon::now()->firstOfYear();
             $tipoVoluntario = $persona->TipoVoluntario ?? 'voluntario';
             $antiguedad = $fechaReclutamiento->diffInYears(Carbon::now()) * -1;
 
@@ -35,7 +32,6 @@ class CuotasController extends Controller
             if ($antiguedad >= 50) $exento = true;
 
             if (!$exento) {
-                // Trae ultima cuota creada
                 $tiposCuota = PrecioCuotas::where('TipoVoluntario', $tipoVoluntario)
                     ->get();
 
@@ -43,10 +39,10 @@ class CuotasController extends Controller
                 $fechaFinProceso = Carbon::parse($fechaFin)->lastOfMonth();
                 $diffMeses = round($fechaFinProceso->diffInMonths($fechaInicioProceso)) * -1;
 
-                for ($i = 0; $i <= $diffMeses; $i++) {
+                for ($i = 0; $i < $diffMeses; $i++) {
 
                     // calcula fecha periodo y vencimiento, agregando
-                    $fechaPeriodo = $fechaInicioProceso->copy()->addMonth();
+                    $fechaPeriodo = $fechaInicioProceso->copy()->addMonths($i);
                     $fechaVencimiento = $fechaPeriodo->copy()->lastOfMonth();
 
                     // por cada tipo de cuota

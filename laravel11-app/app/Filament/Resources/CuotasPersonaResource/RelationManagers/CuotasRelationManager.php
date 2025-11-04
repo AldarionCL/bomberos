@@ -443,7 +443,7 @@ class CuotasRelationManager extends RelationManager
                         $montoPendiente = $records->sum('Pendiente');
                         $montoTotalPendiente = $montoPendiente - $saldoFavor;
 
-                        $records = $records->sort(function ($a, $b) {
+                        /*$records = $records->sort(function ($a, $b) {
                             // Primero por tipo: ordinaria antes que extraordinaria
                             if ($a->TipoCuota !== $b->TipoCuota) {
                                 return $a->TipoCuota === 'cuota_extraordinaria' ? 1 : -1;
@@ -451,7 +451,7 @@ class CuotasRelationManager extends RelationManager
 
                             // Luego por fecha de vencimiento
                             return $a->fecha_vencimiento <=> $b->fecha_vencimiento;
-                        });
+                        });*/
 
                         return [
                             Forms\Components\Placeholder::make('')
@@ -499,8 +499,15 @@ class CuotasRelationManager extends RelationManager
                                         ->downloadable()
                                         ->columnSpanFull()
                                 ])->columns(),
+
+                            Forms\Components\Checkbox::make('checkAprobadas')
+                                ->label('Marcar cuotas como aprobadas automáticamente (solo Admin y Tesorero)')
+                                ->helperText('Si se selecciona esta opción, las cuotas pagadas se marcarán automáticamente como aprobadas.')
+                                ->default(false)
+                                ->visible(fn() => Auth::user()->isRole('Administrador') || Auth::user()->isCargo('Tesorero')),
+
                             Forms\Components\Placeholder::make('')
-                                ->content('El sistema aplicará el monto ingresado a las cuotas seleccionadas, comenzando por las cuotas ordinarias. Si el monto ingresado excede el total pendiente, se generará un saldo a favor en la ultima cuota saldada. ')
+                                ->content('* El sistema aplicará el monto ingresado a las cuotas seleccionadas. Si el monto ingresado excede el total pendiente, se generará un saldo a favor en la ultima cuota saldada. '),
 
                         ];
                     })
@@ -519,12 +526,12 @@ class CuotasRelationManager extends RelationManager
                         ]);
 
                         // Ordenar las cuotas seleccionadas por tipo y fecha de vencimiento
-                        $records = $records->sort(function ($a, $b) {
+                        /*$records = $records->sort(function ($a, $b) {
                             if ($a->TipoCuota !== $b->TipoCuota) {
                                 return $a->TipoCuota === 'cuota_extraordinaria' ? 1 : -1;
                             }
                             return $a->fecha_vencimiento <=> $b->fecha_vencimiento;
-                        });
+                        });*/
 
                         $cuotaAnterior = null;
 
@@ -557,6 +564,10 @@ class CuotasRelationManager extends RelationManager
 
                                 $record->idDocumento = $documento->id;
                                 $record->Estado = 5; // Estado 5, pendiente de aprobacion
+                                if($data['checkAprobadas']){
+                                    $record->Estado = 2; // Estado 2, aprobado
+                                    $record->AprobadoPor = Auth::user()->id;
+                                }
 
                                 Notification::make()
                                     ->title('Cuota Pagada')
@@ -588,7 +599,7 @@ class CuotasRelationManager extends RelationManager
                         }
                         // Revisa si se genero al menos un pago
                         if (Cuota::where('idDocumento', $documento->id)->count() == 0) {
-                            $documento->delete();
+                            $documento->delete(); // limpia el documento si no se uso
                         }
 
                         // Revisa si queda saldo a favor para asignarlo a la ultima cuota pagada
