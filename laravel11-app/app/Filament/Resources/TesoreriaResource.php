@@ -116,18 +116,15 @@ class TesoreriaResource extends Resource
                         Forms\Components\TextInput::make('Monto')
                             ->numeric()
                             ->prefix('$')
-                            ->required()
-                            ->disabledOn('create'),
+                            ->required(),
                         Forms\Components\TextInput::make('Pendiente')
                             ->numeric()
                             ->prefix('$')
-                            ->required()
-                            ->disabledOn('create'),
+                            ->required(),
                         Forms\Components\TextInput::make('Recaudado')
                             ->numeric()
                             ->prefix('$')
-                            ->required()
-                            ->disabledOn('create'),
+                            ->required(),
 
 
                         Select::make('Estado')

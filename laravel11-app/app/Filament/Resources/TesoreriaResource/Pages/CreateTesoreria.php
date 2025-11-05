@@ -12,5 +12,10 @@ class CreateTesoreria extends CreateRecord
 {
     protected static string $resource = TesoreriaResource::class;
 
-
+    protected function mutateFormDataBeforeCreate(array $data): array
+    {
+        dd($data);
+        $data["Pendiente"] = $data["Monto"];
+        return $data;
+    }
 }
