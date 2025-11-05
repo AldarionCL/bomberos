@@ -97,6 +97,8 @@ class TesoreriaResource extends Resource
 
                                         if ($cuotaMonto) {
                                             $set('Monto', $cuotaMonto->Monto);
+                                            $set('Pendiente', $cuotaMonto->Monto);
+                                            $set('Recaudado', 0);
                                         } else {
                                             Notification::make()
                                                 ->title('Atención')
@@ -114,15 +116,18 @@ class TesoreriaResource extends Resource
                         Forms\Components\TextInput::make('Monto')
                             ->numeric()
                             ->prefix('$')
-                            ->required(),
+                            ->required()
+                            ->disabledOn('create'),
                         Forms\Components\TextInput::make('Pendiente')
                             ->numeric()
                             ->prefix('$')
-                            ->required(),
+                            ->required()
+                            ->disabledOn('create'),
                         Forms\Components\TextInput::make('Recaudado')
                             ->numeric()
                             ->prefix('$')
-                            ->required(),
+                            ->required()
+                            ->disabledOn('create'),
 
 
                         Select::make('Estado')
@@ -168,9 +173,10 @@ class TesoreriaResource extends Resource
                                     ->downloadable()
                                     ->columnSpanFull(),
                             ])
+                            ->defaultItems(0)
                             ->columns()
                             ->grid(),
-                    ]),
+                    ])->visibleOn(['edit', 'view']),
             ]);
     }
 
