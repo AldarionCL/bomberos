@@ -16,7 +16,7 @@ class CuotasPersonasPolicy
 
     public function viewAny(User $user)
     {
-        //
+        //2
         return true;
     }
 

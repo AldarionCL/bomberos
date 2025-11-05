@@ -60,7 +60,7 @@ class TesoreriaResource extends Resource
                                     $fechaNacimiento = $user->persona->FechaNacimiento ?? null;
                                     $fechaNacimiento = Carbon::parse($fechaNacimiento);
                                     $edad = Carbon::now()->diffInYears($fechaNacimiento) * -1;
-                                    $antiguedad = Carbon::now()->diffInYears($record->FechaReclutamiento) * -1;
+                                    $antiguedad = Carbon::now()->diffInYears($user->persona->FechaReclutamiento) * -1;
 
                                     if ($antiguedad < 50) {
                                         $tiposCuotas = PrecioCuotas::where('TipoVoluntario', $tipoVoluntario)
