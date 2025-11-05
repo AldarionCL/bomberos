@@ -14,7 +14,6 @@ class CreateTesoreria extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        dd($data);
         $data["Pendiente"] = $data["Monto"];
         return $data;
     }
