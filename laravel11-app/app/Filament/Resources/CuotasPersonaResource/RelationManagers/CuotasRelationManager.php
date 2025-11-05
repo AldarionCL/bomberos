@@ -299,7 +299,7 @@ class CuotasRelationManager extends RelationManager
 
 
                             $documento = Documentos::create([
-                                'TipoDocumento' => 1, // Asumimos que es un comprobante de pago
+                                'TipoDocumento' => 11, // Asumimos que es un comprobante de pago
                                 'Nombre' => $data['Documento'],
                                 'Path' => $data['DocumentoArchivo'],
                                 'Descripcion' => 'Comprobante de pago de cuota',
@@ -530,7 +530,7 @@ class CuotasRelationManager extends RelationManager
                             ->first();
 
                         $documento = Documentos::create([
-                            'TipoDocumento' => 1, // Asumimos que es un comprobante de pago
+                            'TipoDocumento' => 11, // Asumimos que es un comprobante de pago
                             'Nombre' => $data['Documento'],
                             'Path' => $data['DocumentoArchivo'],
                             'Descripcion' => 'Comprobante de pago de cuota',
