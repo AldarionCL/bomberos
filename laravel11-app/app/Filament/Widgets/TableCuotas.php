@@ -20,7 +20,7 @@ class TableCuotas extends BaseWidget
             ->query(
                 Cuota::query()->where('idUser', auth()->id())
                     ->where('Estado', 1)
-                    ->where('FechaVencimiento', '<=', now())
+                    ->where('FechaVencimiento', '<=', now()->lastOfMonth()->format('Y-m-d'))
             )
 //            ->description('Listado de cuotas pendientes')
             ->defaultPaginationPageOption(5)
