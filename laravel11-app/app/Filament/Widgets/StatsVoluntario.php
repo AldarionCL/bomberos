@@ -45,8 +45,8 @@ class StatsVoluntario extends BaseWidget
 
         $cuotas = Cuota::query()
             ->where('idUser', auth()->id())
-            ->where('FechaPeriodo', '<=', Carbon::now())
-            ->where('FechaVencimiento', '>=', Carbon::now())
+            ->where('FechaPeriodo', '<=', Carbon::now()->format('Y-m-d'))
+            ->where('FechaVencimiento', '>=', Carbon::now()->format('Y-m-d'))
             ->first();
 
         if($cuotas){
