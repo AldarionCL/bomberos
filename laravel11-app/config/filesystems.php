@@ -50,7 +50,7 @@ return [
             'root' => storage_path('app/exports'),
             'url' => env('APP_URL').'/storage/exports',
             'visibility' => 'public',
-            'owner' => env('APP_OWNER', 'www-data'),
+//            'owner' => env('APP_OWNER', 'www-data'),
 //            'permissions' => [
 //                'file' => [
 //                    'public' => 0777,
