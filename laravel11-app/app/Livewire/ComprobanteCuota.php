@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Models\Persona;
 use Livewire\Component;
 
 class ComprobanteCuota extends Component
@@ -20,6 +21,13 @@ class ComprobanteCuota extends Component
         $this->documento = $this->cuota->documento;
         $this->user = $this->cuota->user;
         $this->aprobador = $this->cuota->aprobador;
+
+        if($this->aprobador->name == 'Admin'){
+            $tesorero = Persona::whereHas('cargo',fn($query) => $query->where('Cargo', 'Tesorero'))->first()->user;
+            if($tesorero){
+                $this->aprobador = $tesorero;
+            }
+        }
     }
 
     public function render()
