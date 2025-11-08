@@ -80,6 +80,7 @@ class TesoreriaResource extends Resource
                                         $options = [];
                                     }
                                 }
+                                $options['Otros'] = 'Otros';
                                 return $options ?? [];
 
                             })
@@ -130,8 +131,7 @@ class TesoreriaResource extends Resource
                         Select::make('Estado')
                             ->options(fn() => \App\Models\CuotasEstados::all()->pluck('Estado', 'id'))
                             ->default(1)
-                            ->label('Estado')
-                            ->disabled(),
+                            ->label('Estado'),
 
 //                    DatePicker::make('fechaPeriodo')->label('Fecha de Periodo'),
                         Flatpickr::make('FechaPeriodo')
