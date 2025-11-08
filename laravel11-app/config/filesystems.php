@@ -51,6 +51,7 @@ return [
             'url' => env('APP_URL').'/storage/exports',
             'visibility' => 'public',
 //            'owner' => env('APP_OWNER', 'www-data'),
+            'owner' => 'root',
             'permissions' => [
                 'file' => [
                     'public' => 0777,
