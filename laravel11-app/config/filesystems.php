@@ -50,19 +50,19 @@ return [
             'root' => storage_path('app/exports'),
             'url' => env('APP_URL').'/storage/exports',
             'visibility' => 'public',
-//            'owner' => env('APP_OWNER', 'www-data'),
-            'owner' => 'root',
+            'owner' => env('APP_OWNER', 'www-data'),
+//            'owner' => 'root',
             'permissions' => [
                 'file' => [
                     'public' => 0777,
-                    'private' => 0755,
+//                    'private' => 0755,
                 ],
                 'dir' => [
                     'public' => 0777,
-                    'private' => 0755,
+//                    'private' => 0755,
                 ],
             ],
-            'throw' => false,
+            'throw' => true,
         ],
 
         's3' => [
