@@ -287,7 +287,7 @@ class CuotasController extends Controller
 
                 $record->idDocumento = $documento->id;
                 $record->Estado = 5; // Estado 5, pendiente de aprobacion
-                if($data['checkAprobadas']){
+                if($data['checkAprobar']){
                     $record->Estado = 2; // Estado 2, aprobado
                     $record->AprobadoPor = Auth::user()->id;
                 }
