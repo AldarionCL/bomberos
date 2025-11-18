@@ -415,8 +415,7 @@ class CuotasRelationManager extends RelationManager
                                         ->previewable()
                                         ->downloadable()
                                         ->columnSpanFull()
-                                ])->columns()
-                            ->disabled(fn($records) => $records->sum('Pendiente') > 0),
+                                ])->columns(),
 
                             Forms\Components\Checkbox::make('checkAprobar')
                                 ->label('Marcar cuotas como aprobadas automáticamente (solo Admin y Tesorero)')
