@@ -33,9 +33,9 @@ class PersonasResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-s-user-group';
     protected static ?string $navigationGroup = 'Personal';
-    protected static ?string $navigationLabel = 'Listado Voluntarios';
-    protected static ?string $label = 'Voluntario';
-    protected static ?string $pluralLabel = 'Voluntarios';
+    protected static ?string $navigationLabel = 'Listado Usuarios';
+    protected static ?string $label = 'Usuario';
+    protected static ?string $pluralLabel = 'Usuarios';
 
     public static function form(Form $form): Form
     {
@@ -99,10 +99,13 @@ class PersonasResource extends Resource
                                     ->label('Cargo')
                                     ->required(),
                                 Select::make('idEstado')
-                                    ->label('Estado voluntario')
+                                    ->label('Estado Usuario')
                                     ->options(fn() => PersonaEstado::all()->pluck('Estado', 'id'))
                                     ->default(1),
-                                Select::make('TipoVoluntario')
+                                Forms\Components\Hidden::make('TipoVoluntario')
+                                    ->default('usuario'),
+                                /*Select::make('TipoVoluntario')
+                                    ->label('Tipo Usuario')
                                     ->options([
                                         "voluntario" => "Voluntario",
                                         "voluntario_honorario" => "Voluntario Honorario",
@@ -110,21 +113,22 @@ class PersonasResource extends Resource
                                         "voluntario_estudiante" => "Voluntario Estudiante",
                                         "miembro_honorario" => "Miembro Honorario",
                                     ])
-                                    ->default('voluntario'),
+                                    ->default('voluntario'),*/
+
+                                Flatpickr::make('FechaReclutamiento')
+                                    ->label('Fecha Reclutamiento')
+                                    ->default(Carbon::now())
+                                    ->required(),
                                 Forms\Components\Toggle::make('Activo')
                                     ->inline(false)
                                     ->default(true)
                                     ->visible(fn() => Auth::user()->isRole('Administrador')),
-
-                                Flatpickr::make('FechaReclutamiento')
-                                    ->label('Fecha Reclutamiento')
-                                    ->required(),
                             ])->columns()
                                 ->icon('fas-user-pen'),
                             Tabs\Tab::make('Datos Personales')->schema([
                                 Forms\Components\TextInput::make('Direccion'),
                                 Forms\Components\TextInput::make('Comuna'),
-                                TextInput::make('SituacionMilitar'),
+//                                TextInput::make('SituacionMilitar'),
                                 Forms\Components\Select::make('NivelEstudio')
                                     ->options([
                                         "basica" => "Basica",
