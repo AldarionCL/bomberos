@@ -60,84 +60,7 @@ class SolicitudesLicenciaResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Group::make([
-                    Forms\Components\Section::make('Periodo de Licencia')
-                        ->schema([
-                            Forms\Components\DatePicker::make('FechaDesde')
-                                ->reactive()
-                                ->afterStateUpdated(function ($state, $set, $get) {
-                                    if ($state) {
-                                        $fechaDesde = Carbon::parse($state);
-                                        if ($get('FechaHasta')) {
-                                            $fechaHasta = Carbon::parse($get('FechaHasta'));
-                                            $dias = $fechaDesde->diffInDays($fechaHasta) + 1;
-                                            for ($i = 0; $i <= $dias; $i++) {
-                                                $fecha = $fechaDesde->copy()->addDays($i);
-                                                if ($fecha->isWeekend()) {
-                                                    $dias--;
-                                                }
-                                            }
-                                            $set('DiasHabiles', $dias);
 
-                                            if (!Solicitud::verificaDiasDisponibles($get('AsociadoA'), $dias, $get('TipoSolicitud'))) {
-                                                Notification::make()
-                                                    ->title('Error')
-                                                    ->body('El rango de dias solicitados supera los 30 dias disponibles')
-                                                    ->icon('heroicon-o-x-circle')
-                                                    ->danger()
-                                                    ->send();
-                                                $set('NoGuarda', true);
-
-                                            }
-                                        }
-                                    }
-                                })
-                                ->label('Fecha Desde')
-                                ->required(),
-                            Forms\Components\DatePicker::make('FechaHasta')
-                                ->live()
-                                ->afterStateUpdated(function ($state, $set, $get) {
-                                    if ($get('FechaDesde')) {
-                                        $fechaDesde = Carbon::parse($get('FechaDesde'));
-                                        if ($state) {
-                                            $fechaHasta = Carbon::parse($state);
-                                            $dias = $fechaDesde->diffInDays($fechaHasta) + 1;
-                                            for ($i = 0; $i <= $dias; $i++) {
-                                                $fecha = $fechaDesde->copy()->addDays($i);
-                                                if ($fecha->isWeekend()) {
-                                                    $dias--;
-                                                }
-                                            }
-                                            $set('DiasHabiles', $dias);
-
-                                            if (!Solicitud::verificaDiasDisponibles($get('AsociadoA'), $dias, $get('TipoSolicitud'))) {
-                                                Notification::make()
-                                                    ->title('Error')
-                                                    ->body('El rango de dias solicitados supera los dias disponibles')
-                                                    ->icon('heroicon-o-x-circle')
-                                                    ->danger()
-                                                    ->send();
-                                                $set('NoGuarda', true);
-                                            }
-                                        }
-                                    }
-                                })
-                                ->label('Fecha Hasta')
-                                ->required(),
-                            TextInput::make('DiasHabiles')
-                                ->live()
-                                ->label('Total Dias')
-                                ->readOnly()
-                                ->required(),
-
-                            Forms\Components\Select::make('TipoSolicitud')
-                                ->options(fn() => \App\Models\SolicitudesTipo::whereIn('id', [3, 4])->pluck('Tipo', 'id'))
-                                ->default(3)
-                                ->hint('Una licencia, tiene un plazo maximo de 30 dias (trimestral), mientras que una extendida, tiene un plazo maximo de 6 meses')
-                                ->reactive()
-                                ->required()
-                                ->columnSpanFull(),
-
-                        ])->columns(3),
                     Forms\Components\Section::make('Solicitante')
                         ->schema([
                             Forms\Components\Select::make('SolicitadoPor')
@@ -157,6 +80,84 @@ class SolicitudesLicenciaResource extends Resource
                                 ->disabled(fn($record) => !Auth::user()->isRole('Administrador')),
                         ])->columns(),
                 ])->columns(),
+                Forms\Components\Section::make('Periodo de Licencia')
+                    ->schema([
+                        Forms\Components\DatePicker::make('FechaDesde')
+                            ->reactive()
+                            ->afterStateUpdated(function ($state, $set, $get) {
+                                if ($state) {
+                                    $fechaDesde = Carbon::parse($state);
+                                    if ($get('FechaHasta')) {
+                                        $fechaHasta = Carbon::parse($get('FechaHasta'));
+                                        $dias = $fechaDesde->diffInDays($fechaHasta) + 1;
+                                        for ($i = 0; $i <= $dias; $i++) {
+                                            $fecha = $fechaDesde->copy()->addDays($i);
+                                            if ($fecha->isWeekend()) {
+                                                $dias--;
+                                            }
+                                        }
+                                        $set('DiasHabiles', $dias);
+
+                                        if (!Solicitud::verificaDiasDisponibles($get('AsociadoA'), $dias, $get('TipoSolicitud'))) {
+                                            Notification::make()
+                                                ->title('Error')
+                                                ->body('El rango de dias solicitados supera los 30 dias disponibles')
+                                                ->icon('heroicon-o-x-circle')
+                                                ->danger()
+                                                ->send();
+                                            $set('NoGuarda', true);
+
+                                        }
+                                    }
+                                }
+                            })
+                            ->label('Fecha Desde')
+                            ->required(),
+                        Forms\Components\DatePicker::make('FechaHasta')
+                            ->live()
+                            ->afterStateUpdated(function ($state, $set, $get) {
+                                if ($get('FechaDesde')) {
+                                    $fechaDesde = Carbon::parse($get('FechaDesde'));
+                                    if ($state) {
+                                        $fechaHasta = Carbon::parse($state);
+                                        $dias = $fechaDesde->diffInDays($fechaHasta) + 1;
+                                        for ($i = 0; $i <= $dias; $i++) {
+                                            $fecha = $fechaDesde->copy()->addDays($i);
+                                            if ($fecha->isWeekend()) {
+                                                $dias--;
+                                            }
+                                        }
+                                        $set('DiasHabiles', $dias);
+
+                                        if (!Solicitud::verificaDiasDisponibles($get('AsociadoA'), $dias, $get('TipoSolicitud'))) {
+                                            Notification::make()
+                                                ->title('Error')
+                                                ->body('El rango de dias solicitados supera los dias disponibles')
+                                                ->icon('heroicon-o-x-circle')
+                                                ->danger()
+                                                ->send();
+                                            $set('NoGuarda', true);
+                                        }
+                                    }
+                                }
+                            })
+                            ->label('Fecha Hasta')
+                            ->required(),
+                        TextInput::make('DiasHabiles')
+                            ->live()
+                            ->label('Total Dias')
+                            ->readOnly()
+                            ->required(),
+
+                        Forms\Components\Select::make('TipoSolicitud')
+                            ->options(fn() => \App\Models\SolicitudesTipo::whereIn('id', [3, 4])->pluck('Tipo', 'id'))
+                            ->default(3)
+                            ->hint('Una licencia, tiene un plazo maximo de 30 dias (trimestral), mientras que una extendida, tiene un plazo maximo de 6 meses')
+                            ->reactive()
+                            ->required()
+                            ->columnSpanFull(),
+
+                    ])->columns(3),
                 Forms\Components\Group::make([
                     Forms\Components\Section::make('Datos del Voluntario')
                         ->schema([

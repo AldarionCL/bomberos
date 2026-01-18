@@ -95,7 +95,7 @@ class SolicitudesIngresoResource extends Resource
                                 Tabs\Tab::make('Datos Personales')->schema([
                                     Forms\Components\TextInput::make('DireccionPostulante'),
                                     Forms\Components\TextInput::make('ComunaPostulante'),
-                                    TextInput::make('SituacionMilitarPostulante'),
+//                                    TextInput::make('SituacionMilitarPostulante'),
                                     Forms\Components\Select::make('NivelEstudioPostulante')
                                         ->options([
                                             "basica" => "Basica",

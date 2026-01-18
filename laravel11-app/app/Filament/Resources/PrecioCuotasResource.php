@@ -28,33 +28,34 @@ class   PrecioCuotasResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Select::make('TipoCuota')
-                    ->label('Tipo de Cuota')
-                    ->options([
-                        'cuota_ordinaria' => 'Cuota Ordinaria',
-                        'cuota_extraordinaria' => 'Cuota Extraordinaria',
+                Forms\Components\Section::make()
+                    ->schema([
+                        Forms\Components\Select::make('TipoCuota')
+                            ->label('Tipo de Cuota')
+                            ->options([
+                                'cuota_ordinaria' => 'Cuota Ordinaria',
+                                'cuota_extraordinaria' => 'Cuota Extraordinaria',
+                            ])
+                            ->required(),
+                        Forms\Components\Select::make('TipoVoluntario')
+                            ->label('Tipo de Usuario')
+                            ->options([
+                                "miembro" => "Miembro Oficial",
+                                "miembro_honorario" => "Miembro Honorario",
+                            ])
+                            ->required(),
+                        Forms\Components\TextInput::make('Monto')
+                            ->label('Monto')
+                            ->numeric()
+                            ->required()
+                            ->prefix('$'),
+                        /*Forms\Components\DatePicker::make('periodo')
+                            ->label('Periodo Desde')
+                            ->required()
+                            ->default(now())
+                            ->displayFormat('d/m/Y'),*/
                     ])
-                    ->required(),
-                Forms\Components\Select::make('TipoVoluntario')
-                    ->label('Tipo de Voluntario')
-                    ->options([
-                        "voluntario" => "Voluntario",
-                        "voluntario_honorario" => "Voluntario Honorario",
-                        "voluntario_jubilado" => "Voluntario Jubilado",
-                        "voluntario_estudiante" => "Voluntario Estudiante",
-                        "miembro_honorario" => "Miembro Honorario",
-                    ])
-                    ->required(),
-                Forms\Components\TextInput::make('Monto')
-                    ->label('Monto')
-                    ->numeric()
-                    ->required()
-                    ->prefix('$'),
-                /*Forms\Components\DatePicker::make('periodo')
-                    ->label('Periodo Desde')
-                    ->required()
-                    ->default(now())
-                    ->displayFormat('d/m/Y'),*/
+
             ]);
     }
 
@@ -63,10 +64,10 @@ class   PrecioCuotasResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('TipoVoluntario')
-                    ->formatStateUsing(fn ($state) => ucwords(str_replace('_', ' ', strtolower($state))))
+                    ->formatStateUsing(fn($state) => ucwords(str_replace('_', ' ', strtolower($state))))
                     ->label('Tipo de Voluntario'),
                 Tables\Columns\TextColumn::make('TipoCuota')
-                    ->formatStateUsing(fn ($state) =>ucwords(str_replace('_', ' ', strtolower($state))))
+                    ->formatStateUsing(fn($state) => ucwords(str_replace('_', ' ', strtolower($state))))
                     ->label('Tipo de Cuota'),
 
                 Tables\Columns\TextColumn::make('Monto')
@@ -76,10 +77,10 @@ class   PrecioCuotasResource extends Resource
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('TipoVoluntario')
-                ->options(fn() => PrecioCuotas::distinct()->pluck('TipoVoluntario', 'TipoVoluntario')->toArray()),
+                    ->options(fn() => PrecioCuotas::distinct()->pluck('TipoVoluntario', 'TipoVoluntario')->toArray()),
 
                 Tables\Filters\SelectFilter::make('TipoCuota')
-                ->options(fn() => PrecioCuotas::distinct()->pluck('TipoCuota', 'TipoCuota')->toArray())
+                    ->options(fn() => PrecioCuotas::distinct()->pluck('TipoCuota', 'TipoCuota')->toArray())
             ], Tables\Enums\FiltersLayout::AboveContent)
             ->actions([
                 Tables\Actions\EditAction::make(),
