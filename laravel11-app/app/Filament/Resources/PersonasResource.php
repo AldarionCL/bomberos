@@ -117,7 +117,7 @@ class PersonasResource extends Resource
 
                                 Flatpickr::make('FechaReclutamiento')
                                     ->label('Fecha Reclutamiento')
-                                    ->default(Carbon::now())
+                                    ->default(Carbon::now()->format('Y-m-d'))
                                     ->required(),
                                 Forms\Components\Toggle::make('Activo')
                                     ->inline(false)
