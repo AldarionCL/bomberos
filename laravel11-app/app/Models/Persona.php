@@ -24,6 +24,7 @@ class Persona extends Model
         'Observaciones',
         'NivelEstudio',
         'FechaNacimiento',
+        'FechaReclutamiento',
         'Edad',
         'Sexo',
         'EstadoCivil',
