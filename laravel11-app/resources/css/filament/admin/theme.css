@@ -23,9 +23,9 @@ html.dark .fi-main {
 
 
 html:not(.dark) .fi-sidebar {
-    @apply bg-blue-100;
+    @apply bg-green-100;
     /*@apply shadow-lg;*/
-    @apply bg-gradient-to-r from-slate-100 bg-blue-100;
+    @apply bg-gradient-to-r from-slate-100 bg-green-100;
 }
 
 .fi-sidebar-item-icon{
@@ -33,12 +33,12 @@ html:not(.dark) .fi-sidebar {
 }
 
 html:not(.dark) .fi-topbar nav {
-    @apply bg-blue-100 !important;
+    @apply bg-green-100 !important;
     /*@apply shadow-lg;*/
 }
 
 html body {
-    @apply bg-blue-100 !important;
+    @apply bg-green-100 !important;
 }
 
 html .fi-tabs {
@@ -59,7 +59,7 @@ html .fi-tabs-item-active .fi-tabs-item-label {
 
 
 html:not(.dark) .fi-ta-header-ctn {
-    @apply bg-blue-300;
+    @apply bg-green-300;
 }
 html.dark .fi-ta-header-ctn {
     @apply bg-red-800;
@@ -69,7 +69,7 @@ html .fi-ta-header-heading {
 }
 
 html .fi-section {
-    @apply bg-blue-300;
+    @apply bg-green-300;
 }
 html:not(.dark) .fi-section-content{
     @apply bg-white;
