@@ -38,6 +38,14 @@ class DatabaseSeeder extends Seeder
             'idRole' => $rol->id
         ]);
 
+        Persona::create([
+            'idUsuario' => 1,
+            'idCargo' => 1,
+            'idEstado' => 1,
+            'Rut' => '15967365-0',
+            'Activo' => 1
+        ]);
+
         PersonaCargo::create([
             'Cargo' => 'Administrador',
             'Descripcion' => 'Administrador del sistema',
@@ -61,13 +69,6 @@ class DatabaseSeeder extends Seeder
             'Descripcion' => 'Persona dada Baja',
         ]);
 
-        Persona::create([
-            'idUsuario' => 1,
-            'idCargo' => 1,
-            'idEstado' => 1,
-            'Rut' => '15967365-0',
-            'Activo' => 1
-        ]);
 
 //        User::factory(20)->create();
 
@@ -75,6 +76,7 @@ class DatabaseSeeder extends Seeder
         CuotasEstados::create(['Estado'=>'Aprobado']);
         CuotasEstados::create(['Estado'=>'Rechazado']);
         CuotasEstados::create(['Estado'=>'Cancelado']);
+        CuotasEstados::create(['Estado'=>'Pendiente Aprobacion']);
 
         SolicitudesTipo::create([
             'Tipo' => 'Solicitud Baja',
@@ -94,39 +96,17 @@ class DatabaseSeeder extends Seeder
             'Cargo' => 'Director',
         ]);
         PersonaCargo::create([
-            'Cargo' => 'Capitán',
-        ]);
-        PersonaCargo::create([
-            'Cargo' => 'Teniente 1',
-        ]);
-        PersonaCargo::create([
-            'Cargo' => 'Teniente 2',
-        ]);
-        PersonaCargo::create([
-            'Cargo' => 'Teniente 3',
-        ]);
-        PersonaCargo::create([
             'Cargo' => 'Secretario',
         ]);
         PersonaCargo::create([
             'Cargo' => 'Tesorero',
         ]);
         PersonaCargo::create([
-            'Cargo' => 'Ayudante',
+            'Cargo' => 'Miembro Activo',
         ]);
-        PersonaCargo::create([
-            'Cargo' => 'Consejero',
-        ]);
-        PersonaCargo::create([
-            'Cargo' => 'Voluntario',
-        ]);
-        PersonaCargo::create([
-            'Cargo' => 'Maquinista',
-        ]);
-
 
         DocumentosTipo::create([
-            'Tipo' => 'Orden del día',
+            'Tipo' => 'Informacion Importante',
         ]);
         DocumentosTipo::create([
             'Tipo' => 'Boletines',
@@ -158,6 +138,10 @@ class DatabaseSeeder extends Seeder
         ]);
         DocumentosTipo::create([
             'Tipo' => 'Otro',
+            'Clasificacion' => 'privado',
+        ]);
+        DocumentosTipo::create([
+            'Tipo' => 'Comprobante de Pago',
             'Clasificacion' => 'privado',
         ]);
 

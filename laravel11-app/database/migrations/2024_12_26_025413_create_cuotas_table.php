@@ -26,7 +26,7 @@ return new class extends Migration
             $table->string('Documento')->nullable();
             $table->string('DocumentoArchivo')->nullable();
             $table->string('TipoCuota', 50)->nullable();
-            $table->bigInteger('AprobadoPor')->unsigned();
+            $table->bigInteger('AprobadoPor')->unsigned()->nullable();
 
             $table->foreign('idUser')->references('id')->on('users');
             $table->timestamps();
