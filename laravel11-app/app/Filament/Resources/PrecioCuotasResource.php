@@ -54,7 +54,7 @@ class   PrecioCuotasResource extends Resource
                             ->required()
                             ->default(now())
                             ->displayFormat('d/m/Y'),*/
-                    ])
+                    ])->columns(3)
 
             ]);
     }
