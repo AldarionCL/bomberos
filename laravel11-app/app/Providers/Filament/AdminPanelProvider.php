@@ -75,6 +75,7 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])
+            ->darkMode(false)
             ->profile()
             ->maxContentWidth(MaxWidth::Full);
     }
