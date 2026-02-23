@@ -322,9 +322,18 @@ class CuotasRelationManager extends RelationManager
 //                        ->view('filament.pages.comprobanteFilament', fn($record) => ['record' => $record->id])
                     ->openUrlInNewTab()
                     ->button()
-                    ->visible(fn($record) => $record->Estado == 2)
+                    ->visible(fn($record) => $record->Estado == 2 && $record->idDocumento)
                     ->color('success')
                     ->icon('heroicon-s-document-text'),
+
+                Tables\Actions\Action::make('DescargarPDF')
+                    ->label('Descargar PDF')
+                    ->url(fn($record) => route('descargar-comprobante', $record->idDocumento))
+                    ->openUrlInNewTab()
+                    ->button()
+                    ->visible(fn($record) => $record->Estado == 2 && $record->idDocumento)
+                    ->color('primary')
+                    ->icon('heroicon-o-arrow-down-tray'),
 
                 Tables\Actions\ViewAction::make()
                     ->button()

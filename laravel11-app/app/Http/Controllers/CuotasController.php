@@ -9,6 +9,7 @@ use App\Models\Persona;
 use App\Models\PrecioCuotas;
 use App\Models\User;
 use App\Models\UserRole;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Filament\Notifications\Notification;
 use Illuminate\Http\Request;
@@ -351,4 +352,38 @@ class CuotasController extends Controller
             ->sendToDatabase($records[0]->user);
     }
 
+    public function downloadPDF($idDocumento)
+    {
+        $records = Cuota::where('idDocumento', $idDocumento)->get();
+        if ($records->isEmpty()) {
+            abort(404, 'No se encontraron cuotas para este documento.');
+        }
+
+        $cuota = $records[0];
+        $documento = $cuota->documento;
+        $user = $cuota->user;
+        $aprobador = $cuota->aprobador;
+
+        if ($aprobador && $aprobador->name == 'Admin') {
+            $tesorero = Persona::whereHas('cargo', fn($query) => $query->where('Cargo', 'Tesorero'))->first()?->user;
+            if ($tesorero) {
+                $aprobador = $tesorero;
+            }
+        }
+
+        $data = [
+            'cuota' => $cuota,
+            'records' => $records,
+            'documento' => $documento,
+            'user' => $user,
+            'aprobador' => $aprobador,
+        ];
+
+        $pdf = Pdf::loadView('livewire.comprobante-cuota', $data);
+
+        // Opciones para mejorar la renderización (ajustar según necesidad)
+        $pdf->setPaper('letter', 'portrait');
+
+        return $pdf->download('Comprobante_' . ($documento->Nombre ?? $idDocumento) . '.pdf');
+    }
 }

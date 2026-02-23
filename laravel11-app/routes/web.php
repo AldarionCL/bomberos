@@ -16,3 +16,6 @@ Route::get('/filament/exports/{export}/download', DownloadExport::class)
 
 Route::get('/comprobante/{idDocumento}', \App\Livewire\ComprobanteCuota::class)
     ->name('comprobante-cuota');
+
+Route::get('/descargar-comprobante/{idDocumento}', [\App\Http\Controllers\CuotasController::class, 'downloadPDF'])
+    ->name('descargar-comprobante');
