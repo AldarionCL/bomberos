@@ -18,8 +18,9 @@ return new class extends Migration
             $table->integer('MontoGasto');
             $table->integer('MontoIva')->default(0);
             $table->integer('MontoTotal');
-            $table->bigInteger('TipoGasto')->unsigned();
-            $table->integer('AsociadoA')->unsigned()->nullable();
+            $table->string('TipoGasto');
+            $table->unsignedBigInteger('AsociadoA')->nullable();
+            $table->unsignedBigInteger('idCaja')->nullable();
 
             $table->timestamps();
         });

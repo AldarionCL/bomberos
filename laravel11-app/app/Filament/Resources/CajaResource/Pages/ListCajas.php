@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\Resources\GastosResource\Pages;
+namespace App\Filament\Resources\CajaResource\Pages;
 
-use App\Filament\Resources\GastosResource;
+use App\Filament\Resources\CajaResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
-class ListGastos extends ListRecords
+class ListCajas extends ListRecords
 {
-    protected static string $resource = GastosResource::class;
+    protected static string $resource = CajaResource::class;
 
     protected function getHeaderActions(): array
     {
@@ -20,7 +20,7 @@ class ListGastos extends ListRecords
     protected function getHeaderWidgets(): array
     {
         return [
-            GastosResource::getHeaderWidgets()[0],
+            CajaResource::getHeaderWidgets()[0],
         ];
     }
 }

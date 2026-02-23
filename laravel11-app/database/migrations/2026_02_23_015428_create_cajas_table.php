@@ -11,17 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('gastos_tipo', function (Blueprint $table) {
+        Schema::create('caja', function (Blueprint $table) {
             $table->id();
-            $table->string('Tipo');
-            $table->string('Descripcion')->nullable();
-            $table->integer('Activo');
+            $table->integer('monto');
+            $table->integer('impuesto')->nullable();
+            $table->integer('total');
+            $table->unsignedBigInteger('id_usuario');
+            $table->string('descripcion')->nullable();
+            $table->string('tipo')->comment('ingreso o egreso');
 
             $table->timestamps();
-        });
-
-        Schema::table('gastos', function (Blueprint $table) {
-            $table->foreign('TipoGasto')->references('id')->on('gastos_tipo');
         });
     }
 
@@ -30,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('gastos_tipo');
+        Schema::dropIfExists('caja');
     }
 };

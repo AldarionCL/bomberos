@@ -69,31 +69,31 @@ class User extends Authenticatable implements FilamentUser
 
     public function isRole($role):bool
     {
-        if(Auth::user()->role) {
+        if($this->role) {
             if (is_array($role)) {
                 foreach ($role as $k => $r) {
-                    if (Auth::user()->role->Rol == $r) {
+                    if ($this->role->Rol == $r) {
                         return true;
                     }
                 }
                 return false;
             } else {
-                return Auth::user()->role->Rol == $role;
+                return $this->role->Rol == $role;
             }
         } else return false;
     }
     public function isCargo($role):bool
     {
-        if(Auth::user()->persona->cargo->Cargo) {
+        if($this->persona && $this->persona->cargo && $this->persona->cargo->Cargo) {
             if (is_array($role)) {
                 foreach ($role as $k => $r) {
-                    if (Auth::user()->persona->cargo->Cargo == $r) {
+                    if ($this->persona->cargo->Cargo == $r) {
                         return true;
                     }
                 }
                 return false;
             } else {
-                return Auth::user()->persona->cargo->Cargo == $role;
+                return $this->persona->cargo->Cargo == $role;
             }
         } else return false;
     }
