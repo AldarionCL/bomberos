@@ -9,6 +9,8 @@ use NumberFormatter;
 
 class CajaStats extends BaseWidget
 {
+    protected static bool $isDiscovered = false;
+
     protected function getStats(): array
     {
         $total = Caja::sum('total');

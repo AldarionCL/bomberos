@@ -9,6 +9,8 @@ use NumberFormatter;
 
 class GastosStats extends BaseWidget
 {
+    protected static bool $isDiscovered = false;
+
     protected function getStats(): array
     {
         $totalGastos = abs(Gastos::sum('MontoTotal'));
