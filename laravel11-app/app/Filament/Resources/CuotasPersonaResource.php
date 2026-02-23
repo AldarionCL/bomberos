@@ -27,6 +27,7 @@ class CuotasPersonaResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-s-rectangle-stack';
     protected static ?string $navigationGroup = 'Tesoreria';
+    protected static ?int $navigationSort = 4;
     protected static ?string $navigationLabel = 'Recaudacion';
     protected static ?string $label = 'Recaudacion por Persona';
 

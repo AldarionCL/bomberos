@@ -17,6 +17,7 @@ class CajaResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-banknotes';
     protected static ?string $navigationGroup = 'Tesoreria';
+    protected static ?int $navigationSort = 1;
     protected static ?string $label = 'Caja';
     protected static ?string $pluralLabel = 'Caja';
 

@@ -23,6 +23,7 @@ class CuotasPendientesResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-clock';
     protected static ?string $navigationGroup = 'Tesoreria';
+    protected static ?int $navigationSort = 3;
     protected static ?string $navigationLabel = 'Cuotas Pendientes';
     protected static ?string $label = 'Cuota Pendiente';
     protected static ?string $pluralLabel = 'Cuotas Pendientes';

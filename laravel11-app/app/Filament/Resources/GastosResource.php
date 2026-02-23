@@ -22,6 +22,7 @@ class GastosResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-credit-card';
     protected static ?string $navigationGroup = 'Tesoreria';
+    protected static ?int $navigationSort = 2;
     protected static ?string $navigationLabel = 'Gastos';
     protected static ?string $label = 'Gasto';
     protected static ?string $pluralLabel = 'Gastos';
