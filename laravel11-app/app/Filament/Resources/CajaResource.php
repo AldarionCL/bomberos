@@ -44,7 +44,7 @@ class CajaResource extends Resource
                         Forms\Components\Select::make('tipo')
                             ->required()
                             ->options([
-                                'Ingreso cuota' => 'Ingreso cuota',
+                                'Ingreso' => 'Ingreso',
                                 'Egreso' => 'Egreso',
                             ]),
                         Forms\Components\Select::make('id_usuario')
@@ -59,6 +59,7 @@ class CajaResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->recordUrl(null)
             ->columns([
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Fecha')
@@ -67,15 +68,15 @@ class CajaResource extends Resource
                 Tables\Columns\TextColumn::make('descripcion')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('monto')
-                    ->money('CLP')
+                    ->money('CLP', locale: 'es-CL')
                     ->sortable()
                     ->color(fn(string $state): string => str_starts_with($state, '-') ? 'danger' : 'success'),
                 Tables\Columns\TextColumn::make('impuesto')
-                    ->money('CLP')
+                    ->money('CLP', locale: 'es-CL')
                     ->sortable()
                     ->color(fn(string $state): string => str_starts_with($state, '-') ? 'danger' : 'success'),
                 Tables\Columns\TextColumn::make('total')
-                    ->money('CLP')
+                    ->money('CLP', locale: 'es-CL')
                     ->sortable()
                     ->color(fn(string $state): string => str_starts_with($state, '-') ? 'danger' : 'success')
                     ->weight('bold'),
@@ -98,12 +99,11 @@ class CajaResource extends Resource
                     ]),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                //
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    //
                 ]),
             ]);
     }
@@ -120,7 +120,6 @@ class CajaResource extends Resource
         return [
             'index' => Pages\ListCajas::route('/'),
             'create' => Pages\CreateCaja::route('/create'),
-            'edit' => Pages\EditCaja::route('/{record}/edit'),
         ];
     }
 }

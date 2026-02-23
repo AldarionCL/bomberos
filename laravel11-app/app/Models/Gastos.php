@@ -23,4 +23,9 @@ class Gastos extends Model
     public function caja(){
         return $this->belongsTo(Caja::class, 'idCaja');
     }
+
+    public function documento()
+    {
+        return $this->hasOne(DocumentosGastos::class, 'idGasto');
+    }
 }

@@ -66,6 +66,13 @@ class GastosResource extends Resource
                             ->default(now()),
                         Forms\Components\TextInput::make('AsociadoA')
                             ->maxLength(255),
+                        Forms\Components\FileUpload::make('documento.ruta_archivo')
+                            ->label('Documento Adjunto')
+                            ->disk('public')
+                            ->directory('gastos-documentos')
+                            ->visibility('public')
+                            ->preserveFilenames()
+                            ->columnSpanFull(),
                     ])->columns(2),
             ]);
     }
@@ -94,6 +101,12 @@ class GastosResource extends Resource
                     ->weight('bold'),
                 Tables\Columns\TextColumn::make('AsociadoA')
                     ->searchable(),
+                Tables\Columns\IconColumn::make('documento.ruta_archivo')
+                    ->label('Adjunto')
+                    ->icon(fn ($state) => $state ? 'heroicon-o-document-check' : 'heroicon-o-document-minus')
+                    ->color(fn ($state) => $state ? 'success' : 'gray')
+                    ->url(fn ($record) => $record->documento ? asset('storage/' . $record->documento->ruta_archivo) : null)
+                    ->openUrlInNewTab(),
             ])
             ->filters([
                 Tables\Filters\Filter::make('FechaGasto')
