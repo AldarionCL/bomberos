@@ -20,9 +20,9 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        Schema::table('personas', function (Blueprint $table) {
+        /*Schema::table('personas', function (Blueprint $table) {
             $table->foreign('idEstado')->references('id')->on('persona_estados');
-        });
+        });*/
     }
 
     /**
