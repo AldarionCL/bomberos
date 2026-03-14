@@ -278,6 +278,7 @@ class TesoreriaResource extends Resource
                             $periodo = trim($row[1]); // Esperado: Y-m-d o similar
                             $monto = trim($row[2]);
                             $estadoNombre = trim($row[3]);
+                            $fechaPago = trim($row[4]);
 
                             $user = User::where('email', $email)->first();
 
@@ -313,16 +314,21 @@ class TesoreriaResource extends Resource
                                 }
                             }
 
-                            Cuota::create([
-                                'idUser' => $user->id,
-                                'FechaPeriodo' => $fechaPeriodo->format('Y-m-d'),
-                                'FechaVencimiento' => $fechaPeriodo->copy()->endOfMonth()->format('Y-m-d'),
-                                'Monto' => $monto,
-                                'Pendiente' => $estadoNombre === 'Pendiente' ? $monto : 0,
-                                'Recaudado' => $estadoNombre === 'Aprobado' ? $monto : 0,
-                                'Estado' => $estado->id,
-                                'TipoCuota' => $tipoCuota,
-                            ]);
+                            Cuota::updateOrCreate(
+                                [
+                                    'idUser' => $user->id,
+                                    'FechaPeriodo' => $fechaPeriodo->firstOfMonth()->format('Y-m-d'),
+                                ],
+                                [
+                                    'FechaVencimiento' => $fechaPeriodo->copy()->endOfMonth()->format('Y-m-d'),
+                                    'Monto' => $monto,
+                                    'Pendiente' => $estadoNombre === 'Pendiente' ? $monto : 0,
+                                    'Recaudado' => $estadoNombre === 'Aprobado' ? $monto : 0,
+                                    'Estado' => $estado->id,
+                                    'TipoCuota' => $tipoCuota,
+                                    'FechaPago' => $fechaPago,
+                                ]
+                            );
 
                             $count++;
                         }
