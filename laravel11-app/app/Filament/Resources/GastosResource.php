@@ -23,9 +23,9 @@ class GastosResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-credit-card';
     protected static ?string $navigationGroup = 'Tesoreria';
     protected static ?int $navigationSort = 2;
-    protected static ?string $navigationLabel = 'Gastos';
-    protected static ?string $label = 'Gasto';
-    protected static ?string $pluralLabel = 'Gastos';
+    protected static ?string $navigationLabel = 'Egresos';
+    protected static ?string $label = 'Egreso';
+    protected static ?string $pluralLabel = 'Egresos';
 
     public static function canAccess(): bool
     {
@@ -39,9 +39,11 @@ class GastosResource extends Resource
                 Forms\Components\Section::make()
                     ->schema([
                         Forms\Components\TextInput::make('TipoGasto')
+                            ->label('Tipo de Egreso')
                             ->required()
                             ->maxLength(255),
                         Forms\Components\TextInput::make('MontoGasto')
+                            ->label('Monto Egreso')
                             ->required()
                             ->numeric()
                             ->prefix('$')
@@ -63,6 +65,7 @@ class GastosResource extends Resource
                             ->maxLength(65535)
                             ->columnSpanFull(),
                         Forms\Components\DatePicker::make('FechaGasto')
+                            ->label('Fecha del Egreso')
                             ->required()
                             ->default(now()),
                         Forms\Components\TextInput::make('AsociadoA')
@@ -83,11 +86,14 @@ class GastosResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('FechaGasto')
+                    ->label('Fecha')
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('TipoGasto')
+                    ->label('Tipo de Egreso')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('MontoGasto')
+                    ->label('Monto Egreso')
                     ->money('CLP')
                     ->sortable()
                     ->color('danger'),

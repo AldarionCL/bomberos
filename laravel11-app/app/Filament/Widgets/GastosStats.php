@@ -18,7 +18,7 @@ class GastosStats extends BaseWidget
         $formatter = new NumberFormatter('es_CL', NumberFormatter::CURRENCY);
 
         return [
-            Stat::make('Total Gastos', $formatter->formatCurrency($totalGastos, 'CLP'))
+            Stat::make('Total Egresos', $formatter->formatCurrency($totalGastos, 'CLP'))
                 ->description('Suma de todos los egresos registrados')
                 ->color('danger')
                 ->icon('heroicon-o-arrow-trending-down'),
