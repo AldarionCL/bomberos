@@ -10,28 +10,40 @@ use Illuminate\Support\Facades\Auth;
 class CuotaObserver
 {
     /**
+     * Handle the Cuota "created" event.
+     */
+    public function created(Cuota $cuota): void
+    {
+        $this->registrarCaja($cuota);
+    }
+
+    /**
      * Handle the Cuota "updated" event.
      */
     public function updated(Cuota $cuota): void
     {
         // Si el estado ha cambiado
         if ($cuota->isDirty('Estado')) {
-            $nuevoEstado = CuotasEstados::find($cuota->Estado);
+            $this->registrarCaja($cuota);
+        }
+    }
 
-            // Si el nuevo estado es "Pagada" o similar (asumiendo que hay un estado que significa aprobado/pagado)
-            // Según el código anterior en CuotasPendientesResource, los pendientes son 'Pendiente' y 'Pendiente Aprobacion'.
-            // Necesito saber cuál es el estado de "Pagada".
+    /**
+     * Registra el ingreso en caja si el estado es Aprobado o Pagada.
+     */
+    protected function registrarCaja(Cuota $cuota): void
+    {
+        $nuevoEstado = CuotasEstados::find($cuota->Estado);
 
-            if ($nuevoEstado && ($nuevoEstado->Estado === 'Pagada' || $nuevoEstado->Estado === 'Aprobado')) {
-                Caja::create([
-                    'monto' => $cuota->Monto,
-                    'impuesto' => 0,
-                    'total' => $cuota->Monto,
-                    'id_usuario' => Auth::id(),
-                    'descripcion' => "Pago de cuota - Usuario ID: {$cuota->idUser} - Periodo: {$cuota->FechaPeriodo}",
-                    'tipo' => 'Ingreso cuota',
-                ]);
-            }
+        if ($nuevoEstado && ($nuevoEstado->Estado === 'Pagada' || $nuevoEstado->Estado === 'Aprobado')) {
+            Caja::create([
+                'monto' => $cuota->Monto,
+                'impuesto' => 0,
+                'total' => $cuota->Monto,
+                'id_usuario' => Auth::id(),
+                'descripcion' => "Pago de cuota - Usuario ID: {$cuota->idUser} - Periodo: {$cuota->FechaPeriodo}",
+                'tipo' => 'Ingreso cuota',
+            ]);
         }
     }
 }

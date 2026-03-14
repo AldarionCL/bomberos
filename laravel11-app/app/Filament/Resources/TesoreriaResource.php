@@ -314,7 +314,7 @@ class TesoreriaResource extends Resource
                                 }
                             }
 
-                            Cuota::updateOrCreate(
+                            $cuota = Cuota::updateOrCreate(
                                 [
                                     'idUser' => $user->id,
                                     'FechaPeriodo' => $fechaPeriodo->firstOfMonth()->format('Y-m-d'),
@@ -329,6 +329,14 @@ class TesoreriaResource extends Resource
                                     'FechaPago' => $fechaPago,
                                 ]
                             );
+
+                            // Si el registro ya existía y el estado era el mismo, Eloquent no disparará el evento updated.
+                            // Si se está importando como 'Aprobado', se debe asegurar que haya un registro en caja.
+                            // Sin embargo, para evitar duplicados en caja si se re-importa lo mismo, habría que ser cuidadoso.
+                            // Dado que el requisito es que se genere el registro en caja al importar (como cuando se aprueba),
+                            // si el observer no se dispara, se podría forzar algo aquí o confiar en que se dispare.
+                            // Si el registro es nuevo o cambió el estado, el observer lo manejará.
+                            // Si no cambió, no debería generar un nuevo registro en caja por seguridad contra duplicados.
 
                             $count++;
                         }
