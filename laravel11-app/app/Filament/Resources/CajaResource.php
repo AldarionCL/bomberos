@@ -94,10 +94,7 @@ class CajaResource extends Resource
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('tipo')
-                    ->options([
-                        'Ingreso cuota' => 'Ingreso cuota',
-                        'Egreso' => 'Egreso',
-                    ]),
+                    ->options(fn()=> Caja::distinct('tipo')->pluck('tipo', 'tipo')->toArray()),
             ])
             ->actions([
                 //
