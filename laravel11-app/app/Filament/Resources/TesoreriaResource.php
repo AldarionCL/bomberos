@@ -279,6 +279,7 @@ class TesoreriaResource extends Resource
                             $monto = trim($row[2]);
                             $estadoNombre = trim($row[3]);
                             $fechaPago = trim($row[4]);
+                            $tipo = strtolower(trim($row[5] ?? 'cuota'));
 
                             $user = User::where('email', $email)->first();
 
@@ -300,35 +301,46 @@ class TesoreriaResource extends Resource
                                 continue;
                             }
 
-                            // Determinar TipoCuota por defecto o intentar inferir
-                            // Según form(), se busca en PrecioCuotas por TipoVoluntario
-                            $tipoVoluntario = $user->persona->TipoVoluntario ?? null;
-                            $tipoCuota = 'cuota_ordinaria'; // Valor por defecto
+                            if ($tipo === 'ingreso') {
+                                \App\Models\Caja::create([
+                                    'monto' => $monto,
+                                    'impuesto' => 0,
+                                    'total' => $monto,
+                                    'id_usuario' => $user->id,
+                                    'descripcion' => "Ingreso directo (Importación) - Usuario: {$user->name} ({$email}) - Periodo: {$fechaPeriodo->format('m/Y')}",
+                                    'tipo' => 'Ingreso',
+                                ]);
+                            } else {
+                                // Determinar TipoCuota por defecto o intentar inferir
+                                // Según form(), se busca en PrecioCuotas por TipoVoluntario
+                                $tipoVoluntario = $user->persona->TipoVoluntario ?? null;
+                                $tipoCuota = 'cuota_ordinaria'; // Valor por defecto
 
-                            if ($tipoVoluntario) {
-                                $pc = PrecioCuotas::where('TipoVoluntario', $tipoVoluntario)
-                                    ->where('Monto', '>', 0)
-                                    ->first();
-                                if ($pc) {
-                                    $tipoCuota = $pc->TipoCuota;
+                                if ($tipoVoluntario) {
+                                    $pc = PrecioCuotas::where('TipoVoluntario', $tipoVoluntario)
+                                        ->where('Monto', '>', 0)
+                                        ->first();
+                                    if ($pc) {
+                                        $tipoCuota = $pc->TipoCuota;
+                                    }
                                 }
-                            }
 
-                            $cuota = Cuota::updateOrCreate(
-                                [
-                                    'idUser' => $user->id,
-                                    'FechaPeriodo' => $fechaPeriodo->firstOfMonth()->format('Y-m-d'),
-                                ],
-                                [
-                                    'FechaVencimiento' => $fechaPeriodo->copy()->endOfMonth()->format('Y-m-d'),
-                                    'Monto' => $monto,
-                                    'Pendiente' => $estadoNombre === 'Pendiente' ? $monto : 0,
-                                    'Recaudado' => $estadoNombre === 'Aprobado' ? $monto : 0,
-                                    'Estado' => $estado->id,
-                                    'TipoCuota' => $tipoCuota,
-                                    'FechaPago' => $fechaPago,
-                                ]
-                            );
+                                $cuota = Cuota::updateOrCreate(
+                                    [
+                                        'idUser' => $user->id,
+                                        'FechaPeriodo' => $fechaPeriodo->firstOfMonth()->format('Y-m-d'),
+                                    ],
+                                    [
+                                        'FechaVencimiento' => $fechaPeriodo->copy()->endOfMonth()->format('Y-m-d'),
+                                        'Monto' => $monto,
+                                        'Pendiente' => $estadoNombre === 'Pendiente' ? $monto : 0,
+                                        'Recaudado' => $estadoNombre === 'Aprobado' ? $monto : 0,
+                                        'Estado' => $estado->id,
+                                        'TipoCuota' => $tipoCuota,
+                                        'FechaPago' => $fechaPago,
+                                    ]
+                                );
+                            }
 
                             // Si el registro ya existía y el estado era el mismo, Eloquent no disparará el evento updated.
                             // Si se está importando como 'Aprobado', se debe asegurar que haya un registro en caja.
