@@ -6,12 +6,15 @@ use App\Filament\Exports\CuotasExporter;
 use App\Filament\Resources\TesoreriaResource\Pages;
 use App\Filament\Resources\TesoreriaResource\RelationManagers;
 use App\Models\Cuota;
+use App\Models\CuotasEstados;
+use App\Models\User;
 use App\Models\PrecioCuotas;
 use Carbon\Carbon;
 use Coolsam\FilamentFlatpickr\Forms\Components\Flatpickr;
 use Faker\Provider\Text;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
@@ -23,6 +26,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class TesoreriaResource extends Resource
 {
@@ -246,6 +250,103 @@ class TesoreriaResource extends Resource
                     ->searchable()
             ])
             ->headerActions([
+                Tables\Actions\Action::make('importarCuotas')
+                    ->label('Importar Cuotas')
+                    ->icon('heroicon-o-arrow-up-tray')
+                    ->form([
+                        FileUpload::make('archivo_csv')
+                            ->label('Archivo CSV')
+                            ->disk('local')
+                            ->directory('temp')
+                            ->acceptedFileTypes(['text/csv', 'application/csv', 'text/plain'])
+                            ->required(),
+                    ])
+                    ->action(function (array $data) {
+                        $path = Storage::disk('local')->path($data['archivo_csv']);
+                        $handle = fopen($path, 'r');
+
+                        // Leer cabecera
+                        $header = fgetcsv($handle, 1000, ',');
+
+                        $count = 0;
+                        $errors = [];
+
+                        while (($row = fgetcsv($handle, 1000, ',')) !== FALSE) {
+                            if (count($row) < 4) continue;
+
+                            $email = trim($row[0]);
+                            $periodo = trim($row[1]); // Esperado: Y-m-d o similar
+                            $monto = trim($row[2]);
+                            $estadoNombre = trim($row[3]);
+
+                            $user = User::where('email', $email)->first();
+
+                            if (!$user) {
+                                $errors[] = "Usuario con email {$email} no encontrado.";
+                                continue;
+                            }
+
+                            $estado = CuotasEstados::where('Estado', $estadoNombre)->first();
+                            if (!$estado) {
+                                $errors[] = "Estado '{$estadoNombre}' no válido para el email {$email}.";
+                                continue;
+                            }
+
+                            try {
+                                $fechaPeriodo = Carbon::parse($periodo);
+                            } catch (\Exception $e) {
+                                $errors[] = "Fecha '{$periodo}' inválida para el email {$email}.";
+                                continue;
+                            }
+
+                            // Determinar TipoCuota por defecto o intentar inferir
+                            // Según form(), se busca en PrecioCuotas por TipoVoluntario
+                            $tipoVoluntario = $user->persona->TipoVoluntario ?? null;
+                            $tipoCuota = 'cuota_ordinaria'; // Valor por defecto
+
+                            if ($tipoVoluntario) {
+                                $pc = PrecioCuotas::where('TipoVoluntario', $tipoVoluntario)
+                                    ->where('Monto', '>', 0)
+                                    ->first();
+                                if ($pc) {
+                                    $tipoCuota = $pc->TipoCuota;
+                                }
+                            }
+
+                            Cuota::create([
+                                'idUser' => $user->id,
+                                'FechaPeriodo' => $fechaPeriodo->format('Y-m-d'),
+                                'FechaVencimiento' => $fechaPeriodo->copy()->endOfMonth()->format('Y-m-d'),
+                                'Monto' => $monto,
+                                'Pendiente' => $estadoNombre === 'Pendiente' ? $monto : 0,
+                                'Recaudado' => $estadoNombre === 'Aprobado' ? $monto : 0,
+                                'Estado' => $estado->id,
+                                'TipoCuota' => $tipoCuota,
+                            ]);
+
+                            $count++;
+                        }
+
+                        fclose($handle);
+                        Storage::disk('local')->delete($data['archivo_csv']);
+
+                        if ($count > 0) {
+                            Notification::make()
+                                ->title('Importación completada')
+                                ->body("Se han importado {$count} cuotas correctamente.")
+                                ->success()
+                                ->send();
+                        }
+
+                        if (count($errors) > 0) {
+                            Notification::make()
+                                ->title('Errores en la importación')
+                                ->body(implode('<br>', array_slice($errors, 0, 5)) . (count($errors) > 5 ? '<br>...' : ''))
+                                ->danger()
+                                ->persistent()
+                                ->send();
+                        }
+                    }),
                 Tables\Actions\ExportAction::make()
                     ->modalContent(view("filament.cuotas-exporter-modal"))
                     ->exporter(CuotasExporter::class)
