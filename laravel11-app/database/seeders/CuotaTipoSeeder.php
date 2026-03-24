@@ -14,6 +14,7 @@ class CuotaTipoSeeder extends Seeder
     {
         $cuotas = [
             'Cuota Inscripción Club',
+            'Cuota Mensual',
             'Cuota Asado Inicio Año',
             'Cuota Aniversario Socio',
             'Cuota Aniversario Acompañante',
