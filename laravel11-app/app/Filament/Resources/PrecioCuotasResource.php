@@ -81,7 +81,8 @@ class   PrecioCuotasResource extends Resource
                     ->options(fn() => \App\Models\CuotaTipo::where('activo', 1)->pluck('nombre', 'nombre')),
             ], Tables\Enums\FiltersLayout::AboveContent)
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->modal(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -101,8 +102,6 @@ class   PrecioCuotasResource extends Resource
     {
         return [
             'index' => Pages\ListPrecioCuotas::route('/'),
-            'create' => Pages\CreatePrecioCuotas::route('/create'),
-            'edit' => Pages\EditPrecioCuotas::route('/{record}/edit'),
         ];
     }
 }
