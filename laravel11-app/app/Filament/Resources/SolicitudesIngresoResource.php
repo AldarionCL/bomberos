@@ -188,9 +188,9 @@ class SolicitudesIngresoResource extends Resource
             })
             ->columns([
                 Tables\Columns\Layout\Split::make([
-                    TextColumn::make('id')
+                    /*TextColumn::make('id')
                         ->description('ID', position: 'above')
-                        ->label('ID'),
+                        ->label('ID'),*/
                     TextColumn::make('postulante.NombrePostulante')
                         ->description('Postulante', position: 'above')
                         ->label('Nombre')

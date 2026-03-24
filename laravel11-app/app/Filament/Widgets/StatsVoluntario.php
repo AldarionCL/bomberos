@@ -17,17 +17,17 @@ class StatsVoluntario extends BaseWidget
             $estado = 'Activo';
             $color = 'success';
             $icono = 'heroicon-s-check-circle';
-            $textoDescripcion = 'El usuario se encuentra activo';
+            $textoDescripcion = 'El Socio se encuentra activo';
         } else if ($estado == 'Inactivo') {
             $estado = 'Inactivo';
             $color = 'danger';
             $icono = 'heroicon-s-x-circle';
-            $textoDescripcion = 'El usuario se encuentra inactivo';
+            $textoDescripcion = 'El Socio se encuentra inactivo';
         } else {
             $estado = 'Desconocido';
             $color = 'warning';
             $icono = 'heroicon-s-exclamation-circle';
-            $textoDescripcion = 'El estado del usuario es desconocido';
+            $textoDescripcion = 'El estado del Socio es desconocido';
         }
 
 

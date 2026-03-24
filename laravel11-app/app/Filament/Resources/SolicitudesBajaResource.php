@@ -124,9 +124,9 @@ class SolicitudesBajaResource extends Resource
             })
             ->columns([
                 Tables\Columns\Layout\Split::make([
-                    TextColumn::make('id')
+                    /*TextColumn::make('id')
                         ->description('ID', position: 'above')
-                        ->label('ID'),
+                        ->label('ID'),*/
 
                     Tables\Columns\Layout\Split::make([
                         Tables\Columns\ImageColumn::make('aprobador.persona.Foto')

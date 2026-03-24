@@ -7,6 +7,7 @@ use App\Filament\Resources\TesoreriaResource\Pages;
 use App\Filament\Resources\TesoreriaResource\RelationManagers;
 use App\Models\Cuota;
 use App\Models\CuotasEstados;
+use App\Models\CuotaTipo;
 use App\Models\User;
 use App\Models\PrecioCuotas;
 use Carbon\Carbon;
@@ -53,11 +54,13 @@ class TesoreriaResource extends Resource
                         Select::make('idUser')
                             ->relationship('user', 'name')
                             ->label('Persona')
+                            ->searchable()
                             ->reactive()
                             ->required(),
 
                         Select::make('TipoCuota')
-                            ->options(function ($record, $get,$set) {
+                            ->options(fn()=>CuotaTipo::all()->pluck('nombre','id'))
+                            /*->options(function ($record, $get,$set) {
                                 $usuario = $get('idUser');
                                 if ($usuario) {
                                     $user = \App\Models\User::find($usuario);
@@ -116,20 +119,23 @@ class TesoreriaResource extends Resource
                                 }
 
 
-                            })
+                            })*/
                             ->required(),
 
                         Forms\Components\TextInput::make('Monto')
                             ->numeric()
                             ->prefix('$')
+                            ->hint('El monto total de la cuota')
                             ->required(),
                         Forms\Components\TextInput::make('Pendiente')
                             ->numeric()
                             ->prefix('$')
+                            ->hint('El monto pendiente por pagar')
                             ->required(),
                         Forms\Components\TextInput::make('Recaudado')
                             ->numeric()
                             ->prefix('$')
+                            ->hint('El monto recaudado (no puede ser mayor al monto total)')
                             ->required(),
 
 
@@ -140,7 +146,7 @@ class TesoreriaResource extends Resource
 
 //                    DatePicker::make('fechaPeriodo')->label('Fecha de Periodo'),
                         Flatpickr::make('FechaPeriodo')
-                            ->label('Periodo Desde')
+                            ->label('Periodo de Cuota')
                             ->required(),
 
                         Flatpickr::make('FechaVencimiento')

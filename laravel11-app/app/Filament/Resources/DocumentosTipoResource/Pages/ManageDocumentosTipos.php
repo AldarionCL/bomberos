@@ -13,7 +13,8 @@ class ManageDocumentosTipos extends ManageRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()
+                ->label('Nuevo Documento Tipo'),
         ];
     }
 }

@@ -65,7 +65,8 @@ class   PrecioCuotasResource extends Resource
                 /*Tables\Columns\TextColumn::make('TipoVoluntario')
                     ->formatStateUsing(fn($state) => ucwords(str_replace('_', ' ', strtolower($state))))
                     ->label('Tipo de Usuario'),*/
-                Tables\Columns\TextColumn::make('cuotastipo.tipoCobro'),
+                Tables\Columns\TextColumn::make('cuotastipo.tipoCobro')
+                ->label('Tipo de Cobro'),
                 Tables\Columns\TextColumn::make('cuotastipo.nombre')
                     ->formatStateUsing(fn($state) => ucwords(str_replace('_', ' ', strtolower($state))))
                     ->label('Tipo de Cuota'),

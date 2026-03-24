@@ -33,9 +33,9 @@ class PersonasResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-s-user-group';
     protected static ?string $navigationGroup = 'Personal';
-    protected static ?string $navigationLabel = 'Listado Usuarios';
-    protected static ?string $label = 'Usuario';
-    protected static ?string $pluralLabel = 'Usuarios';
+    protected static ?string $navigationLabel = 'Listado de Socios';
+    protected static ?string $label = 'Socio';
+    protected static ?string $pluralLabel = 'Socios';
 
     public static function form(Form $form): Form
     {
