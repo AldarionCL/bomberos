@@ -102,13 +102,15 @@ class PersonasResource extends Resource
                                     ->label('Estado Usuario')
                                     ->options(fn() => PersonaEstado::all()->pluck('Estado', 'id'))
                                     ->default(1),
-                                Select::make('TipoVoluntario')
+                                Forms\Components\Hidden::make('TipoVoluntario')
+                                    ->default('miembro'),
+                                /*Select::make('TipoVoluntario')
                                     ->label('Tipo Usuario')
                                     ->options([
                                         "miembro" => "Miembro Oficial",
                                         "miembro_honorario" => "Miembro Honorario",
                                     ])
-                                    ->default('voluntario'),
+                                    ->default('miembro'),*/
 
                                 Flatpickr::make('FechaReclutamiento')
                                     ->label('Fecha Ingreso')

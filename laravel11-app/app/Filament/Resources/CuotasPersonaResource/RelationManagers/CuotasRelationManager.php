@@ -55,6 +55,11 @@ class CuotasRelationManager extends RelationManager
                             ->label('Fecha de Vencimiento')
                             ->content(fn($record) => Carbon::parse($record->FechaVencimiento)->format('d/m/Y')),
 
+                        Select::make('idCuotaTipo')
+                            ->relationship('tipo', 'nombre')
+                            ->label('Tipo de Cuota (Nuevo)')
+                            ->placeholder('Seleccione un tipo'),
+
                         Select::make('Estado')
                             ->relationship('estadocuota', 'Estado')
                             ->default(1)

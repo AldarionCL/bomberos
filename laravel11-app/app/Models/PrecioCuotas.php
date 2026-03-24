@@ -20,6 +20,10 @@ class PrecioCuotas extends Model
         'periodo' => 'date',
     ];
 
+    public function cuotastipo()
+    {
+        return $this->belongsTo(\App\Models\CuotaTipo::class, 'TipoCuota', 'nombre');
+    }
 
     public function scopeTipoVoluntario($query, $tipo)
     {

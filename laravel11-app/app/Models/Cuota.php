@@ -11,6 +11,7 @@ class Cuota extends Model
     protected $primaryKey = 'id';
     protected $fillable = [
         'idUser',
+        'idCuotaTipo',
         'FechaPeriodo',
         'FechaVencimiento',
         'FechaPago',
@@ -34,6 +35,10 @@ class Cuota extends Model
 
     public function user(){
         return $this->belongsTo(User::class, 'idUser');
+    }
+
+    public function tipo(){
+        return $this->belongsTo(CuotaTipo::class, 'idCuotaTipo');
     }
 
     public function estadocuota(){

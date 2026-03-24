@@ -19,8 +19,8 @@ class   PrecioCuotasResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $navigationGroup = 'Administracion';
-    protected static ?string $navigationLabel = 'Valor Cuotas';
+    protected static ?string $navigationGroup = 'Configuración';
+    protected static ?string $navigationLabel = 'Valor Cuota';
     protected static ?string $label = 'Valor Cuota';
     protected static ?string $pluralLabel = 'Valores Cuotas';
 
@@ -32,18 +32,17 @@ class   PrecioCuotasResource extends Resource
                     ->schema([
                         Forms\Components\Select::make('TipoCuota')
                             ->label('Tipo de Cuota')
-                            ->options([
-                                'cuota_ordinaria' => 'Cuota Ordinaria',
-                                'cuota_extraordinaria' => 'Cuota Extraordinaria',
-                            ])
+                            ->options(fn() => \App\Models\CuotaTipo::where('activo', 1)->pluck('nombre', 'nombre'))
                             ->required(),
-                        Forms\Components\Select::make('TipoVoluntario')
+                        Forms\Components\Hidden::make('TipoVoluntario')
+                            ->default('miembro'),
+                        /*Forms\Components\Select::make('TipoVoluntario')
                             ->label('Tipo de Usuario')
                             ->options([
                                 "miembro" => "Miembro Oficial",
                                 "miembro_honorario" => "Miembro Honorario",
                             ])
-                            ->required(),
+                            ->required(),*/
                         Forms\Components\TextInput::make('Monto')
                             ->label('Monto')
                             ->numeric()
@@ -63,10 +62,11 @@ class   PrecioCuotasResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('TipoVoluntario')
+                /*Tables\Columns\TextColumn::make('TipoVoluntario')
                     ->formatStateUsing(fn($state) => ucwords(str_replace('_', ' ', strtolower($state))))
-                    ->label('Tipo de Voluntario'),
-                Tables\Columns\TextColumn::make('TipoCuota')
+                    ->label('Tipo de Usuario'),*/
+                Tables\Columns\TextColumn::make('cuotastipo.tipoCobro'),
+                Tables\Columns\TextColumn::make('cuotastipo.nombre')
                     ->formatStateUsing(fn($state) => ucwords(str_replace('_', ' ', strtolower($state))))
                     ->label('Tipo de Cuota'),
 
@@ -76,11 +76,8 @@ class   PrecioCuotasResource extends Resource
                     ->numeric(),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('TipoVoluntario')
-                    ->options(fn() => PrecioCuotas::distinct()->pluck('TipoVoluntario', 'TipoVoluntario')->toArray()),
-
                 Tables\Filters\SelectFilter::make('TipoCuota')
-                    ->options(fn() => PrecioCuotas::distinct()->pluck('TipoCuota', 'TipoCuota')->toArray())
+                    ->options(fn() => \App\Models\CuotaTipo::where('activo', 1)->pluck('nombre', 'nombre')),
             ], Tables\Enums\FiltersLayout::AboveContent)
             ->actions([
                 Tables\Actions\EditAction::make(),

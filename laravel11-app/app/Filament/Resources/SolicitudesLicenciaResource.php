@@ -159,7 +159,7 @@ class SolicitudesLicenciaResource extends Resource
 
                     ])->columns(3),
                 Forms\Components\Group::make([
-                    Forms\Components\Section::make('Datos del Voluntario')
+                    Forms\Components\Section::make('Datos del Usuario')
                         ->schema([
                             Forms\Components\Select::make('AsociadoA')
 //                            ->relationship('asociado', 'name')
@@ -172,13 +172,13 @@ class SolicitudesLicenciaResource extends Resource
                                 ->live()
                                 ->label('Nombre')
                                 ->searchable()
-                                ->hint('Seleccione un Voluntario para asociar a esta solicitud')
+                                ->hint('Seleccione un Usuario para asociar a esta solicitud')
                                 ->required()
                                 ->default(fn() => Auth::user()->id)
                             ->visibleOn('create'),
                             Forms\Components\Placeholder::make('AsociadoA_Placeholder')
                                 ->content(fn($record) => $record->asociado->name)
-                                ->label('Voluntario')
+                                ->label('Usuario')
                                 ->visibleOn('edit'),
 
                             Forms\Components\RichEditor::make('Observaciones')

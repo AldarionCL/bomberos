@@ -28,12 +28,12 @@ class CuotasController extends Controller
             ->get();
 
         foreach ($personas as $persona) {
-            $fechaReclutamiento = ($persona->FechaReclutamiento!='') ? Carbon::parse($persona->FechaReclutamiento) : Carbon::now()->firstOfYear();
-            $tipoVoluntario = $persona->TipoVoluntario ?? 'voluntario';
-            $antiguedad = $fechaReclutamiento->diffInYears(Carbon::now()) * -1;
+//            $fechaReclutamiento = ($persona->FechaReclutamiento!='') ? Carbon::parse($persona->FechaReclutamiento) : Carbon::now()->firstOfYear();
+            $tipoVoluntario = $persona->TipoVoluntario ?? 'miembro';
+//            $antiguedad = $fechaReclutamiento->diffInYears(Carbon::now()) * -1;
 
             $exento = false;
-            if ($antiguedad >= 50) $exento = true;
+//            if ($antiguedad >= 50) $exento = true;
 
             if (!$exento) {
                 $tiposCuota = PrecioCuotas::where('TipoVoluntario', $tipoVoluntario)

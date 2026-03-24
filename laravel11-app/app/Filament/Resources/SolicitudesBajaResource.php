@@ -63,15 +63,15 @@ class SolicitudesBajaResource extends Resource
 
                     ])->columns(),
 
-                Forms\Components\Section::make('Datos del Voluntario')
+                Forms\Components\Section::make('Datos del Usuario')
                     ->schema([
                         Forms\Components\Select::make('AsociadoA')
 //                            ->relationship('asociado', 'name')
                             ->options(fn() => \App\Models\User::whereHas('persona', function ($query) {
                                 $query->where('Activo', 1);
                             })->pluck('name', 'id'))
-                            ->label('Voluntario')
-                            ->hint('Seleccione un Voluntario para asociar a esta solicitud')
+                            ->label('Usuario')
+                            ->hint('Seleccione un Usuario para asociar a esta solicitud')
                             ->required(),
                         Forms\Components\RichEditor::make('Observaciones')
                     ]),
