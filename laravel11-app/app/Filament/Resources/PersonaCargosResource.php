@@ -48,7 +48,7 @@ class PersonaCargosResource extends Resource
                     Tables\Columns\TextColumn::make('Activo')
                         ->state(fn($record) => $record->Activo == 1 ? 'Activo' : 'Inactivo')
                         ->badge()
-                        ->icon(fn($record) => $record->Activo == 1 ? 'fas-check-circle' : 'fas-x-circle')
+                        ->icon(fn($record) => $record->Activo == 1 ? 'heroicon-s-check-circle' : 'heroicon-s-x-circle')
                         ->color(fn($record) => $record->Activo == 1 ? 'info' : 'warning')
                         ->grow(false)
                 ])
