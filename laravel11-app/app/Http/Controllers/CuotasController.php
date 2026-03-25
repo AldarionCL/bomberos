@@ -19,7 +19,7 @@ use Maatwebsite\Excel\Facades\Excel;
 class CuotasController extends Controller
 {
 
-    public function sincronizarCuotas($fechaInicio, $fechaFin, $actualizaMontos = false)
+    public function sincronizarCuotas($fechaInicio, $fechaFin, $actualizaMontos = false, $tipoCuotaParam = null)
     {
 
         // Trae las personas activas
@@ -37,6 +37,7 @@ class CuotasController extends Controller
 
             if (!$exento) {
                 $tiposCuota = PrecioCuotas::where('TipoVoluntario', $tipoVoluntario)
+                    ->where('TipoCuota', $tipoCuotaParam)
                     ->get();
 
                 $fechaInicioProceso = Carbon::parse($fechaInicio)->firstOfMonth();

@@ -3,11 +3,13 @@
 namespace App\Filament\Resources\TesoreriaResource\Pages;
 
 use App\Filament\Resources\TesoreriaResource;
+use App\Models\CuotaTipo;
 use Carbon\Carbon;
 use Filament\Actions;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
@@ -36,12 +38,16 @@ class ListTesorerias extends ListRecords
                         ->required(),
                     Checkbox::make('actualizaMonto')
                     ->inlineLabel()
-                    ->default(false)
+                    ->default(false),
+                    Select::make('tipoCuota')
+                        ->label('Tipo de Cuota')
+                        ->options(fn()=>CuotaTipo::where('activo', 1)->pluck('nombre', 'id'))
+                        ->default('Anual'),
                 ])
                 ->action(function ($data) {
                     $cuotasController = new \App\Http\Controllers\CuotasController();
 //                    $cuotasController->sincronizarCuotas();
-                    $cuotasController->sincronizarCuotas($data['fechaInicio'], $data['fechaFin'], $data['actualizaMonto']);
+                    $cuotasController->sincronizarCuotas($data['fechaInicio'], $data['fechaFin'], $data['actualizaMonto'], $data['tipoCuota']);
 
                     Notification::make()
                         ->success()
