@@ -42,7 +42,7 @@ class ListTesorerias extends ListRecords
                     Select::make('tipoCuota')
                         ->label('Tipo de Cuota')
                         ->options(fn()=>CuotaTipo::where('activo', 1)->pluck('nombre', 'id'))
-                        ->default('Anual'),
+                        ->default('Cuota Mensual'),
                 ])
                 ->action(function ($data) {
                     $cuotasController = new \App\Http\Controllers\CuotasController();
