@@ -26,7 +26,7 @@ class ListTesorerias extends ListRecords
         return [
             Actions\CreateAction::make(),
             Actions\Action::make('generarCuotas')
-                ->label('Generar Cuotas Anual')
+                ->label('Generar Cuotas Masivas')
                 ->form([
                     DatePicker::make('fechaInicio')
                         ->default(Carbon::now()->startOfYear())
