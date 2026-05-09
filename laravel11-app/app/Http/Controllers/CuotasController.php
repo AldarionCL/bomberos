@@ -36,8 +36,7 @@ class CuotasController extends Controller
 //            if ($antiguedad >= 50) $exento = true;
 
             if (!$exento) {
-                $tiposCuota = PrecioCuotas::where('TipoVoluntario', $tipoVoluntario)
-                    ->where('TipoCuota', $tipoCuotaParam)
+                $tiposCuota = PrecioCuotas::where('TipoCuota', $tipoCuotaParam)
                     ->get();
 
                 $fechaInicioProceso = Carbon::parse($fechaInicio)->firstOfMonth();
