@@ -95,6 +95,9 @@ class GastosResource extends Resource
                 Tables\Columns\TextColumn::make('TipoGasto')
                     ->label('Tipo de Egreso')
                     ->searchable(),
+                Tables\Columns\TextColumn::make('Descripcion')
+                    ->searchable()
+                    ->limit(50),
                 Tables\Columns\TextColumn::make('MontoGasto')
                     ->label('Monto Egreso')
                     ->money('CLP')
