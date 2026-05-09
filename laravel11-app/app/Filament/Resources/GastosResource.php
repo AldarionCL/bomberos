@@ -46,6 +46,7 @@ class GastosResource extends Resource
                             ->label('Monto Egreso')
                             ->required()
                             ->numeric()
+                            ->minValue(0)
                             ->prefix('$')
                             ->live(onBlur: true)
                             ->afterStateUpdated(function (Forms\Set $set, $state, Forms\Get $get) {
@@ -56,10 +57,12 @@ class GastosResource extends Resource
                         Forms\Components\TextInput::make('MontoIva')
                             ->required()
                             ->numeric()
+                            ->minValue(0)
                             ->prefix('$'),
                         Forms\Components\TextInput::make('MontoTotal')
                             ->required()
                             ->numeric()
+                            ->minValue(0)
                             ->prefix('$'),
                         Forms\Components\Textarea::make('Descripcion')
                             ->maxLength(65535)

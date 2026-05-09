@@ -83,7 +83,7 @@ class ListGastos extends ListRecords
             $descripcion = trim($row[1]);
             $montoStr = str_replace(['$', '.'], '', $row[2]);
             $montoStr = str_replace(',', '.', $montoStr);
-            $monto = (float) $montoStr;
+            $monto = abs((float) $montoStr);
 
             if ($monto > 0) {
                 $total = $monto;
