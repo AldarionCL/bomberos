@@ -86,13 +86,14 @@ class ListGastos extends ListRecords
             $monto = (float) $montoStr;
 
             if ($monto > 0) {
-                $iva = $monto * 0.19;
-                $total = $monto + $iva;
+                $total = $monto;
+                $neto = $total / 1.19;
+                $iva = $total - $neto;
 
                 Gastos::create([
                     'FechaGasto' => $fecha,
                     'Descripcion' => $descripcion,
-                    'MontoGasto' => $monto,
+                    'MontoGasto' => $neto,
                     'MontoIva' => $iva,
                     'MontoTotal' => $total,
                     'TipoGasto' => 'Importado', // Valor por defecto
