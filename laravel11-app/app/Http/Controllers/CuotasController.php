@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Filament\Resources\PrecioCuotasResource;
 use App\Models\Cuota;
+use App\Models\CuotaTipo;
 use App\Models\Documentos;
 use App\Models\Persona;
 use App\Models\PrecioCuotas;
@@ -21,6 +22,16 @@ class CuotasController extends Controller
 
     public function sincronizarCuotas($fechaInicio, $fechaFin, $actualizaMontos = false, $tipoCuotaParam = null)
     {
+
+        // Si tipoCuotaParam es numericom, busca el nombre del tipo de cuota en la tabla CuotaTipo
+        if (is_numeric($tipoCuotaParam)) {
+            $tipoCuota = CuotaTipo::find($tipoCuotaParam);
+            if ($tipoCuota) {
+                $tipoCuotaParam = $tipoCuota->nombre;
+            } else {
+                $tipoCuotaParam = null; // Si no se encuentra, se asigna null
+            }
+        }
 
         // Trae las personas activas
         $personas = Persona::where('Activo', 1)
