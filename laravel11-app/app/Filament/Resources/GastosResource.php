@@ -43,7 +43,7 @@ class GastosResource extends Resource
                             ->required()
                             ->maxLength(255),
                         Forms\Components\TextInput::make('MontoGasto')
-                            ->label('Monto Egreso')
+                            ->label('Monto Neto Egreso')
                             ->required()
                             ->numeric()
                             ->minValue(0)
@@ -63,7 +63,15 @@ class GastosResource extends Resource
                             ->required()
                             ->numeric()
                             ->minValue(0)
-                            ->prefix('$'),
+                            ->prefix('$')
+                            ->live(onBlur: true)
+                            ->afterStateUpdated(function (Forms\Set $set, $state) {
+                                $total = (float)$state;
+                                $neto = $total / 1.19;
+                                $iva = $total - $neto;
+                                $set('MontoGasto', round($neto, 2));
+                                $set('MontoIva', round($iva, 2));
+                            }),
                         Forms\Components\Textarea::make('Descripcion')
                             ->maxLength(65535)
                             ->columnSpanFull(),
