@@ -32,8 +32,8 @@ class CuotaTipoResource extends Resource
                             ->maxLength(255),
                         Forms\Components\Select::make('tipoCobro')
                             ->options([
-                                'Cuota' => 'Cuota',
-                                'Pago' => 'Pago',
+                                'CUOTA' => 'CUOTA',
+                                'PAGO' => 'PAGO',
                             ])
                         ->required(),
                         Forms\Components\Toggle::make('activo')
