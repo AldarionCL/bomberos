@@ -59,7 +59,7 @@ class TesoreriaResource extends Resource
                             ->required(),
 
                         Select::make('TipoCuota')
-                            ->options(fn()=>CuotaTipo::all()->pluck('nombre','id'))
+                            ->options(fn()=>CuotaTipo::all()->pluck('nombre','nombre'))
                             /*->options(function ($record, $get,$set) {
                                 $usuario = $get('idUser');
                                 if ($usuario) {
