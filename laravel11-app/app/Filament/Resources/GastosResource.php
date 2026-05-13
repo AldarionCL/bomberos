@@ -43,34 +43,25 @@ class GastosResource extends Resource
                             ->required()
                             ->maxLength(255),
                         Forms\Components\TextInput::make('MontoGasto')
-                            ->label('Monto Neto Egreso')
-                            ->required()
-                            ->numeric()
-                            ->minValue(0)
-                            ->prefix('$')
-                            ->live(onBlur: true)
-                            ->afterStateUpdated(function (Forms\Set $set, $state, Forms\Get $get) {
-                                $iva = (float)$state * 0.19;
-                                $set('MontoIva', $iva);
-                                $set('MontoTotal', (float)$state + $iva);
-                            }),
-                        Forms\Components\TextInput::make('MontoIva')
-                            ->required()
-                            ->numeric()
-                            ->minValue(0)
-                            ->prefix('$'),
-                        Forms\Components\TextInput::make('MontoTotal')
+                            ->label('Monto Egreso')
                             ->required()
                             ->numeric()
                             ->minValue(0)
                             ->prefix('$')
                             ->live(onBlur: true)
                             ->afterStateUpdated(function (Forms\Set $set, $state) {
-                                $total = (float)$state;
-                                $neto = $total / 1.19;
-                                $iva = $total - $neto;
-                                $set('MontoGasto', round($neto, 2));
-                                $set('MontoIva', round($iva, 2));
+                                $set('MontoTotal', (float)$state);
+                            }),
+                        Forms\Components\TextInput::make('MontoTotal')
+                            ->hidden()
+                            ->dehydrated()
+                            ->required()
+                            ->numeric()
+                            ->minValue(0)
+                            ->prefix('$')
+                            ->live(onBlur: true)
+                            ->afterStateUpdated(function (Forms\Set $set, $state) {
+                                $set('MontoGasto', (float)$state);
                             }),
                         Forms\Components\Textarea::make('Descripcion')
                             ->maxLength(65535)
@@ -111,15 +102,6 @@ class GastosResource extends Resource
                     ->money('CLP')
                     ->sortable()
                     ->color('danger'),
-                Tables\Columns\TextColumn::make('MontoIva')
-                    ->money('CLP')
-                    ->sortable()
-                    ->color('danger'),
-                Tables\Columns\TextColumn::make('MontoTotal')
-                    ->money('CLP')
-                    ->sortable()
-                    ->color('danger')
-                    ->weight('bold'),
                 Tables\Columns\TextColumn::make('AsociadoA')
                     ->searchable(),
                 Tables\Columns\IconColumn::make('documento.ruta_archivo')

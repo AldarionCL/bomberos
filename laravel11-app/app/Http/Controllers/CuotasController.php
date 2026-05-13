@@ -76,6 +76,7 @@ class CuotasController extends Controller
                                 $cuota = Cuota::Create(
                                     [
                                         'idUser' => $persona->idUsuario,
+                                        'idCuotaTipo' => $tipoCuota->id,
                                         'FechaPeriodo' => $fechaPeriodo->format('Y-m-01'),
                                         'FechaVencimiento' => $fechaVencimiento->format('Y-m-d'),
                                         'Estado' => 1,
