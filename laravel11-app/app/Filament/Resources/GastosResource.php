@@ -67,14 +67,12 @@ class GastosResource extends Resource
                             ->maxLength(65535)
                             ->columnSpanFull(),
                         Forms\Components\TextInput::make('Evento')
+                            ->label('Asociado a')
                             ->maxLength(255),
                         Forms\Components\DatePicker::make('FechaGasto')
                             ->label('Fecha del Egreso')
                             ->required()
                             ->default(now()),
-                        Forms\Components\TextInput::make('Evento')
-                            ->label('Asociado a')
-                            ->maxLength(255),
                         Forms\Components\FileUpload::make('documento.ruta_archivo')
                             ->label('Documento Adjunto')
                             ->disk('public')
