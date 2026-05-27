@@ -15,6 +15,7 @@ class Gastos extends Model
         'MontoIva',
         'MontoTotal',
         'Descripcion',
+        'Evento',
         'FechaGasto',
         'AsociadoA',
         'idCaja'

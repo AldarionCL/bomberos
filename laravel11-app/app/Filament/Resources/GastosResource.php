@@ -66,11 +66,14 @@ class GastosResource extends Resource
                         Forms\Components\Textarea::make('Descripcion')
                             ->maxLength(65535)
                             ->columnSpanFull(),
+                        Forms\Components\TextInput::make('Evento')
+                            ->maxLength(255),
                         Forms\Components\DatePicker::make('FechaGasto')
                             ->label('Fecha del Egreso')
                             ->required()
                             ->default(now()),
-                        Forms\Components\TextInput::make('AsociadoA')
+                        Forms\Components\TextInput::make('Evento')
+                            ->label('Asociado a')
                             ->maxLength(255),
                         Forms\Components\FileUpload::make('documento.ruta_archivo')
                             ->label('Documento Adjunto')
@@ -97,12 +100,15 @@ class GastosResource extends Resource
                 Tables\Columns\TextColumn::make('Descripcion')
                     ->searchable()
                     ->limit(50),
+                Tables\Columns\TextColumn::make('Evento')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('MontoGasto')
                     ->label('Monto Egreso')
                     ->money('CLP')
                     ->sortable()
                     ->color('danger'),
-                Tables\Columns\TextColumn::make('AsociadoA')
+                Tables\Columns\TextColumn::make('Evento')
+                    ->label('Asociado a')
                     ->searchable(),
                 Tables\Columns\IconColumn::make('documento.ruta_archivo')
                     ->label('Adjunto')

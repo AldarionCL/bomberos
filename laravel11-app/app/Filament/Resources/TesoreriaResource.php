@@ -235,6 +235,9 @@ class TesoreriaResource extends Resource
                             ->money('CLP')
                             ->label('Total')
                     ]),*/
+                TextColumn::make('FechaPago')
+                    ->label('Fecha de Pago')
+                    ->date('d/m/Y'),
                 TextColumn::make('Pendiente')
                     ->money('CLP', locale: 'es_CL')
                     ->summarize([

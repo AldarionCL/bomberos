@@ -29,6 +29,15 @@ class CuotaObserver
     }
 
     /**
+     * Handle the Cuota "deleted" event.
+     */
+    public function deleted(Cuota $cuota): void
+    {
+        $descripcion = "Pago de cuota - Usuario ID: {$cuota->idUser} - Periodo: {$cuota->FechaPeriodo}";
+        Caja::where('descripcion', $descripcion)->delete();
+    }
+
+    /**
      * Registra el ingreso en caja si el estado es Aprobado o Pagada.
      */
     protected function registrarCaja(Cuota $cuota): void
