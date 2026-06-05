@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Exports\CajaExporter;
 use App\Filament\Resources\CajaResource\Pages;
 use App\Models\Caja;
 use Filament\Forms;
@@ -95,6 +96,12 @@ class CajaResource extends Resource
             ->filters([
                 Tables\Filters\SelectFilter::make('tipo')
                     ->options(fn()=> Caja::distinct('tipo')->pluck('tipo', 'tipo')->toArray()),
+            ])
+            ->headerActions([
+                Tables\Actions\ExportAction::make()
+                    ->exporter(CajaExporter::class)
+                    ->label('Exportar Excel')
+                    ->fileDisk('exports'),
             ])
             ->actions([
                 //
