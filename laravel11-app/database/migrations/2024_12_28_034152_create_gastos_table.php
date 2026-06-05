@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('gastos', function (Blueprint $table) {
             $table->id();
-            $table->string('Descripcion');
+            $table->string('Descripcion')->nullable();
             $table->date('FechaGasto');
             $table->integer('MontoGasto');
             $table->integer('MontoIva')->default(0);

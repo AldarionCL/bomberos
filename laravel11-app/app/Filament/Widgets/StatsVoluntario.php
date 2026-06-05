@@ -51,6 +51,8 @@ class StatsVoluntario extends BaseWidget
 
         if($cuotas){
             $estadoCuota = $cuotas->estadocuota->Estado;
+            if ($estadoCuota == 'Aprobado')
+                $estadoCuota = 'Al Dia';
         } else {
             $estadoCuota = 'No disponible';
         }
@@ -63,8 +65,8 @@ class StatsVoluntario extends BaseWidget
                 ->icon($icono)
                 ->color($color),
 
-            Stat::make('Licencia', $diasLicencia)
-                ->description('Días de licencia')
+            Stat::make('Inactividad', $diasLicencia)
+                ->description('Días de inactividad')
                 ->icon('heroicon-s-calendar')
                 ->color('warning'),
 
