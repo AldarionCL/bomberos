@@ -100,6 +100,7 @@ class CajaResource extends Resource
             ->headerActions([
                 Tables\Actions\ExportAction::make()
                     ->exporter(CajaExporter::class)
+                    ->color('info')
                     ->label('Exportar Excel')
                     ->fileDisk('exports'),
             ])
