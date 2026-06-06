@@ -22,7 +22,7 @@ class ComprobanteCuota extends Component
         $this->user = $this->cuota->user;
         $this->aprobador = $this->cuota->aprobador;
 
-        if($this->aprobador->name == 'Admin'){
+        if($this->aprobador && $this->aprobador->name == 'Admin'){
             $tesorero = Persona::whereHas('cargo',fn($query) => $query->where('Cargo', 'Tesorero'))->first()->user;
             if($tesorero){
                 $this->aprobador = $tesorero;
