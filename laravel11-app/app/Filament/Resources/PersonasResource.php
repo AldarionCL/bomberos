@@ -37,6 +37,18 @@ class PersonasResource extends Resource
     protected static ?string $label = 'Socio';
     protected static ?string $pluralLabel = 'Socios';
 
+    public static function isNavigationItemActive(): bool
+    {
+        if (
+            request()->routeIs(static::getRouteBaseName() . '.edit') &&
+            (string) request()->route('record') === (string) Auth::id()
+        ) {
+            return false;
+        }
+
+        return request()->routeIs(static::getRouteBaseName() . '.*');
+    }
+
     public static function form(Form $form): Form
     {
         return $form
