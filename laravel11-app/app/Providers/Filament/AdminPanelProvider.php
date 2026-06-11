@@ -4,7 +4,10 @@ namespace App\Providers\Filament;
 
 use App\Filament\Pages\Home;
 use App\Filament\Resources\DocumentosResource;
+use App\Filament\Resources\PersonasResource;
 use Filament\Http\Middleware\Authenticate;
+use Filament\Navigation\NavigationItem;
+use Illuminate\Support\Facades\Auth;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -77,6 +80,17 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->darkMode(false)
             ->profile()
+            ->navigationItems([
+                NavigationItem::make('Mi Perfil')
+                    ->url(fn() => PersonasResource::getUrl('edit', ['record' => Auth::id()]))
+                    ->icon('heroicon-s-user-circle')
+                    ->group('Personal')
+                    ->sort(-1)
+                    ->isActiveWhen(fn() =>
+                        request()->routeIs('filament.admin.resources.personas.edit')
+                        && (string) request()->route('record') === (string) Auth::id()
+                    ),
+            ])
             ->maxContentWidth(MaxWidth::Full);
     }
 }
