@@ -6,6 +6,7 @@ use App\Filament\Pages\Home;
 use App\Filament\Resources\DocumentosResource;
 use App\Filament\Resources\PersonasResource;
 use Filament\Http\Middleware\Authenticate;
+use Filament\Navigation\MenuItem;
 use Filament\Navigation\NavigationItem;
 use Illuminate\Support\Facades\Auth;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -79,7 +80,12 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
             ])
             ->darkMode(false)
-            ->profile()
+            ->userMenuItems([
+                'profile' => MenuItem::make()
+                    ->label('Mi Perfil')
+                    ->url(fn() => PersonasResource::getUrl('edit', ['record' => Auth::id()]))
+                    ->icon('heroicon-s-user-circle'),
+            ])
             ->navigationItems([
                 NavigationItem::make('Mi Perfil')
                     ->url(fn() => PersonasResource::getUrl('edit', ['record' => Auth::id()]))
