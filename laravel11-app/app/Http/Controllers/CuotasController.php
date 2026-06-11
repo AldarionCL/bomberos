@@ -198,12 +198,12 @@ class CuotasController extends Controller
 
 
             $documento = Documentos::create([
-                'TipoDocumento' => 11, // Asumimos que es un comprobante de pago
-                'Nombre' => $data['Documento'],
+                'TipoDocumento' => 11,
+                'Nombre' => '',
                 'Path' => $data['DocumentoArchivo'],
                 'Descripcion' => 'Comprobante de pago de cuota',
-//                            'AsosiadoA' => Auth::user()->id,
             ]);
+            $documento->update(['Nombre' => str_pad($documento->id, 6, '0', STR_PAD_LEFT)]);
 
             $record->idDocumento = $documento->id;
 
@@ -254,12 +254,12 @@ class CuotasController extends Controller
             ->first();
 
         $documento = Documentos::create([
-            'TipoDocumento' => 11, // Asumimos que es un comprobante de pago
-            'Nombre' => $data['Documento'],
+            'TipoDocumento' => 11,
+            'Nombre' => '',
             'Path' => $data['DocumentoArchivo'],
             'Descripcion' => 'Comprobante de pago de cuota',
-//                            'AsosiadoA' => Auth::user()->id,
         ]);
+        $documento->update(['Nombre' => str_pad($documento->id, 6, '0', STR_PAD_LEFT)]);
 
         // Ordenar las cuotas seleccionadas por tipo y fecha de vencimiento
         /*$records = $records->sort(function ($a, $b) {

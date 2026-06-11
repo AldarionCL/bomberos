@@ -231,9 +231,6 @@ class CuotasRelationManager extends RelationManager
                                 ])->columns(),
                             Section::make('Documentos')
                                 ->schema([
-                                    TextInput::make('Documento')
-                                        ->label('N° Documento')
-                                        ->required(),
                                     Flatpickr::make('FechaPago')->label('Fecha de Pago')
                                         ->default(fn() => Carbon::today()->format('Y-m-d'))
                                         ->required(),
@@ -330,10 +327,6 @@ class CuotasRelationManager extends RelationManager
                     ->modalHeading('Generar comprobante de pago')
                     ->modalDescription('Esta cuota fue aprobada sin un comprobante adjunto. Complete los datos para generarlo.')
                     ->form(fn($record) => [
-                        TextInput::make('Documento')
-                            ->label('N° Documento')
-                            ->default('COMP-' . $record->id . '-' . now()->format('Ymd'))
-                            ->required(),
                         Flatpickr::make('FechaPago')
                             ->label('Fecha de Pago')
                             ->default(fn() => $record->FechaPago
@@ -352,10 +345,11 @@ class CuotasRelationManager extends RelationManager
                     ->action(function (array $data, $record) {
                         $documento = Documentos::create([
                             'TipoDocumento' => 11,
-                            'Nombre' => $data['Documento'],
+                            'Nombre' => '',
                             'Path' => $data['DocumentoArchivo'] ?? null,
                             'Descripcion' => 'Comprobante de pago de cuota',
                         ]);
+                        $documento->update(['Nombre' => str_pad($documento->id, 6, '0', STR_PAD_LEFT)]);
 
                         $record->update([
                             'idDocumento' => $documento->id,
@@ -467,9 +461,6 @@ class CuotasRelationManager extends RelationManager
                                 ])->columns(),
                             Section::make('Documentos')
                                 ->schema([
-                                    TextInput::make('Documento')
-                                        ->label('N° Documento')
-                                        ->required(),
                                     Flatpickr::make('FechaPago')->label('Fecha de Pago')
                                         ->default(fn() => Carbon::today()->format('Y-m-d'))
                                         ->required(),
