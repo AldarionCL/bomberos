@@ -13,6 +13,21 @@ class EditPersonas extends EditRecord
 {
     protected static string $resource = PersonasResource::class;
 
+    public static function authorizeResourceAccess(): void
+    {
+        $user = Auth::user();
+
+        if (
+            $user->isRole('Administrador')
+            || $user->isCargo(['Director', 'Capitán', 'Capitan', 'Teniente 1', 'Teniente 2', 'Teniente 3', 'Ayudante'])
+        ) {
+            return;
+        }
+
+        // Regular users can only access their own record
+        abort_unless((string) $user->id === (string) request()->route('record'), 403);
+    }
+
     protected function authorizeAccess(): void
     {
         $user = Auth::user();
@@ -21,7 +36,7 @@ class EditPersonas extends EditRecord
         abort_unless(
             $user->isRole('Administrador')
             || $user->isCargo(['Director', 'Capitán', 'Capitan', 'Teniente 1', 'Teniente 2', 'Teniente 3', 'Ayudante'])
-            || $user->id === $record->id,
+            || $user->id == $record->id,
             403
         );
     }
