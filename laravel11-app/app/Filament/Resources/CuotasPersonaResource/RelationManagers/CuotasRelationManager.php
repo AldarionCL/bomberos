@@ -321,10 +321,63 @@ class CuotasRelationManager extends RelationManager
                     ->visible(fn($record) => (Auth::user()->isRole('Administrador') || Auth::user()->isCargo('Tesorero')) && $record->Estado == 5)
                     ->requiresConfirmation(),
 
+                Tables\Actions\Action::make('GenerarComprobante')
+                    ->label('Generar Comprobante')
+                    ->button()
+                    ->color('warning')
+                    ->icon('heroicon-s-document-plus')
+                    ->visible(fn($record) => $record->Estado == 2 && !$record->idDocumento)
+                    ->modalHeading('Generar comprobante de pago')
+                    ->modalDescription('Esta cuota fue aprobada sin un comprobante adjunto. Complete los datos para generarlo.')
+                    ->form(fn($record) => [
+                        TextInput::make('Documento')
+                            ->label('N° Documento')
+                            ->default('COMP-' . $record->id . '-' . now()->format('Ymd'))
+                            ->required(),
+                        Flatpickr::make('FechaPago')
+                            ->label('Fecha de Pago')
+                            ->default(fn() => $record->FechaPago
+                                ? Carbon::parse($record->FechaPago)->format('Y-m-d')
+                                : Carbon::today()->format('Y-m-d'))
+                            ->required(),
+                        Forms\Components\FileUpload::make('DocumentoArchivo')
+                            ->label('Archivo Comprobante (opcional)')
+                            ->disk('public')
+                            ->directory('comprobantesCuotas')
+                            ->deletable(false)
+                            ->previewable()
+                            ->downloadable()
+                            ->columnSpanFull(),
+                    ])
+                    ->action(function (array $data, $record) {
+                        $documento = Documentos::create([
+                            'TipoDocumento' => 11,
+                            'Nombre' => $data['Documento'],
+                            'Path' => $data['DocumentoArchivo'] ?? null,
+                            'Descripcion' => 'Comprobante de pago de cuota',
+                        ]);
+
+                        $record->update([
+                            'idDocumento' => $documento->id,
+                            'FechaPago' => $data['FechaPago'],
+                        ]);
+
+                        Notification::make()
+                            ->title('Comprobante generado')
+                            ->body('Se ha generado el comprobante de pago correctamente.')
+                            ->success()
+                            ->icon('heroicon-s-document-text')
+                            ->actions([
+                                \Filament\Notifications\Actions\Action::make('Abrir comprobante')
+                                    ->button()
+                                    ->url(route('comprobante-cuota', $documento->id), shouldOpenInNewTab: true),
+                            ])
+                            ->send();
+                    }),
+
                 Tables\Actions\Action::make('VerComprobante')
                     ->label('Recibo de Pago')
                     ->url(fn($record) => route('comprobante-cuota', $record->idDocumento))
-//                        ->view('filament.pages.comprobanteFilament', fn($record) => ['record' => $record->id])
                     ->openUrlInNewTab()
                     ->button()
                     ->visible(fn($record) => $record->Estado == 2 && $record->idDocumento)
