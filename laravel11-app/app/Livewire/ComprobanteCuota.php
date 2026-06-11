@@ -7,12 +7,12 @@ use Livewire\Component;
 
 class ComprobanteCuota extends Component
 {
-
     public $records;
     public $cuota;
     public $documento;
     public $user;
     public $aprobador;
+    public $logoBase64;
 
     public function mount($idDocumento)
     {
@@ -22,12 +22,17 @@ class ComprobanteCuota extends Component
         $this->user = $this->cuota->user;
         $this->aprobador = $this->cuota->aprobador;
 
-        if($this->aprobador && $this->aprobador->name == 'Admin'){
-            $tesorero = Persona::whereHas('cargo',fn($query) => $query->where('Cargo', 'Tesorero'))->first()->user;
-            if($tesorero){
+        if ($this->aprobador && $this->aprobador->name == 'Admin') {
+            $tesorero = Persona::whereHas('cargo', fn($query) => $query->where('Cargo', 'Tesorero'))->first()?->user;
+            if ($tesorero) {
                 $this->aprobador = $tesorero;
             }
         }
+
+        $logoPath = public_path('img/logo.png');
+        $this->logoBase64 = file_exists($logoPath)
+            ? 'data:image/png;base64,' . base64_encode(file_get_contents($logoPath))
+            : null;
     }
 
     public function render()
@@ -35,12 +40,8 @@ class ComprobanteCuota extends Component
         return view('livewire.comprobante-cuota');
     }
 
-/*    public function createPDF(){
-        $pdf = \PDF::loadView('livewire.comprobante-cuota', ['cuota' => $this->cuota]);
-        return $pdf->stream('comprobante-cuota.pdf');
-    }*/
-
-    public static function getHtml($idDocumento){
+    public static function getHtml($idDocumento)
+    {
         $records = \App\Models\Cuota::where('idDocumento', $idDocumento)->get();
         $cuota = $records[0];
 
@@ -52,5 +53,4 @@ class ComprobanteCuota extends Component
             'aprobador' => $cuota->aprobador,
         ])->render();
     }
-
 }

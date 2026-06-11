@@ -383,15 +383,22 @@ class CuotasController extends Controller
             }
         }
 
+        $logoPath = public_path('img/logo.png');
+        $logoBase64 = file_exists($logoPath)
+            ? 'data:image/png;base64,' . base64_encode(file_get_contents($logoPath))
+            : null;
+
         $data = [
             'cuota' => $cuota,
             'records' => $records,
             'documento' => $documento,
             'user' => $user,
             'aprobador' => $aprobador,
+            'logoBase64' => $logoBase64,
+            'forPdf' => true,
         ];
 
-        $pdf = Pdf::loadView('livewire.comprobante-cuota', $data);
+        $pdf = Pdf::loadView('pdf.comprobante-cuota', $data);
 
         // Opciones para mejorar la renderización (ajustar según necesidad)
         $pdf->setPaper('letter', 'portrait');
