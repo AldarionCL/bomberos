@@ -33,7 +33,7 @@
         <div class="md:w-1/2 lg:w-3/5 flex-shrink-0 overflow-hidden">
             <img src="{{ asset('storage/' . $featured->Imagen) }}"
                  alt="{{ $featured->Titulo }}"
-                 class="h-64 md:h-full w-full object-cover transition-transform duration-300 group-hover:scale-105">
+                 class="h-64 md:h-full w-full object-cover ">
         </div>
         @endif
 
