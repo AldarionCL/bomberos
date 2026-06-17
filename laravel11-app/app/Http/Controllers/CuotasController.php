@@ -233,6 +233,25 @@ class CuotasController extends Controller
                 ->send()
                 ->sendToDatabase($record->user);
 
+            // Notificar a tesoreros y administradores (excluyendo al usuario que registra el pago)
+            $notifyAdmins = User::whereHas('role', fn($q) => $q->where('Rol', 'Administrador'))
+                ->orWhereHas('persona.cargo', fn($q) => $q->where('Cargo', 'Tesorero'))
+                ->where('id', '!=', Auth::id())
+                ->get();
+
+            if ($notifyAdmins->isNotEmpty()) {
+                Notification::make()
+                    ->title('Nuevo pago registrado')
+                    ->body(($record->user->name ?? 'Un usuario') . ' registró un pago de $' . number_format($montoCuota, 0, ',', '.') . ' — periodo ' . Carbon::parse($record->FechaPeriodo)->format('d/m/Y'))
+                    ->info()
+                    ->icon('heroicon-s-currency-dollar')
+                    ->actions([
+                        \Filament\Notifications\Actions\Action::make('Ver comprobante')
+                            ->button()
+                            ->url(route('comprobante-cuota', $documento->id), shouldOpenInNewTab: true),
+                    ])
+                    ->sendToDatabase($notifyAdmins);
+            }
 
         } else {
 
@@ -362,6 +381,29 @@ class CuotasController extends Controller
             ])
             ->send()
             ->sendToDatabase($records[0]->user);
+
+        // Notificar a tesoreros y administradores (excluyendo al usuario que registra el pago)
+        $totalPagadas = Cuota::where('idDocumento', $documento->id)->count();
+        if ($totalPagadas > 0) {
+            $notifyAdmins = User::whereHas('role', fn($q) => $q->where('Rol', 'Administrador'))
+                ->orWhereHas('persona.cargo', fn($q) => $q->where('Cargo', 'Tesorero'))
+                ->where('id', '!=', Auth::id())
+                ->get();
+
+            if ($notifyAdmins->isNotEmpty()) {
+                Notification::make()
+                    ->title('Nuevo pago registrado')
+                    ->body(($records[0]->user->name ?? 'Un usuario') . ' registró ' . $totalPagadas . ' pago(s) por $' . number_format($data['MontoPagar'], 0, ',', '.'))
+                    ->info()
+                    ->icon('heroicon-s-currency-dollar')
+                    ->actions([
+                        \Filament\Notifications\Actions\Action::make('Ver comprobante')
+                            ->button()
+                            ->url(route('comprobante-cuota', $documento->id), shouldOpenInNewTab: true),
+                    ])
+                    ->sendToDatabase($notifyAdmins);
+            }
+        }
     }
 
     public function downloadPDF($idDocumento)
