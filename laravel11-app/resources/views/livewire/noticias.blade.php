@@ -50,7 +50,7 @@
                 <p class="text-sm font-medium text-gray-500 dark:text-gray-400 mb-4">{{ $featured->Subtitulo }}</p>
                 @endif
                 <div class="prose prose-sm dark:prose-invert text-gray-600 dark:text-gray-300">
-                    {!! $featured->Contenido !!}
+                    {!! \Illuminate\Support\Str::markdown($featured->Contenido ?? '') !!}
                 </div>
             </div>
 
@@ -99,7 +99,7 @@
             <p class="text-xs text-gray-500 dark:text-gray-400 font-medium mb-3">{{ $noticia->Subtitulo }}</p>
             @endif
             <div class="prose prose-sm dark:prose-invert text-gray-600 dark:text-gray-300 text-sm flex-1">
-                {!! $noticia->Contenido !!}
+                {!! \Illuminate\Support\Str::markdown($noticia->Contenido ?? '') !!}
             </div>
         </div>
 
