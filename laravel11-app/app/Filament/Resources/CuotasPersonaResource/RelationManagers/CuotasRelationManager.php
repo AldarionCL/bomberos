@@ -161,7 +161,7 @@ class CuotasRelationManager extends RelationManager
                         : null)
                     ->visibleFrom('md'),
 
-                Tables\Columns\TextColumn::make('documento.Nombre')
+                Tables\Columns\TextColumn::make('documento.NroComprobante')
                     ->label('Comprobante')
                     ->badge()
                     ->color('info')
