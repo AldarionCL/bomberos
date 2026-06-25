@@ -18,6 +18,7 @@ class Persona extends Model
         'Rut',
         'Nombre',
         'Telefono',
+        'TelefonoEmergencia',
         'Correo',
         'Direccion',
         'Comuna',

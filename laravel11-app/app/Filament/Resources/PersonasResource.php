@@ -87,6 +87,10 @@ class PersonasResource extends Resource
                                     ->mask('+56 (9) 9999-9999')
                                     ->placeholder('+56 (9) 1234-5678')
                                     ->label('Teléfono'),
+                                Forms\Components\TextInput::make('TelefonoEmergencia')
+                                    ->mask('+56 (9) 9999-9999')
+                                    ->placeholder('+56 (9) 1234-5678')
+                                    ->label('Teléfono de Emergencia'),
                                 Flatpickr::make('FechaNacimiento')
                                     ->label('Fecha Nacimiento')
                                     ->live()
