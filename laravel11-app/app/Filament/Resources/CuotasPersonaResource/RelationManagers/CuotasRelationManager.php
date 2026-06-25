@@ -241,6 +241,10 @@ class CuotasRelationManager extends RelationManager
                                 ])->columns(),
                             Section::make('Documentos')
                                 ->schema([
+                                    Forms\Components\Textarea::make('NroComprobante')
+                                        ->label('N° Comprobante')
+                                        ->rows(1)
+                                        ->placeholder('Ingrese el número de comprobante...'),
                                     Flatpickr::make('FechaPago')->label('Fecha de Pago')
                                         ->default(fn() => Carbon::today()->format('Y-m-d'))
                                         ->required(),
