@@ -96,9 +96,9 @@ class CuotasRelationManager extends RelationManager
                 Section::make('Comprobantes de Pago')
                     ->relationship('documento')
                     ->schema([
-                        Forms\Components\Placeholder::make('NroDocumento')
-                            ->label('Nro Documento')
-                            ->content(fn($record) => $record->NroDocumento ?? 'No asignado'),
+                        Forms\Components\TextInput::make('NroDocumento')
+                            ->label('N° Documento')
+                            ->nullable(),
                         Forms\Components\Placeholder::make('FechaPago')
                             ->label('Fecha de Pago')
                             ->content(fn($record) => isset($record->FechaPago) ? Carbon::parse($record->FechaPago)->format('d/m/Y') : 'No asignado'),
