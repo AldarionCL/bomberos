@@ -11,6 +11,7 @@ class Documentos extends Model
     protected $primaryKey = 'id';
     protected $fillable = [
         'Nombre',
+        'NroDocumento',
         'Descripcion',
         'TipoArchivo',
         'TipoDocumento',

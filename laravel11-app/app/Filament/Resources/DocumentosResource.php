@@ -43,6 +43,10 @@ class DocumentosResource extends Resource
                         Forms\Components\TextInput::make('Nombre')
                             ->required(),
 
+                        Forms\Components\TextInput::make('NroDocumento')
+                            ->label('N° Documento')
+                            ->nullable(),
+
                         Forms\Components\Select::make('TipoDocumento')
                             ->options(fn() => DocumentosTipo::where('Clasificacion', 'publico')->pluck('Tipo', 'id'))
                             ->label('Tipo de Documento')
@@ -111,8 +115,13 @@ class DocumentosResource extends Resource
                     Tables\Columns\TextColumn::make('Nombre')
                         ->grow()
                         ->searchable()
-                        ->description(fn($record) => $record->tipo->Tipo)
-                    ,
+                        ->description(fn($record) => $record->tipo->Tipo),
+
+                    Tables\Columns\TextColumn::make('NroDocumento')
+                        ->label('N° Documento')
+                        ->searchable()
+                        ->placeholder('-')
+                        ->grow(false),
 //                Tables\Columns\TextColumn::make('tipo.Tipo')->searchable(),
 
 //                    Tables\Columns\Layout\Stack::make([

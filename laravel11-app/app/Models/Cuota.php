@@ -25,6 +25,7 @@ class Cuota extends Model
         'SaldoFavor',
         'TipoCuota',
         'AprobadoPor',
+        'MotivoRechazo',
     ];
 
     protected $dates = [

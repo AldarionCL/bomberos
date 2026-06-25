@@ -85,6 +85,12 @@ class CuotasRelationManager extends RelationManager
                         Forms\Components\Placeholder::make('AprobadoPor')
                             ->label('Aprobado Por')
                             ->content(fn($record) => $record->aprobador ? $record->aprobador->name : 'Sin aprobacion'),
+
+                        Forms\Components\Placeholder::make('MotivoRechazo')
+                            ->label('Motivo de Rechazo')
+                            ->content(fn($record) => $record->MotivoRechazo ?? '-')
+                            ->visible(fn($record) => $record && $record->estadocuota?->Estado === 'Rechazado')
+                            ->columnSpanFull(),
                     ])->columns(3),
 
                 Section::make('Comprobantes de Pago')
@@ -149,7 +155,11 @@ class CuotasRelationManager extends RelationManager
                         'Cancelado' => 'danger',
                         'Pendiente Aprobacion' => 'warning',
                         default => 'gray',
-                    })->visibleFrom('md'),
+                    })
+                    ->tooltip(fn($record) => $record->estadocuota?->Estado === 'Rechazado' && $record->MotivoRechazo
+                        ? 'Motivo: ' . $record->MotivoRechazo
+                        : null)
+                    ->visibleFrom('md'),
 
                 Tables\Columns\TextColumn::make('documento.Nombre')
                     ->label('Comprobante')
@@ -317,6 +327,42 @@ class CuotasRelationManager extends RelationManager
                     ->disabled(fn($record) => $record->Pendiente > 0)
                     ->visible(fn($record) => (Auth::user()->isRole('Administrador') || Auth::user()->isCargo('Tesorero')) && $record->Estado == 5)
                     ->requiresConfirmation(),
+
+                Tables\Actions\Action::make('RechazarPago')
+                    ->label('Rechazar')
+                    ->button()
+                    ->color('danger')
+                    ->icon('heroicon-s-x-circle')
+                    ->visible(fn($record) => (Auth::user()->isRole('Administrador') || Auth::user()->isCargo('Tesorero')) && $record->Estado == 5)
+                    ->form([
+                        Forms\Components\Textarea::make('MotivoRechazo')
+                            ->label('Motivo de rechazo')
+                            ->required()
+                            ->rows(3)
+                            ->placeholder('Indique el motivo por el cual se rechaza este pago...'),
+                    ])
+                    ->action(function (array $data, $record) {
+                        $record->update([
+                            'Estado' => 3,
+                            'MotivoRechazo' => $data['MotivoRechazo'],
+                        ]);
+
+                        Notification::make()
+                            ->title('Pago Rechazado')
+                            ->danger()
+                            ->icon('heroicon-s-x-circle')
+                            ->send();
+
+                        Notification::make()
+                            ->title('Pago Rechazado')
+                            ->body('Se ha rechazado el pago de tu cuota del periodo ' . Carbon::parse($record->FechaPeriodo)->format('d/m/Y') . '. Motivo: ' . $data['MotivoRechazo'])
+                            ->danger()
+                            ->icon('heroicon-s-x-circle')
+                            ->sendToDatabase($record->user);
+                    })
+                    ->modalHeading('Rechazar pago')
+                    ->modalDescription('Esta acción marcará la cuota como rechazada y notificará al voluntario.')
+                    ->requiresConfirmation(false),
 
                 Tables\Actions\Action::make('GenerarComprobante')
                     ->label('Generar Comprobante')
