@@ -165,9 +165,9 @@ class TesoreriaResource extends Resource
                             ->relationship('documentos')
                             ->label('')
                             ->schema([
-                                Forms\Components\Placeholder::make('Ndocumento')
-                                    ->label('N° Documento')
-                                    ->content(fn($record) => $record->Nombre ?? ''),
+                                Forms\Components\Placeholder::make('NroDocumento')
+                                    ->label('Nro Documento')
+                                    ->content(fn($record) => $record->NroDocumento ?? ''),
                                 Forms\Components\Placeholder::make('FechaPago')
                                     ->label('Fecha de Pago')
                                     ->content(fn($record) => Carbon::parse($record->FechaPago ?? '')->format('d/m/Y')),
