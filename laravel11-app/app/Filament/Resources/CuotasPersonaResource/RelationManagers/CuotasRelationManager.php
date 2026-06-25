@@ -373,6 +373,10 @@ class CuotasRelationManager extends RelationManager
                     ->modalHeading('Generar comprobante de pago')
                     ->modalDescription('Esta cuota fue aprobada sin un comprobante adjunto. Complete los datos para generarlo.')
                     ->form(fn($record) => [
+                        Forms\Components\Textarea::make('NroComprobante')
+                            ->label('N° Comprobante')
+                            ->rows(1)
+                            ->placeholder('Ingrese el número de comprobante...'),
                         Flatpickr::make('FechaPago')
                             ->label('Fecha de Pago')
                             ->default(fn() => $record->FechaPago
@@ -507,13 +511,13 @@ class CuotasRelationManager extends RelationManager
                                 ])->columns(),
                             Section::make('Documentos')
                                 ->schema([
-                                    Flatpickr::make('FechaPago')->label('Fecha de Pago')
-                                        ->default(fn() => Carbon::today()->format('Y-m-d'))
-                                        ->required(),
                                     Forms\Components\Textarea::make('NroComprobante')
                                         ->label('N° Comprobante')
                                         ->rows(1)
                                         ->placeholder('Ingrese el número de comprobante...'),
+                                    Flatpickr::make('FechaPago')->label('Fecha de Pago')
+                                        ->default(fn() => Carbon::today()->format('Y-m-d'))
+                                        ->required(),
                                     Forms\Components\FileUpload::make('DocumentoArchivo')
                                         ->label('Archivo Comprobante')
                                         ->required()
