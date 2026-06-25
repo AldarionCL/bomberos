@@ -200,7 +200,7 @@ class CuotasController extends Controller
             $documento = Documentos::create([
                 'TipoDocumento' => 11,
                 'Nombre' => '',
-                'NroComprobante' => $data['NroComprobante'],
+                'NroDocumento' => $data['NroDocumento'],
                 'Path' => $data['DocumentoArchivo'],
                 'Descripcion' => 'Comprobante de pago de cuota',
             ]);
@@ -276,7 +276,7 @@ class CuotasController extends Controller
         $documento = Documentos::create([
             'TipoDocumento' => 11,
             'Nombre' => '',
-            'NroComprobante' => $data['NroComprobante'],
+            'NroDocumento' => $data['NroDocumento'],
             'Path' => $data['DocumentoArchivo'],
             'Descripcion' => 'Comprobante de pago de cuota',
         ]);
