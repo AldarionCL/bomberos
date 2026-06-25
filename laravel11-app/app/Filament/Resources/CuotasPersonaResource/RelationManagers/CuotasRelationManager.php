@@ -351,6 +351,19 @@ class CuotasRelationManager extends RelationManager
                             'MotivoRechazo' => $data['MotivoRechazo'],
                         ]);
 
+                        Cuota::create([
+                            'idUser'        => $record->idUser,
+                            'idCuotaTipo'   => $record->idCuotaTipo,
+                            'FechaPeriodo'  => $record->FechaPeriodo,
+                            'FechaVencimiento' => $record->FechaVencimiento,
+                            'Monto'         => $record->Monto,
+                            'Pendiente'     => $record->Monto,
+                            'Recaudado'     => 0,
+                            'SaldoFavor'    => 0,
+                            'TipoCuota'     => $record->TipoCuota,
+                            'Estado'        => 1,
+                        ]);
+
                         Notification::make()
                             ->title('Pago Rechazado')
                             ->danger()
@@ -359,13 +372,13 @@ class CuotasRelationManager extends RelationManager
 
                         Notification::make()
                             ->title('Pago Rechazado')
-                            ->body('Se ha rechazado el pago de tu cuota del periodo ' . Carbon::parse($record->FechaPeriodo)->format('d/m/Y') . '. Motivo: ' . $data['MotivoRechazo'])
+                            ->body('Se ha rechazado el pago de tu cuota del periodo ' . Carbon::parse($record->FechaPeriodo)->format('d/m/Y') . '. Motivo: ' . $data['MotivoRechazo'] . '. Se ha generado una nueva cuota pendiente.')
                             ->danger()
                             ->icon('heroicon-s-x-circle')
                             ->sendToDatabase($record->user);
                     })
                     ->modalHeading('Rechazar pago')
-                    ->modalDescription('Esta acción marcará la cuota como rechazada y notificará al voluntario.')
+                    ->modalDescription('Esta acción marcará la cuota como rechazada, notificará al voluntario y generará una nueva cuota pendiente.')
                     ->requiresConfirmation(false),
 
                 Tables\Actions\Action::make('GenerarComprobante')
