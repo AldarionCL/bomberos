@@ -141,7 +141,7 @@
         <div class="section-label">Autorizado por</div>
         <div class="sig-spacer"></div>
         <div class="sig-line"></div>
-        <div class="sig-name">{{ $aprobador->name ?? '' }}</div>
+        <div class="sig-name">{{ $aprobadorNombre ?? ($aprobador->name ?? '') }}</div>
         <div class="sig-role">Tesorero · Florida Runners</div>
     </div>
     @endif

@@ -12,6 +12,7 @@ class ComprobanteCuota extends Component
     public $documento;
     public $user;
     public $aprobador;
+    public $aprobadorNombre;
     public $logoBase64;
 
     public function mount($idDocumento)
@@ -21,6 +22,7 @@ class ComprobanteCuota extends Component
         $this->documento = $this->cuota->documento;
         $this->user = $this->cuota->user;
         $this->aprobador = $this->cuota->aprobador;
+        $this->aprobadorNombre = $this->aprobador ? 'Directiva2026' : null;
 
         if ($this->aprobador && $this->aprobador->name == 'Admin') {
             $tesorero = Persona::whereHas('cargo', fn($query) => $query->where('Cargo', 'Tesorero'))->first()?->user;
@@ -51,6 +53,7 @@ class ComprobanteCuota extends Component
             'documento' => $cuota->documento,
             'user' => $cuota->user,
             'aprobador' => $cuota->aprobador,
+            'aprobadorNombre' => $cuota->aprobador ? 'Directiva2026' : null,
         ])->render();
     }
 }

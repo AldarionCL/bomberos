@@ -125,7 +125,7 @@
         <div class="inv-signature">
             <div class="inv-label">Autorizado por</div>
             <div class="inv-sig-line"></div>
-            <div class="inv-sig-name">{{ $aprobador->name ?? '' }}</div>
+            <div class="inv-sig-name">{{ $aprobadorNombre ?? ($aprobador->name ?? '') }}</div>
             <div class="inv-sig-role">Tesorero · Florida Runners</div>
         </div>
         @endif

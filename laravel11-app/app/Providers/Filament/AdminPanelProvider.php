@@ -34,6 +34,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('/app')
             ->login()
+            ->passwordReset()
             ->colors([
                 'badgeAlert' => Color::hex('#cdb200'),
                 'logoYellow' => Color::hex('#cdb200'),
@@ -42,7 +43,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->brandLogo('/img/logo.png')
             ->brandLogoHeight('60px')
-            ->brandName('App')
+            ->brandName(config('app.name'))
             ->font('Roboto')
             ->sideBarWidth(300)
             ->sidebarCollapsibleOnDesktop()

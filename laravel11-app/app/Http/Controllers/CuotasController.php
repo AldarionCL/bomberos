@@ -429,6 +429,7 @@ class CuotasController extends Controller
         $documento = $cuota->documento;
         $user = $cuota->user;
         $aprobador = $cuota->aprobador;
+        $aprobadorNombre = $aprobador ? 'Directiva2026' : null;
 
         if ($aprobador && $aprobador->name == 'Admin') {
             $tesorero = Persona::whereHas('cargo', fn($query) => $query->where('Cargo', 'Tesorero'))->first()?->user;
@@ -448,6 +449,7 @@ class CuotasController extends Controller
             'documento' => $documento,
             'user' => $user,
             'aprobador' => $aprobador,
+            'aprobadorNombre' => $aprobadorNombre,
             'logoBase64' => $logoBase64,
             'forPdf' => true,
         ];

@@ -71,7 +71,7 @@ class NoticiasResource extends Resource
                             ->label('Archivo')
                             ->downloadable()
                             ->deletable(false)
-                            ->required(),
+                            ->nullable(),
                     ])
 
             ]);

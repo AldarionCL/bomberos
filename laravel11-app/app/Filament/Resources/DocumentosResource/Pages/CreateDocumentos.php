@@ -20,11 +20,13 @@ class CreateDocumentos extends CreateRecord
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         if ($data["Noticia"]) {
+            $archivoUrl = Storage::disk('public')->url($data['Path']);
+
             Noticias::create([
                 "Titulo" => "Nuevo documento publicado",
-                "SubTitulo" => $data["TipoDocumento"],
+                "Subtitulo" => $data["TipoDocumento"],
                 "Contenido" => "<p>Se ha publicado un nuevo documento, puede descargarlo en el siguiente enlace:</p>
-                <a href='" . Storage::disk('public')->download($data['Path']) . "'>Descargar</a>",
+                <a href='" . $archivoUrl . "'>Descargar</a>",
                 "FechaPublicacion" => Carbon::today()->format("Y-m-d"),
                 "createdBy" => Auth::user()->id,
 
