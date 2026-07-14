@@ -154,6 +154,9 @@ class CuotasController extends Controller
         $saldo = $data['MontoPagar'];
         $saldoFavor = Cuota::where('idUser', $record->idUser)
             ->where('SaldoFavor', '>', 0)
+            ->whereHas('estadocuota', function ($query) {
+                $query->whereIn('Estado', ['Aprobado', 'Pagada']);
+            })
             ->first();
 
         $montoPagar = $record->Pendiente;
@@ -162,6 +165,8 @@ class CuotasController extends Controller
 
         // uso del saldo a favor
         if ($saldoFavor) {
+            $saldoFavorAplicado = $saldoFavor->SaldoFavor;
+
             if ($montoPagar >= $saldoFavor->SaldoFavor) {
                 $montoPagar = $montoPagar - $saldoFavor->SaldoFavor;
                 $saldoFavor->SaldoFavor = 0;
@@ -169,7 +174,7 @@ class CuotasController extends Controller
 
                 Notification::make()
                     ->title('Saldo a Favor Aplicado')
-                    ->body('Se ha aplicado un saldo a favor de $' . number_format($saldoFavor->SaldoFavor, 0, ',', '.'))
+                    ->body('Se ha aplicado un saldo a favor de $' . number_format($saldoFavorAplicado, 0, ',', '.'))
                     ->success()
                     ->icon('heroicon-s-check')
                     ->send();
@@ -271,6 +276,9 @@ class CuotasController extends Controller
         $saldo = $data['MontoPagar'];
         $saldoFavor = Cuota::where('idUser', $records->first()->idUser)
             ->where('SaldoFavor', '>', 0)
+            ->whereHas('estadocuota', function ($query) {
+                $query->whereIn('Estado', ['Aprobado', 'Pagada']);
+            })
             ->first();
 
         $documento = Documentos::create([
@@ -299,6 +307,8 @@ class CuotasController extends Controller
 
             // uso del saldo a favor
             if ($saldoFavor) {
+                $saldoFavorAplicado = $saldoFavor->SaldoFavor;
+
                 if ($montoPagar >= $saldoFavor->SaldoFavor) {
                     $montoPagar = $montoPagar - $saldoFavor->SaldoFavor;
                     $saldoFavor->SaldoFavor = 0;
@@ -306,7 +316,7 @@ class CuotasController extends Controller
 
                     Notification::make()
                         ->title('Saldo a Favor Aplicado')
-                        ->body('Se ha aplicado un saldo a favor de $' . number_format($saldoFavor->SaldoFavor, 0, ',', '.'))
+                        ->body('Se ha aplicado un saldo a favor de $' . number_format($saldoFavorAplicado, 0, ',', '.'))
                         ->success()
                         ->icon('heroicon-s-check')
                         ->send();

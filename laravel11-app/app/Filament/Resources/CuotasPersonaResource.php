@@ -58,7 +58,17 @@ class CuotasPersonaResource extends Resource
                             ->content(fn($record) => $record->cuotas->where('Estado', 1)->count())
                             ->label('Cuotas Pendientes'),
                         Forms\Components\Placeholder::make('SaldoFavor')
-                            ->content(fn($record) => '$' . number_format($record->cuotas->where('SaldoFavor','>', 0)->sum('SaldoFavor'), 0, ',', '.'))
+                            ->content(fn($record) => '$' . number_format(
+                                $record->cuotas()
+                                    ->where('SaldoFavor', '>', 0)
+                                    ->whereHas('estadocuota', function ($query) {
+                                        $query->whereIn('Estado', ['Aprobado', 'Pagada']);
+                                    })
+                                    ->sum('SaldoFavor'),
+                                0,
+                                ',',
+                                '.'
+                            ))
                             ->label('Saldo Favor')
                         ->extraAttributes(['class' => 'text-lg font-bold text-yellow-500']),
                     ])->columns(3)

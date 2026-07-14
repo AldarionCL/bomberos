@@ -78,7 +78,12 @@ class CuotasRelationManager extends RelationManager
                             ->content(fn($record) => "$" . number_format($record->Recaudado, 0, ',', '.')),
                         Forms\Components\Placeholder::make('SaldoFavor')
                             ->label('Saldo a Favor')
-                            ->content(fn($record) => "$" . number_format($record->SaldoFavor, 0, ',', '.')),
+                            ->content(fn($record) => '$' . number_format(
+                                in_array($record->estadocuota?->Estado, ['Aprobado', 'Pagada']) ? ($record->SaldoFavor ?? 0) : 0,
+                                0,
+                                ',',
+                                '.'
+                            )),
                         Forms\Components\Placeholder::make('TipoCuota')
                             ->label('Tipo de Cuota')
                             ->content(fn($record) => $record->TipoCuota == 'cuota_ordinaria' ? 'Cuota Ordinaria' : 'Cuota Extraordinaria'),
@@ -206,6 +211,9 @@ class CuotasRelationManager extends RelationManager
                     ->form(function ($record) {
                         $saldoFavor = Cuota::where('idUser', $record->idUser)
                             ->where('SaldoFavor', '>', 0)
+                            ->whereHas('estadocuota', function ($query) {
+                                $query->whereIn('Estado', ['Aprobado', 'Pagada']);
+                            })
                             ->sum('SaldoFavor');
 
                         $montoPendiente = $record->Pendiente;
@@ -487,6 +495,9 @@ class CuotasRelationManager extends RelationManager
                     ->form(function ($records) {
                         $saldoFavor = Cuota::where('idUser', $records->first()->idUser)
                             ->where('SaldoFavor', '>', 0)
+                            ->whereHas('estadocuota', function ($query) {
+                                $query->whereIn('Estado', ['Aprobado', 'Pagada']);
+                            })
                             ->sum('SaldoFavor');
                         $saldoFavorRestado = $saldoFavor;
 

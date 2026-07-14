@@ -23,7 +23,7 @@ class CuotaObserver
     public function updated(Cuota $cuota): void
     {
         // Si el estado ha cambiado
-        if ($cuota->isDirty('Estado')) {
+        if ($cuota->wasChanged('Estado')) {
             $this->registrarCaja($cuota);
         }
     }
