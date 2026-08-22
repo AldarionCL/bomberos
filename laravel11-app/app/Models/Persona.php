@@ -44,10 +44,13 @@ class Persona extends Model
         'Activo',
     ];
 
-    protected $dates = [
-        'FechaNacimiento',
-        'FechaReclutamiento'
-    ];
+    protected function casts(): array
+    {
+        return [
+            'FechaNacimiento' => 'date:Y-m-d',
+            'FechaReclutamiento' => 'date:Y-m-d',
+        ];
+    }
 
     public function user()
     {

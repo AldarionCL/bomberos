@@ -28,11 +28,14 @@ class Cuota extends Model
         'MotivoRechazo',
     ];
 
-    protected $dates = [
-        'FechaPeriodo',
-        'FechaVencimiento',
-        'FechaPago',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'FechaPeriodo' => 'date:Y-m-d',
+            'FechaVencimiento' => 'date:Y-m-d',
+            'FechaPago' => 'date:Y-m-d',
+        ];
+    }
 
     public function user(){
         return $this->belongsTo(User::class, 'idUser');
