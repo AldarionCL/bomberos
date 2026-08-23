@@ -207,9 +207,9 @@
       <path value="$PROJECT_DIR$/laravel11-app/vendor/markbaker/matrix" />
       <path value="$PROJECT_DIR$/laravel11-app/vendor/markbaker/complex" />
       <path value="$PROJECT_DIR$/laravel11-app/vendor/ezyang/htmlpurifier" />
+      <path value="$PROJECT_DIR$/laravel11-app/vendor/transbank/transbank-sdk" />
     </include_path>
   </component>
-  <component name="PhpProjectSharedConfiguration" php_language_level="8.2" />
   <component name="PhpStan">
     <PhpStan_settings>
       <phpstan_by_interpreter asDefaultInterpreter="true" interpreter_id="a838a006-2c22-4a3d-b302-8b48961e9f78" timeout="60000" />

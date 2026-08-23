@@ -13,6 +13,11 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->statefulApi();
+        // Transbank redirige/postea aquí desde su propio dominio: no trae (ni puede
+        // traer) nuestro token CSRF.
+        $middleware->validateCsrfTokens(except: [
+            'webpay/retorno',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

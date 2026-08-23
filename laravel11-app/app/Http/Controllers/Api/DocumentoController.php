@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Documentos;
 use App\Models\DocumentosTipo;
 use App\Models\Noticias;
+use App\Models\Persona;
 use App\Models\User;
 use Carbon\Carbon;
 use Filament\Notifications\Notification;
@@ -41,7 +42,13 @@ class DocumentoController extends Controller
 
         $query = Documentos::query()->with(['tipo', 'asociado'])->orderByDesc('created_at');
 
-        if (! $user->isRole('Administrador')) {
+        if ($asociadoA = $request->query('asociadoA')) {
+            $query->where('AsociadoA', $asociadoA);
+            $puedeVerPrivados = $user->can('update', Persona::class) || (int) $asociadoA === $user->id;
+            if (! $puedeVerPrivados) {
+                $query->whereHas('tipo', fn ($q) => $q->where('Clasificacion', 'publico'));
+            }
+        } elseif (! $user->isRole('Administrador')) {
             $query->whereHas('tipo', fn ($q) => $q->where('Clasificacion', 'publico'));
         }
 

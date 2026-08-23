@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class Persona extends Model
 {
@@ -84,7 +85,22 @@ class Persona extends Model
     }
 
     public function documentos(){
-        return $this->hasMany(Documentos::class, 'AsociadoA', 'id');
+        return $this->hasMany(Documentos::class, 'AsociadoA', 'idUsuario');
+    }
+
+    public function solicitudes(){
+        return $this->hasMany(Solicitud::class, 'AsociadoA', 'idUsuario');
+    }
+
+    /** Token estable usado para el carnet de socio verificable (QR). */
+    public function tokenCarnet(): string
+    {
+        if (! $this->token) {
+            $this->token = Str::random(40);
+            $this->save();
+        }
+
+        return $this->token;
     }
 
 

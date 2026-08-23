@@ -16,6 +16,8 @@ class CuotaTipo extends Model
         'descripcion',
         'tipoCobro',
         'activo',
+        'es_mensual',
+        'es_cuota_inscripcion',
     ];
 
     public function cuotas()

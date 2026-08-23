@@ -16,8 +16,21 @@ use Illuminate\Support\Facades\DB;
 
 class CuotaController extends Controller
 {
+    private ?CuotaTipo $tipoMensualCache = null;
+    private bool $tipoMensualCargado = false;
+
     public function __construct(private CuotaMensualService $cuotaMensualService)
     {
+    }
+
+    private function tipoMensual(): ?CuotaTipo
+    {
+        if (! $this->tipoMensualCargado) {
+            $this->tipoMensualCache = $this->cuotaMensualService->tipoMensual();
+            $this->tipoMensualCargado = true;
+        }
+
+        return $this->tipoMensualCache;
     }
 
     private function esTesoreria(Request $request): bool
@@ -27,6 +40,15 @@ class CuotaController extends Controller
         return $user->isRole('Administrador') || $user->isCargo('Tesorero');
     }
 
+    private function esMensual(?CuotaTipo $tipoMensual, ?int $idCuotaTipo, ?string $tipoCuotaTexto): bool
+    {
+        if (! $tipoMensual) {
+            return false;
+        }
+
+        return $idCuotaTipo === $tipoMensual->id || $tipoCuotaTexto === $tipoMensual->nombre;
+    }
+
     private function serializeCuota(Cuota $cuota, bool $conPersona = false): array
     {
         $estados = [1 => 'Pendiente', 2 => 'Aprobado', 3 => 'Rechazado', 4 => 'Cancelado', 5 => 'Pendiente Aprobacion'];
@@ -34,6 +56,7 @@ class CuotaController extends Controller
         $data = [
             'id' => $cuota->id,
             'virtual' => false,
+            'esMensual' => $this->esMensual($this->tipoMensual(), $cuota->idCuotaTipo, $cuota->TipoCuota),
             'tipo' => $cuota->tipo?->nombre ?? $cuota->TipoCuota,
             'idCuotaTipo' => $cuota->idCuotaTipo,
             'periodo' => optional($cuota->FechaPeriodo)->format('Y-m-d'),
@@ -70,6 +93,7 @@ class CuotaController extends Controller
         return [
             'id' => null,
             'virtual' => true,
+            'esMensual' => true,
             'periodoKey' => $periodo['periodo']->format('Y-m'),
             'tipo' => $tipo?->nombre,
             'idCuotaTipo' => $tipo?->id,
@@ -384,5 +408,19 @@ class CuotaController extends Controller
         });
 
         return response()->json($this->serializeCuota($cuota->fresh(['estadocuota'])));
+    }
+
+    /** Disparo manual del recordatorio de cuotas vencidas (además del envío automático semanal). */
+    public function enviarRecordatorios(Request $request)
+    {
+        abort_unless($request->user()->isRole('Administrador'), 403);
+
+        $atrasados = $this->cuotaMensualService->personasConAtraso();
+
+        foreach ($atrasados as $atraso) {
+            $this->cuotaMensualService->enviarRecordatorio($atraso);
+        }
+
+        return response()->json(['enviados' => $atrasados->count()]);
     }
 }

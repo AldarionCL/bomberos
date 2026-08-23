@@ -23,6 +23,15 @@ class Solicitud extends Model
         'DiasHabiles'
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'Fecha_registro' => 'date:Y-m-d',
+            'FechaDesde' => 'date:Y-m-d',
+            'FechaHasta' => 'date:Y-m-d',
+        ];
+    }
+
     public function solicitante()
     {
         return $this->hasOne(User::class, 'id', 'SolicitadoPor');

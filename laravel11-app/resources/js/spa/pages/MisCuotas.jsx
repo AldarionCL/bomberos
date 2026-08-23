@@ -1,12 +1,27 @@
-import {useState} from 'react'
+import {useEffect, useState} from 'react'
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query'
+import {useSearchParams} from 'react-router-dom'
 import {BanknotesIcon, DocumentTextIcon} from '@heroicons/react/24/outline'
 import client from '../api/client'
 import {Button, Card, CardHeader, EmptyState, Field, Input, Modal, PageLoader} from '../components/Ui'
 import Badge from '../components/Badge'
+import HistorialPagosChart from '../components/HistorialPagosChart'
 import {formatMoney, formatMonthLabel} from '../utils/format'
 import {useToast, apiErrorMessage} from '../context/ToastContext'
 import {useAuth} from '../context/AuthContext'
+
+function irAWebpay(url, token) {
+    const form = document.createElement('form')
+    form.method = 'POST'
+    form.action = url
+    const input = document.createElement('input')
+    input.type = 'hidden'
+    input.name = 'token_ws'
+    input.value = token
+    form.appendChild(input)
+    document.body.appendChild(form)
+    form.submit()
+}
 
 function PagarModal({cuota, onClose}) {
     const {user} = useAuth()
@@ -47,6 +62,16 @@ function PagarModal({cuota, onClose}) {
         onError: (err) => notify(apiErrorMessage(err), 'error'),
     })
 
+    const webpayMutation = useMutation({
+        mutationFn: async () => {
+            const payload = cuota.virtual ? {periodoKey: cuota.periodoKey} : {cuotaId: cuota.id}
+            const {data} = await client.post('/webpay/iniciar', payload)
+            return data
+        },
+        onSuccess: ({url, token}) => irAWebpay(url, token),
+        onError: (err) => notify(apiErrorMessage(err), 'error'),
+    })
+
     return (
         <Modal open onClose={onClose} title="Pagar cuota">
             <div className="space-y-4">
@@ -57,6 +82,25 @@ function PagarModal({cuota, onClose}) {
                     <p>
                         Monto pendiente: <strong>{formatMoney(cuota.pendiente)}</strong>
                     </p>
+                </div>
+
+                <div className="rounded-lg border border-blue-100 bg-blue-50 p-3">
+                    <p className="text-sm font-medium text-blue-900">Pago en línea con tarjeta (Webpay)</p>
+                    <p className="mt-0.5 text-xs text-blue-700">
+                        Se aprueba automáticamente al confirmar el pago con Transbank.
+                    </p>
+                    <Button
+                        className="mt-2"
+                        onClick={() => webpayMutation.mutate()}
+                        loading={webpayMutation.isPending}
+                    >
+                        Pagar {formatMoney(cuota.pendiente)} con Webpay
+                    </Button>
+                </div>
+
+                <div className="relative py-1 text-center text-xs text-slate-400">
+                    <span className="relative z-10 bg-white px-2">o sube tu comprobante manualmente</span>
+                    <div className="absolute inset-x-0 top-1/2 border-t border-slate-200" />
                 </div>
 
                 <Field label="Monto a pagar">
@@ -113,13 +157,38 @@ function PagarModal({cuota, onClose}) {
     )
 }
 
+const MENSAJES_WEBPAY = {
+    exito: {tono: 'success', texto: 'Pago con Webpay aprobado correctamente.'},
+    rechazado: {tono: 'error', texto: 'El pago con Webpay fue rechazado. Puedes intentarlo nuevamente.'},
+    cancelado: {tono: 'error', texto: 'Cancelaste el pago con Webpay.'},
+    error: {tono: 'error', texto: 'Ocurrió un problema al procesar el pago con Webpay. Intenta nuevamente.'},
+}
+
 export default function MisCuotas() {
     const [cuotaSeleccionada, setCuotaSeleccionada] = useState(null)
+    const [searchParams, setSearchParams] = useSearchParams()
+    const {notify} = useToast()
+    const queryClient = useQueryClient()
 
     const {data, isLoading} = useQuery({
         queryKey: ['cuotas-mias'],
         queryFn: async () => (await client.get('/cuotas/mias')).data,
     })
+
+    useEffect(() => {
+        const resultado = searchParams.get('webpay')
+        if (!resultado) return
+        const mensaje = MENSAJES_WEBPAY[resultado]
+        if (mensaje) notify(mensaje.texto, mensaje.tono)
+        queryClient.invalidateQueries({queryKey: ['cuotas-mias']})
+        queryClient.invalidateQueries({queryKey: ['dashboard']})
+        setSearchParams((prev) => {
+            const next = new URLSearchParams(prev)
+            next.delete('webpay')
+            return next
+        }, {replace: true})
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [])
 
     if (isLoading) return <PageLoader />
 
@@ -134,6 +203,13 @@ export default function MisCuotas() {
                     <span className="font-semibold text-slate-900">{formatMoney(data?.resumen?.totalPendiente)}</span>
                 </div>
             </div>
+
+            {cuotas.length > 0 && (
+                <Card>
+                    <CardHeader title="Estado de cuenta" subtitle="Cumplimiento de la cuota mensual en los últimos 12 meses" />
+                    <HistorialPagosChart cuotas={cuotas} />
+                </Card>
+            )}
 
             <Card>
                 {cuotas.length === 0 ? (

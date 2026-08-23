@@ -3,8 +3,12 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Cuota;
+use App\Models\CuotaTipo;
 use App\Models\Persona;
+use App\Models\PrecioCuotas;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -15,6 +19,12 @@ class PersonaController extends Controller
         $user = $request->user();
 
         return $user->isRole('Administrador') || $user->isCargo('Tesorero');
+    }
+
+    /** Puede crear/editar la ficha completa de cualquier socio (no solo la propia). */
+    private function puedeGestionar(Request $request): bool
+    {
+        return $request->user()->can('update', Persona::class);
     }
 
     private function serialize(User $user): array
@@ -35,7 +45,21 @@ class PersonaController extends Controller
                 'TelefonoEmergencia' => $persona->TelefonoEmergencia,
                 'Direccion' => $persona->Direccion,
                 'Comuna' => $persona->Comuna,
+                'FechaNacimiento' => optional($persona->FechaNacimiento)->format('Y-m-d'),
                 'FechaReclutamiento' => optional($persona->FechaReclutamiento)->format('Y-m-d'),
+                'Nacionalidad' => $persona->Nacionalidad,
+                'NivelEstudio' => $persona->NivelEstudio,
+                'Ocupacion' => $persona->Ocupacion,
+                'LugarOcupacion' => $persona->LugarOcupacion,
+                'EstadoCivil' => $persona->EstadoCivil,
+                'GrupoSanguineo' => $persona->GrupoSanguineo,
+                'TallaZapatos' => $persona->TallaZapatos,
+                'TallaPantalon' => $persona->TallaPantalon,
+                'TallaCamisa' => $persona->TallaCamisa,
+                'TallaChaqueta' => $persona->TallaChaqueta,
+                'TallaSombrero' => $persona->TallaSombrero,
+                'Observaciones' => $persona->Observaciones,
+                'Foto' => $persona->Foto ? asset('storage/'.$persona->Foto) : null,
                 'idCargo' => $persona->idCargo,
                 'cargo' => $persona->cargo?->Cargo,
                 'idEstado' => $persona->idEstado,
@@ -92,6 +116,7 @@ class PersonaController extends Controller
             'Telefono' => ['nullable', 'string', 'max:30'],
             'idCargo' => ['required', 'exists:persona_cargos,id'],
             'FechaReclutamiento' => ['required', 'date'],
+            'omitirCuotaInscripcion' => ['boolean'],
         ]);
 
         $user = User::create([
@@ -112,38 +137,102 @@ class PersonaController extends Controller
             'Activo' => true,
         ]);
 
+        if (! ($data['omitirCuotaInscripcion'] ?? false)) {
+            $this->generarCuotaInscripcion($user, Carbon::parse($data['FechaReclutamiento']));
+        }
+
         return response()->json($this->serialize($user->fresh()), 201);
+    }
+
+    /**
+     * Genera, al crear un socio, el cobro único de la cuota de inscripción
+     * (si hay un tipo designado para ello y tiene un valor configurado).
+     */
+    private function generarCuotaInscripcion(User $user, Carbon $fechaReclutamiento): void
+    {
+        $tipo = CuotaTipo::where('es_cuota_inscripcion', true)->first();
+        if (! $tipo) {
+            return;
+        }
+
+        $monto = PrecioCuotas::vigentePara($tipo->nombre);
+        if ($monto <= 0) {
+            return;
+        }
+
+        Cuota::create([
+            'idUser' => $user->id,
+            'idCuotaTipo' => $tipo->id,
+            'TipoCuota' => $tipo->nombre,
+            'FechaPeriodo' => $fechaReclutamiento->format('Y-m-d'),
+            'FechaVencimiento' => $fechaReclutamiento->copy()->addDays(30)->format('Y-m-d'),
+            'Estado' => 1,
+            'Monto' => $monto,
+            'Pendiente' => $monto,
+            'Recaudado' => 0,
+        ]);
     }
 
     public function update(Request $request, Persona $persona)
     {
         $user = $request->user();
-        $esAdmin = $user->isRole('Administrador');
-        abort_unless($esAdmin || $user->id === $persona->idUsuario, 403);
+        $puedeGestionar = $this->puedeGestionar($request);
+        $esPropio = $user->id === $persona->idUsuario;
+        abort_unless($puedeGestionar || $esPropio, 403);
 
-        $data = $request->validate([
+        // Campos personales/descriptivos: cualquiera puede editarlos en su propia
+        // ficha (igual que el mantenedor de Filament). Los organizacionales
+        // (cargo, estado, activo, rol) quedan reservados a quienes administran
+        // socios, para evitar que alguien se autoasigne un cargo o se reactive.
+        $rules = [
             'name' => ['sometimes', 'string', 'max:255'],
+            'email' => ['sometimes', 'email', 'unique:users,email,'.$persona->idUsuario],
+            'password' => ['nullable', 'string', 'min:6'],
+            'Rut' => ['sometimes', 'string', 'unique:personas,Rut,'.$persona->id],
             'Telefono' => ['nullable', 'string', 'max:30'],
             'TelefonoEmergencia' => ['nullable', 'string', 'max:30'],
+            'FechaNacimiento' => ['sometimes', 'date'],
+            'Nacionalidad' => ['nullable', 'string', 'max:255'],
             'Direccion' => ['nullable', 'string', 'max:255'],
             'Comuna' => ['nullable', 'string', 'max:255'],
-            'idCargo' => ['sometimes', 'exists:persona_cargos,id'],
-            'idEstado' => ['sometimes', 'exists:persona_estados,id'],
-            'Activo' => ['sometimes', 'boolean'],
-        ]);
+            'NivelEstudio' => ['nullable', 'string', 'max:255'],
+            'Ocupacion' => ['nullable', 'string', 'max:255'],
+            'LugarOcupacion' => ['nullable', 'string', 'max:255'],
+            'EstadoCivil' => ['nullable', 'string', 'max:255'],
+            'GrupoSanguineo' => ['nullable', 'string', 'max:255'],
+            'TallaZapatos' => ['nullable', 'string', 'max:50'],
+            'TallaPantalon' => ['nullable', 'string', 'max:50'],
+            'TallaCamisa' => ['nullable', 'string', 'max:50'],
+            'TallaChaqueta' => ['nullable', 'string', 'max:50'],
+            'TallaSombrero' => ['nullable', 'string', 'max:50'],
+            'Observaciones' => ['nullable', 'string'],
+            'foto' => ['nullable', 'image', 'max:5120'],
+        ];
 
-        if ($esAdmin) {
-            $persona->update($data);
-            if (isset($data['name'])) {
-                $persona->user->update(['name' => $data['name']]);
-            }
-        } else {
-            $persona->update([
-                'Telefono' => $data['Telefono'] ?? $persona->Telefono,
-                'TelefonoEmergencia' => $data['TelefonoEmergencia'] ?? $persona->TelefonoEmergencia,
-                'Direccion' => $data['Direccion'] ?? $persona->Direccion,
-                'Comuna' => $data['Comuna'] ?? $persona->Comuna,
-            ]);
+        if ($puedeGestionar) {
+            $rules['idRole'] = ['sometimes', 'exists:user_roles,id'];
+            $rules['idCargo'] = ['sometimes', 'exists:persona_cargos,id'];
+            $rules['idEstado'] = ['sometimes', 'exists:persona_estados,id'];
+            $rules['FechaReclutamiento'] = ['sometimes', 'date'];
+            $rules['Activo'] = ['sometimes', 'boolean'];
+        }
+
+        $data = $request->validate($rules);
+
+        $personaData = collect($data)->except(['name', 'email', 'password', 'idRole', 'foto'])->toArray();
+
+        if ($request->hasFile('foto')) {
+            $personaData['Foto'] = $request->file('foto')->store('fotosPersonas', 'public');
+        }
+
+        $persona->update($personaData);
+
+        $userData = collect($data)->only(['name', 'email', 'idRole'])->toArray();
+        if (! empty($data['password'])) {
+            $userData['password'] = Hash::make($data['password']);
+        }
+        if (! empty($userData)) {
+            $persona->user->update($userData);
         }
 
         return response()->json($this->serialize($persona->fresh()->user));

@@ -1,78 +1,145 @@
-import {useState} from 'react'
-import {useMutation} from '@tanstack/react-query'
+import {useEffect, useState} from 'react'
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query'
+import clsx from 'clsx'
 import client from '../api/client'
-import {Button, Card, CardHeader, Field, Input} from '../components/Ui'
+import {Button, Card, CardHeader, Field, Input, PageLoader, Select} from '../components/Ui'
+import {
+    DatosGeneralesFields,
+    DatosPersonalesFields,
+    TallasFields,
+    ObservacionesField,
+    PERSONA_TABS_BASE,
+    personaFormInicial,
+} from '../components/PersonaCampos'
 import {useAuth} from '../context/AuthContext'
 import {useToast, apiErrorMessage} from '../context/ToastContext'
-import {formatDate} from '../utils/format'
 
 export default function Perfil() {
     const {user, setUser} = useAuth()
     const {notify} = useToast()
-    const [form, setForm] = useState({
-        Telefono: user?.persona?.Telefono ?? '',
-        TelefonoEmergencia: user?.persona?.TelefonoEmergencia ?? '',
-        Direccion: user?.persona?.Direccion ?? '',
-        Comuna: user?.persona?.Comuna ?? '',
+    const queryClient = useQueryClient()
+    const [tab, setTab] = useState('general')
+    const [form, setForm] = useState(null)
+    const [foto, setFoto] = useState(null)
+
+    const puedeGestionar = !!user?.permisos?.gestionarPersonas
+    const personaId = user?.persona?.id
+
+    const {data: catalogos} = useQuery({
+        queryKey: ['catalogos'],
+        queryFn: async () => (await client.get('/catalogos')).data,
     })
+
+    useEffect(() => {
+        if (user && !form) {
+            setForm({
+                name: user.name ?? '',
+                email: user.email ?? '',
+                password: '',
+                idRole: user.idRole ?? '',
+                ...personaFormInicial(user.persona),
+            })
+        }
+    }, [user, form])
 
     const set = (key) => (e) => setForm((f) => ({...f, [key]: e.target.value}))
 
     const mutation = useMutation({
-        mutationFn: () => client.put('/me', form),
+        mutationFn: () => {
+            const data = new FormData()
+            data.append('_method', 'PUT')
+            Object.entries(form).forEach(([k, v]) => {
+                if (k === 'password' && !v) return
+                if (k === 'Activo') data.append(k, v ? '1' : '0')
+                else data.append(k, v ?? '')
+            })
+            if (foto) data.append('foto', foto)
+            return client.post(`/personas/${personaId}`, data)
+        },
         onSuccess: ({data}) => {
+            notify('Perfil actualizado correctamente.')
             setUser(data)
-            notify('Perfil actualizado.')
+            queryClient.invalidateQueries({queryKey: ['personas']})
+            setFoto(null)
         },
         onError: (err) => notify(apiErrorMessage(err), 'error'),
     })
 
+    if (!form) return <PageLoader />
+
     return (
-        <div className="max-w-2xl space-y-6">
+        <div className="max-w-4xl space-y-6">
             <h1 className="text-xl font-bold text-slate-900">Mi perfil</h1>
 
-            <Card>
-                <CardHeader title={user?.name} subtitle={user?.email} />
-                <div className="grid gap-4 p-5 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-[220px_1fr]">
+                <Card className="flex flex-col items-center gap-3 p-5 text-center">
+                    <img
+                        src={foto ? URL.createObjectURL(foto) : user?.avatar}
+                        alt={user?.name}
+                        className="h-28 w-28 rounded-full object-cover ring-4 ring-slate-100"
+                    />
+                    <label className="cursor-pointer text-xs font-semibold text-brand-blue hover:underline">
+                        Cambiar foto
+                        <input type="file" accept="image/*" className="hidden" onChange={(e) => setFoto(e.target.files?.[0] ?? null)} />
+                    </label>
                     <div>
-                        <p className="text-xs font-medium uppercase text-slate-400">Rut</p>
-                        <p className="text-sm text-slate-700">{user?.persona?.Rut ?? '—'}</p>
+                        <p className="font-semibold text-slate-800">{user?.name}</p>
+                        <p className="text-xs text-slate-400">{user?.cargo}</p>
                     </div>
-                    <div>
-                        <p className="text-xs font-medium uppercase text-slate-400">Cargo</p>
-                        <p className="text-sm text-slate-700">{user?.cargo ?? '—'}</p>
-                    </div>
-                    <div>
-                        <p className="text-xs font-medium uppercase text-slate-400">Fecha de ingreso</p>
-                        <p className="text-sm text-slate-700">{formatDate(user?.persona?.FechaReclutamiento)}</p>
-                    </div>
-                    <div>
-                        <p className="text-xs font-medium uppercase text-slate-400">Estado</p>
-                        <p className="text-sm text-slate-700">{user?.persona?.estado ?? '—'}</p>
-                    </div>
-                </div>
-            </Card>
+                </Card>
 
-            <Card>
-                <CardHeader title="Datos de contacto" />
-                <div className="grid gap-4 p-5 sm:grid-cols-2">
-                    <Field label="Teléfono">
-                        <Input value={form.Telefono} onChange={set('Telefono')} placeholder="+56 9 1234 5678" />
-                    </Field>
-                    <Field label="Teléfono de emergencia">
-                        <Input value={form.TelefonoEmergencia} onChange={set('TelefonoEmergencia')} placeholder="+56 9 1234 5678" />
-                    </Field>
-                    <Field label="Dirección">
-                        <Input value={form.Direccion} onChange={set('Direccion')} />
-                    </Field>
-                    <Field label="Comuna">
-                        <Input value={form.Comuna} onChange={set('Comuna')} />
-                    </Field>
+                <div className="space-y-6">
+                    <Card>
+                        <CardHeader title="Datos de usuario" />
+                        <div className="grid gap-4 p-5 sm:grid-cols-2">
+                            <Field label="Nombre completo"><Input value={form.name} onChange={set('name')} /></Field>
+                            <Field label="Correo"><Input type="email" value={form.email} onChange={set('email')} /></Field>
+                            <Field label="Nueva contraseña" hint="Deja en blanco para no cambiarla">
+                                <Input type="password" value={form.password} onChange={set('password')} />
+                            </Field>
+                            {user?.esAdministrador && (
+                                <Field label="Rol del sistema">
+                                    <Select value={form.idRole ?? ''} onChange={set('idRole')}>
+                                        {catalogos?.roles?.map((r) => <option key={r.id} value={r.id}>{r.Rol}</option>)}
+                                    </Select>
+                                </Field>
+                            )}
+                        </div>
+                    </Card>
+
+                    <Card>
+                        <div className="flex gap-1 overflow-x-auto border-b border-slate-100 px-3 pt-3">
+                            {PERSONA_TABS_BASE.map((t) => (
+                                <button
+                                    key={t.key}
+                                    onClick={() => setTab(t.key)}
+                                    className={clsx(
+                                        'whitespace-nowrap rounded-t-lg px-3.5 py-2 text-sm font-medium transition',
+                                        tab === t.key ? 'border-b-2 border-brand-blue text-brand-blue' : 'text-slate-500 hover:text-slate-700'
+                                    )}
+                                >
+                                    {t.label}
+                                </button>
+                            ))}
+                        </div>
+
+                        <div className="p-5">
+                            {tab === 'general' && (
+                                <DatosGeneralesFields form={form} set={set} catalogos={catalogos} puedeGestionar={puedeGestionar} esAdministrador={user?.esAdministrador} />
+                            )}
+                            {tab === 'personal' && <DatosPersonalesFields form={form} set={set} />}
+                            {tab === 'tallas' && <TallasFields form={form} set={set} />}
+                            {tab === 'observaciones' && <ObservacionesField form={form} set={set} />}
+                        </div>
+
+                        <div className="flex justify-end border-t border-slate-100 px-5 py-3">
+                            <Button loading={mutation.isPending} onClick={() => mutation.mutate()}>
+                                Guardar cambios
+                            </Button>
+                        </div>
+                    </Card>
                 </div>
-                <div className="flex justify-end border-t border-slate-100 px-5 py-3">
-                    <Button loading={mutation.isPending} onClick={() => mutation.mutate()}>Guardar cambios</Button>
-                </div>
-            </Card>
+            </div>
         </div>
     )
 }

@@ -6,7 +6,9 @@ use App\Models\Cuota;
 use App\Models\CuotaTipo;
 use App\Models\Persona;
 use App\Models\PrecioCuotas;
+use App\Notifications\CuotaVencidaNotification;
 use Carbon\Carbon;
+use Filament\Notifications\Notification as FilamentNotification;
 use Illuminate\Support\Collection;
 
 /**
@@ -36,15 +38,7 @@ class CuotaMensualService
             return 0;
         }
 
-        $tipoVoluntario ??= 'miembro';
-
-        $precio = PrecioCuotas::where('TipoCuota', $tipo->nombre)
-            ->where('TipoVoluntario', $tipoVoluntario)
-            ->orderByDesc('id')
-            ->first()
-            ?? PrecioCuotas::where('TipoCuota', $tipo->nombre)->orderByDesc('id')->first();
-
-        return (int) ($precio?->Monto ?? 0);
+        return PrecioCuotas::vigentePara($tipo->nombre, $tipoVoluntario ?? 'miembro');
     }
 
     /**
@@ -100,6 +94,91 @@ class CuotaMensualService
         }
 
         return $pendientes;
+    }
+
+    /**
+     * Un socio está "al día" si no tiene periodos mensuales pendientes vencidos
+     * ni cuotas reales (de cualquier tipo) pendientes/atrasadas.
+     */
+    public function estaAlDia(Persona $persona): bool
+    {
+        $hoy = now()->startOfDay();
+
+        $virtualVencido = $this->periodosPendientes($persona)
+            ->contains(fn ($p) => $p['vencimiento']->lt($hoy));
+
+        if ($virtualVencido) {
+            return false;
+        }
+
+        return ! Cuota::where('idUser', $persona->idUsuario)
+            ->whereIn('Estado', [1, 5])
+            ->where('Pendiente', '>', 0)
+            ->where('FechaVencimiento', '<', $hoy->format('Y-m-d'))
+            ->exists();
+    }
+
+    /**
+     * Socios activos que tienen al menos una cuota (virtual o real) vencida y
+     * sin pagar. Base para los recordatorios automáticos.
+     *
+     * @return Collection<int, array{persona: Persona, virtuales: Collection, reales: Collection}>
+     */
+    public function personasConAtraso(): Collection
+    {
+        $hoy = now()->startOfDay();
+
+        return Persona::where('Activo', 1)->get()
+            ->map(function (Persona $persona) use ($hoy) {
+                $virtuales = $this->periodosPendientes($persona)
+                    ->filter(fn ($p) => $p['vencimiento']->lt($hoy))
+                    ->values();
+
+                $reales = Cuota::where('idUser', $persona->idUsuario)
+                    ->whereIn('Estado', [1, 5])
+                    ->where('Pendiente', '>', 0)
+                    ->where('FechaVencimiento', '<', $hoy->format('Y-m-d'))
+                    ->get();
+
+                if ($virtuales->isEmpty() && $reales->isEmpty()) {
+                    return null;
+                }
+
+                return ['persona' => $persona, 'virtuales' => $virtuales, 'reales' => $reales];
+            })
+            ->filter()
+            ->values();
+    }
+
+    /**
+     * Envía el recordatorio (email + notificación in-app) a un socio con
+     * cuotas atrasadas. $atraso es un elemento de personasConAtraso().
+     */
+    public function enviarRecordatorio(array $atraso): void
+    {
+        $persona = $atraso['persona'];
+        $user = $persona->user;
+        if (! $user) {
+            return;
+        }
+
+        $items = collect();
+        foreach ($atraso['virtuales'] as $v) {
+            $items->push(['label' => 'Cuota mensual de '.$v['periodo']->translatedFormat('F Y'), 'monto' => $v['monto']]);
+        }
+        foreach ($atraso['reales'] as $cuota) {
+            $items->push(['label' => ($cuota->tipo?->nombre ?? $cuota->TipoCuota).' — vencida el '.Carbon::parse($cuota->FechaVencimiento)->format('d/m/Y'), 'monto' => (int) $cuota->Pendiente]);
+        }
+
+        $total = $items->sum('monto');
+
+        $user->notify(new CuotaVencidaNotification($items, $total));
+
+        FilamentNotification::make()
+            ->title('Tienes cuotas vencidas')
+            ->body('Monto total pendiente: $'.number_format($total, 0, ',', '.').'. Ingresa a Mis Cuotas para regularizar.')
+            ->warning()
+            ->sendToDatabase($user);
     }
 
     /**

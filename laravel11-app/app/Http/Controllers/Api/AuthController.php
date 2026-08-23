@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Documentos;
 use App\Models\Noticias;
+use App\Models\Persona;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -44,25 +45,6 @@ class AuthController extends Controller
         return response()->json($this->serializeUser($request->user()));
     }
 
-    public function updateMe(Request $request)
-    {
-        $user = $request->user();
-        $persona = $user->persona;
-
-        $data = $request->validate([
-            'Telefono' => ['nullable', 'string', 'max:30'],
-            'TelefonoEmergencia' => ['nullable', 'string', 'max:30'],
-            'Direccion' => ['nullable', 'string', 'max:255'],
-            'Comuna' => ['nullable', 'string', 'max:255'],
-        ]);
-
-        if ($persona) {
-            $persona->update($data);
-        }
-
-        return response()->json($this->serializeUser($user->fresh()));
-    }
-
     private function serializeUser(User $user): array
     {
         $persona = $user->persona;
@@ -71,6 +53,7 @@ class AuthController extends Controller
             'id' => $user->id,
             'name' => $user->name,
             'email' => $user->email,
+            'idRole' => $user->idRole,
             'avatar' => $user->getFilamentAvatarUrl(),
             'rol' => $user->role?->Rol,
             'cargo' => $persona?->cargo?->Cargo,
@@ -79,6 +62,9 @@ class AuthController extends Controller
             'permisos' => [
                 'gestionarNoticias' => $user->can('create', Noticias::class),
                 'gestionarDocumentos' => $user->can('create', Documentos::class),
+                'gestionarPersonas' => $user->can('update', Persona::class),
+                'verPersonas' => $user->can('viewAny', Persona::class),
+                'solicitarLicenciaParaOtros' => $user->isRole('Administrador') || $user->isCargo(['Director', 'Capitan', 'Capitán']),
             ],
             'persona' => $persona ? [
                 'id' => $persona->id,
@@ -86,10 +72,25 @@ class AuthController extends Controller
                 'Nombre' => $persona->Nombre,
                 'Telefono' => $persona->Telefono,
                 'TelefonoEmergencia' => $persona->TelefonoEmergencia,
+                'FechaNacimiento' => optional($persona->FechaNacimiento)->format('Y-m-d'),
+                'Nacionalidad' => $persona->Nacionalidad,
                 'Direccion' => $persona->Direccion,
                 'Comuna' => $persona->Comuna,
+                'NivelEstudio' => $persona->NivelEstudio,
+                'Ocupacion' => $persona->Ocupacion,
+                'LugarOcupacion' => $persona->LugarOcupacion,
+                'EstadoCivil' => $persona->EstadoCivil,
+                'GrupoSanguineo' => $persona->GrupoSanguineo,
+                'TallaZapatos' => $persona->TallaZapatos,
+                'TallaPantalon' => $persona->TallaPantalon,
+                'TallaCamisa' => $persona->TallaCamisa,
+                'TallaChaqueta' => $persona->TallaChaqueta,
+                'TallaSombrero' => $persona->TallaSombrero,
+                'Observaciones' => $persona->Observaciones,
                 'FechaReclutamiento' => optional($persona->FechaReclutamiento)->format('Y-m-d'),
-                'Foto' => $persona->Foto,
+                'Foto' => $persona->Foto ? asset('storage/'.$persona->Foto) : null,
+                'idCargo' => $persona->idCargo,
+                'idEstado' => $persona->idEstado,
                 'Activo' => (bool) $persona->Activo,
                 'estado' => $persona->estado?->Estado,
                 'cargo' => $persona->cargo?->Cargo,

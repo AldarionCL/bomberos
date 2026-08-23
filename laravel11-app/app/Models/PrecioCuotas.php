@@ -34,4 +34,16 @@ class PrecioCuotas extends Model
     {
         return $query->where('TipoCuota', $tipo);
     }
+
+    /** Monto vigente para un tipo de cuota, priorizando el precio específico del tipo de voluntario. */
+    public static function vigentePara(string $nombreTipo, string $tipoVoluntario = 'miembro'): int
+    {
+        $precio = self::where('TipoCuota', $nombreTipo)
+            ->where('TipoVoluntario', $tipoVoluntario)
+            ->orderByDesc('id')
+            ->first()
+            ?? self::where('TipoCuota', $nombreTipo)->orderByDesc('id')->first();
+
+        return (int) ($precio?->Monto ?? 0);
+    }
 }

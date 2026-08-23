@@ -14,6 +14,8 @@ import {
     Bars3Icon,
     XMarkIcon,
     BuildingLibraryIcon,
+    IdentificationIcon,
+    CalendarDaysIcon,
 } from '@heroicons/react/24/outline'
 import {useAuth} from '../context/AuthContext'
 
@@ -53,10 +55,13 @@ export default function AppLayout() {
             <NavItem to="/" icon={HomeIcon} label="Inicio" onClick={() => setOpen(false)} />
             <NavItem to="/panel" icon={Squares2X2Icon} label="Panel de control" onClick={() => setOpen(false)} />
             <NavItem to="/mis-cuotas" icon={BanknotesIcon} label="Mis cuotas" onClick={() => setOpen(false)} />
+            <NavItem to="/licencias" icon={CalendarDaysIcon} label="Licencias" onClick={() => setOpen(false)} />
             {esTesoreria && (
                 <NavItem to="/tesoreria" icon={BuildingLibraryIcon} label="Tesorería" onClick={() => setOpen(false)} />
             )}
-            {esTesoreria && <NavItem to="/socios" icon={UsersIcon} label="Socios" onClick={() => setOpen(false)} />}
+            {user?.permisos?.verPersonas && (
+                <NavItem to="/socios" icon={UsersIcon} label="Socios" onClick={() => setOpen(false)} />
+            )}
             <NavItem to="/documentos" icon={FolderIcon} label="Documentos" onClick={() => setOpen(false)} />
             {user?.permisos?.gestionarNoticias && (
                 <NavItem to="/noticias" icon={NewspaperIcon} label="Noticias" onClick={() => setOpen(false)} />
@@ -66,6 +71,7 @@ export default function AppLayout() {
             )}
             <div className="my-2 border-t border-slate-100" />
             <NavItem to="/perfil" icon={UserCircleIcon} label="Mi perfil" onClick={() => setOpen(false)} />
+            <NavItem to="/mi-carnet" icon={IdentificationIcon} label="Mi carnet" onClick={() => setOpen(false)} />
         </nav>
     )
 
@@ -121,7 +127,7 @@ export default function AppLayout() {
                     </div>
                 )}
 
-                <main className="min-h-[calc(100vh-4rem)] flex-1 px-4 py-6 sm:px-6 lg:px-8">
+                <main className="min-h-[calc(100vh-4rem)] min-w-0 flex-1 px-4 py-6 sm:px-6 lg:px-8">
                     <div className="mx-auto max-w-6xl">
                         <Outlet />
                     </div>

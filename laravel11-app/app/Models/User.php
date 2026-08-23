@@ -107,6 +107,10 @@ class User extends Authenticatable implements FilamentUser
 
     public function getFilamentAvatarUrl(): ?string
     {
+        if ($this->persona?->Foto) {
+            return \Illuminate\Support\Facades\Storage::disk('public')->url($this->persona->Foto);
+        }
+
         return $this->profile_photo_url;
     }
 

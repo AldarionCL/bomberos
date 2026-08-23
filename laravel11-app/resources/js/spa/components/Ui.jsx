@@ -90,11 +90,13 @@ export function Field({label, children, error, hint}) {
     )
 }
 
-export function Input({className, ...props}) {
+export function Input({className, disabled, ...props}) {
     return (
         <input
+            disabled={disabled}
             className={clsx(
-                'block w-full rounded-lg border-0 bg-white px-3 py-2 text-sm text-slate-900 ring-1 ring-inset ring-slate-300 placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-brand-blue',
+                'block w-full rounded-lg border-0 px-3 py-2 text-sm ring-1 ring-inset placeholder:text-slate-400 focus:ring-2 focus:ring-inset focus:ring-brand-blue',
+                disabled ? 'bg-slate-100 text-slate-400 ring-slate-200' : 'bg-white text-slate-900 ring-slate-300',
                 className
             )}
             {...props}
@@ -102,11 +104,13 @@ export function Input({className, ...props}) {
     )
 }
 
-export function Select({className, children, ...props}) {
+export function Select({className, children, disabled, ...props}) {
     return (
         <select
+            disabled={disabled}
             className={clsx(
-                'block w-full rounded-lg border-0 bg-white px-3 py-2 text-sm text-slate-900 ring-1 ring-inset ring-slate-300 focus:ring-2 focus:ring-inset focus:ring-brand-blue',
+                'block w-full rounded-lg border-0 px-3 py-2 text-sm ring-1 ring-inset focus:ring-2 focus:ring-inset focus:ring-brand-blue',
+                disabled ? 'bg-slate-100 text-slate-400 ring-slate-200' : 'bg-white text-slate-900 ring-slate-300',
                 className
             )}
             {...props}

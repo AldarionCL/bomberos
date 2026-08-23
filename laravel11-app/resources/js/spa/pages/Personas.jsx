@@ -1,4 +1,5 @@
 import {useState} from 'react'
+import {Link} from 'react-router-dom'
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query'
 import {PlusIcon, MagnifyingGlassIcon} from '@heroicons/react/24/outline'
 import client from '../api/client'
@@ -14,13 +15,14 @@ function NuevoSocioModal({onClose, catalogos}) {
     const [form, setForm] = useState({
         name: '', email: '', password: '', idRole: 2, Rut: '', Telefono: '', idCargo: '', FechaReclutamiento: new Date().toISOString().slice(0, 10),
     })
+    const [cobrarInscripcion, setCobrarInscripcion] = useState(true)
 
     const set = (key) => (e) => setForm((f) => ({...f, [key]: e.target.value}))
 
     const mutation = useMutation({
-        mutationFn: () => client.post('/personas', form),
+        mutationFn: () => client.post('/personas', {...form, omitirCuotaInscripcion: !cobrarInscripcion}),
         onSuccess: () => {
-            notify('Socio creado correctamente.')
+            notify('Socio creado correctamente. Ahora puedes completar su ficha.')
             queryClient.invalidateQueries({queryKey: ['personas']})
             onClose()
         },
@@ -50,60 +52,20 @@ function NuevoSocioModal({onClose, catalogos}) {
                     <Input type="date" value={form.FechaReclutamiento} onChange={set('FechaReclutamiento')} />
                 </Field>
             </div>
+
+            <label className="mt-4 flex items-center gap-2 text-sm text-slate-600">
+                <input
+                    type="checkbox"
+                    checked={cobrarInscripcion}
+                    onChange={(e) => setCobrarInscripcion(e.target.checked)}
+                    className="rounded border-slate-300"
+                />
+                Cobrar cuota de inscripción al crear el socio
+            </label>
+
             <div className="mt-5 flex justify-end gap-2">
                 <Button variant="secondary" onClick={onClose}>Cancelar</Button>
                 <Button loading={mutation.isPending} onClick={() => mutation.mutate()}>Crear socio</Button>
-            </div>
-        </Modal>
-    )
-}
-
-function EditarSocioModal({persona, onClose, catalogos}) {
-    const queryClient = useQueryClient()
-    const {notify} = useToast()
-    const [form, setForm] = useState({
-        idCargo: persona.persona?.idCargo ?? '',
-        idEstado: persona.persona?.idEstado ?? '',
-        Activo: persona.persona?.Activo ?? true,
-        Telefono: persona.persona?.Telefono ?? '',
-    })
-
-    const set = (key) => (e) => setForm((f) => ({...f, [key]: e.target.value}))
-
-    const mutation = useMutation({
-        mutationFn: () => client.put(`/personas/${persona.persona.id}`, form),
-        onSuccess: () => {
-            notify('Socio actualizado.')
-            queryClient.invalidateQueries({queryKey: ['personas']})
-            onClose()
-        },
-        onError: (err) => notify(apiErrorMessage(err), 'error'),
-    })
-
-    return (
-        <Modal open onClose={onClose} title={`Editar a ${persona.name}`} wide>
-            <div className="grid gap-4 sm:grid-cols-2">
-                <Field label="Cargo">
-                    <Select value={form.idCargo} onChange={set('idCargo')}>
-                        {catalogos?.cargos?.map((c) => <option key={c.id} value={c.id}>{c.Cargo}</option>)}
-                    </Select>
-                </Field>
-                <Field label="Estado">
-                    <Select value={form.idEstado} onChange={set('idEstado')}>
-                        {catalogos?.estados?.map((e) => <option key={e.id} value={e.id}>{e.Estado}</option>)}
-                    </Select>
-                </Field>
-                <Field label="Teléfono"><Input value={form.Telefono} onChange={set('Telefono')} /></Field>
-                <Field label="Activo">
-                    <Select value={form.Activo ? '1' : '0'} onChange={(e) => setForm((f) => ({...f, Activo: e.target.value === '1'}))}>
-                        <option value="1">Sí</option>
-                        <option value="0">No</option>
-                    </Select>
-                </Field>
-            </div>
-            <div className="mt-5 flex justify-end gap-2">
-                <Button variant="secondary" onClick={onClose}>Cancelar</Button>
-                <Button loading={mutation.isPending} onClick={() => mutation.mutate()}>Guardar</Button>
             </div>
         </Modal>
     )
@@ -113,7 +75,6 @@ export default function Personas() {
     const {user} = useAuth()
     const [busqueda, setBusqueda] = useState('')
     const [nuevoOpen, setNuevoOpen] = useState(false)
-    const [editando, setEditando] = useState(null)
 
     const {data, isLoading} = useQuery({
         queryKey: ['personas', busqueda],
@@ -126,6 +87,7 @@ export default function Personas() {
     })
 
     const personas = data?.data ?? []
+    const puedeGestionar = user?.permisos?.gestionarPersonas
 
     return (
         <div className="space-y-6">
@@ -158,7 +120,7 @@ export default function Personas() {
                                     <th className="px-5 py-3">Cargo</th>
                                     <th className="px-5 py-3">Ingreso</th>
                                     <th className="px-5 py-3">Estado</th>
-                                    {user?.esAdministrador && <th className="px-5 py-3 text-right">Acciones</th>}
+                                    <th className="px-5 py-3 text-right">Acciones</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100">
@@ -176,13 +138,16 @@ export default function Personas() {
                                                 {p.persona?.Activo ? 'Activo' : 'Inactivo'}
                                             </Badge>
                                         </td>
-                                        {user?.esAdministrador && (
-                                            <td className="px-5 py-3 text-right">
-                                                <Button variant="secondary" className="px-2.5 py-1.5 text-xs" onClick={() => setEditando(p)}>
-                                                    Editar
-                                                </Button>
-                                            </td>
-                                        )}
+                                        <td className="px-5 py-3 text-right">
+                                            {p.persona && (
+                                                <Link
+                                                    to={`/socios/${p.persona.id}`}
+                                                    className="inline-flex items-center rounded-lg px-2.5 py-1.5 text-xs font-semibold text-brand-blue ring-1 ring-inset ring-blue-200 hover:bg-blue-50"
+                                                >
+                                                    {puedeGestionar ? 'Editar ficha' : 'Ver ficha'}
+                                                </Link>
+                                            )}
+                                        </td>
                                     </tr>
                                 ))}
                             </tbody>
@@ -192,7 +157,6 @@ export default function Personas() {
             </Card>
 
             {nuevoOpen && <NuevoSocioModal onClose={() => setNuevoOpen(false)} catalogos={catalogos} />}
-            {editando && <EditarSocioModal persona={editando} onClose={() => setEditando(null)} catalogos={catalogos} />}
         </div>
     )
 }
