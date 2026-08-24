@@ -17,10 +17,10 @@ export default function Home() {
 
     return (
         <div className="space-y-6">
-            <div className="rounded-2xl bg-gradient-to-r from-brand-blue to-blue-700 px-6 py-8 text-white shadow-lg">
-                <p className="text-sm font-medium text-blue-100">Bienvenido/a</p>
+            <div className="rounded-2xl bg-gradient-to-r from-brand-blue to-brand-700 px-6 py-8 text-white shadow-lg">
+                <p className="text-sm font-medium text-brand-100">Bienvenido/a</p>
                 <h1 className="mt-1 text-2xl font-bold">{user?.name}</h1>
-                <p className="mt-2 max-w-2xl text-sm text-blue-100">
+                <p className="mt-2 max-w-2xl text-sm text-brand-100">
                     Aquí encontrarás las últimas noticias y novedades del club.
                 </p>
             </div>
@@ -52,10 +52,10 @@ export default function Home() {
                                 <p className="text-xs font-medium uppercase tracking-wide text-brand-blue">
                                     {formatDate(n.fechaPublicacion || n.creadoEn)}
                                 </p>
-                                <h2 className="mt-1 text-lg font-bold text-slate-900">{n.titulo}</h2>
-                                {n.subtitulo && <p className="mt-1 text-sm text-slate-500">{n.subtitulo}</p>}
+                                <h2 className="mt-1 text-lg font-bold text-slate-900 dark:text-slate-100">{n.titulo}</h2>
+                                {n.subtitulo && <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{n.subtitulo}</p>}
                                 {n.contenido && (
-                                    <p className="mt-3 whitespace-pre-line text-sm text-slate-600 line-clamp-6">
+                                    <p className="mt-3 whitespace-pre-line text-sm text-slate-600 line-clamp-6 dark:text-slate-300">
                                         {n.contenido}
                                     </p>
                                 )}
@@ -64,12 +64,12 @@ export default function Home() {
                                         href={n.documento.url}
                                         target="_blank"
                                         rel="noreferrer"
-                                        className="mt-4 flex items-center gap-3 rounded-xl border border-slate-200 p-3 transition hover:border-brand-blue hover:bg-blue-50"
+                                        className="mt-4 flex items-center gap-3 rounded-xl border border-slate-200 p-3 transition hover:border-brand-blue hover:bg-brand-50 dark:border-slate-700 dark:hover:bg-brand-900/20"
                                     >
                                         <FileIcon extension={n.documento.extension} />
                                         <div className="min-w-0 flex-1">
-                                            <p className="truncate text-sm font-medium text-slate-700">{n.documento.nombre}</p>
-                                            <p className="text-xs text-slate-400">{n.documento.tipo}</p>
+                                            <p className="truncate text-sm font-medium text-slate-700 dark:text-slate-200">{n.documento.nombre}</p>
+                                            <p className="text-xs text-slate-400 dark:text-slate-500">{n.documento.tipo}</p>
                                         </div>
                                         <ArrowDownTrayIcon className="h-4 w-4 shrink-0 text-brand-blue" />
                                     </a>

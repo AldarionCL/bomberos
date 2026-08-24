@@ -16,8 +16,13 @@ import {
     BuildingLibraryIcon,
     IdentificationIcon,
     CalendarDaysIcon,
+    SunIcon,
+    MoonIcon,
 } from '@heroicons/react/24/outline'
 import {useAuth} from '../context/AuthContext'
+import {useTheme} from '../context/ThemeContext'
+import {useSiteConfig} from '../context/SiteConfigContext'
+import NotificacionesBell from '../components/NotificacionesBell'
 
 function NavItem({to, icon: Icon, label, onClick}) {
     return (
@@ -29,7 +34,7 @@ function NavItem({to, icon: Icon, label, onClick}) {
                     'flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition',
                     isActive
                         ? 'bg-brand-blue text-white shadow-sm'
-                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-700 dark:hover:text-white'
                 )
             }
         >
@@ -44,6 +49,8 @@ export default function AppLayout() {
     const navigate = useNavigate()
     const [open, setOpen] = useState(false)
     const esTesoreria = user?.esAdministrador || user?.esTesorero
+    const {oscuro, alternar} = useTheme()
+    const {nombreGrupo, logo} = useSiteConfig()
 
     const handleLogout = async () => {
         await logout()
@@ -69,37 +76,45 @@ export default function AppLayout() {
             {user?.esAdministrador && (
                 <NavItem to="/configuracion" icon={Cog6ToothIcon} label="Configuración" onClick={() => setOpen(false)} />
             )}
-            <div className="my-2 border-t border-slate-100" />
+            <div className="my-2 border-t border-slate-100 dark:border-slate-700" />
             <NavItem to="/perfil" icon={UserCircleIcon} label="Mi perfil" onClick={() => setOpen(false)} />
             <NavItem to="/mi-carnet" icon={IdentificationIcon} label="Mi carnet" onClick={() => setOpen(false)} />
         </nav>
     )
 
     return (
-        <div className="min-h-screen bg-slate-50">
-            <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-slate-200 bg-white px-4 sm:px-6">
+        <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
+            <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-slate-200 bg-white px-4 dark:border-slate-700 dark:bg-slate-800 sm:px-6">
                 <div className="flex items-center gap-3">
-                    <button className="rounded-lg p-2 hover:bg-slate-100 lg:hidden" onClick={() => setOpen(true)}>
-                        <Bars3Icon className="h-6 w-6 text-slate-600" />
+                    <button className="rounded-lg p-2 hover:bg-slate-100 dark:hover:bg-slate-700 lg:hidden" onClick={() => setOpen(true)}>
+                        <Bars3Icon className="h-6 w-6 text-slate-600 dark:text-slate-300" />
                     </button>
-                    <img src="/img/logo.png" alt="Logo" className="h-9 w-9 rounded-full object-cover" />
-                    <span className="hidden text-base font-bold text-slate-900 sm:block">
-                        {import.meta.env.VITE_APP_NAME || 'Club'}
+                    <img src={logo} alt="Logo" className="h-9 w-9 rounded-full object-cover" />
+                    <span className="hidden text-base font-bold text-slate-900 dark:text-slate-100 sm:block">
+                        {nombreGrupo}
                     </span>
                 </div>
                 <div className="flex items-center gap-3">
+                    <button
+                        onClick={alternar}
+                        className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 hover:text-slate-700 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200"
+                        title={oscuro ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro'}
+                    >
+                        {oscuro ? <SunIcon className="h-5 w-5" /> : <MoonIcon className="h-5 w-5" />}
+                    </button>
+                    <NotificacionesBell />
                     <div className="hidden text-right sm:block">
-                        <p className="text-sm font-semibold text-slate-800">{user?.name}</p>
-                        <p className="text-xs text-slate-500">{user?.cargo || user?.rol}</p>
+                        <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">{user?.name}</p>
+                        <p className="text-xs text-slate-500 dark:text-slate-400">{user?.cargo || user?.rol}</p>
                     </div>
                     <img
                         src={user?.avatar}
                         alt={user?.name}
-                        className="h-9 w-9 rounded-full ring-2 ring-slate-100"
+                        className="h-9 w-9 rounded-full ring-2 ring-slate-100 dark:ring-slate-700"
                     />
                     <button
                         onClick={handleLogout}
-                        className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 hover:text-rose-600"
+                        className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 hover:text-rose-600 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-rose-400"
                         title="Cerrar sesión"
                     >
                         <ArrowLeftOnRectangleIcon className="h-5 w-5" />
@@ -108,18 +123,18 @@ export default function AppLayout() {
             </header>
 
             <div className="flex">
-                <aside className="hidden w-64 shrink-0 border-r border-slate-200 bg-white lg:flex lg:flex-col">
+                <aside className="hidden w-64 shrink-0 border-r border-slate-200 bg-white dark:border-slate-700 dark:bg-slate-800 lg:flex lg:flex-col">
                     {nav}
                 </aside>
 
                 {open && (
                     <div className="fixed inset-0 z-40 lg:hidden">
                         <div className="absolute inset-0 bg-slate-900/50" onClick={() => setOpen(false)} />
-                        <div className="relative flex h-full w-64 flex-col bg-white shadow-xl">
+                        <div className="relative flex h-full w-64 flex-col bg-white dark:bg-slate-800 shadow-xl">
                             <div className="flex items-center justify-between px-4 py-4">
-                                <span className="text-sm font-bold text-slate-900">Menú</span>
+                                <span className="text-sm font-bold text-slate-900 dark:text-slate-100">Menú</span>
                                 <button onClick={() => setOpen(false)}>
-                                    <XMarkIcon className="h-6 w-6 text-slate-500" />
+                                    <XMarkIcon className="h-6 w-6 text-slate-500 dark:text-slate-400" />
                                 </button>
                             </div>
                             {nav}

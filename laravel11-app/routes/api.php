@@ -4,11 +4,13 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CarnetController;
 use App\Http\Controllers\Api\CatalogController;
 use App\Http\Controllers\Api\ConfiguracionController;
+use App\Http\Controllers\Api\ConfiguracionSitioController;
 use App\Http\Controllers\Api\CuotaController;
 use App\Http\Controllers\Api\CuotaTipoController;
 use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\DocumentoController;
 use App\Http\Controllers\Api\NoticiaController;
+use App\Http\Controllers\Api\NotificacionController;
 use App\Http\Controllers\Api\PersonaController;
 use App\Http\Controllers\Api\SolicitudLicenciaController;
 use App\Http\Controllers\Api\WebpayController;
@@ -19,11 +21,19 @@ Route::post('/login', [AuthController::class, 'login']);
 // Verificación pública de carnet de socio (sin autenticación, para lectores QR).
 Route::get('/verificar/{token}', [CarnetController::class, 'verificar']);
 
+// Configuración de sitio (nombre, logo, color): pública porque el login la necesita.
+Route::get('/configuracion/sitio', [ConfiguracionSitioController::class, 'show']);
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
 
     Route::get('/dashboard', [DashboardController::class, 'index']);
+
+    Route::get('/notificaciones', [NotificacionController::class, 'index']);
+    Route::get('/notificaciones/contador', [NotificacionController::class, 'contador']);
+    Route::post('/notificaciones/leer-todas', [NotificacionController::class, 'marcarTodasLeidas']);
+    Route::post('/notificaciones/{id}/leer', [NotificacionController::class, 'marcarLeida']);
 
     Route::get('/noticias', [NoticiaController::class, 'index']);
     Route::post('/noticias', [NoticiaController::class, 'store']);
@@ -51,6 +61,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/configuracion/cuota-mensual', [ConfiguracionController::class, 'updateCuotaMensual']);
     Route::get('/configuracion/cuota-inscripcion', [ConfiguracionController::class, 'showCuotaInscripcion']);
     Route::put('/configuracion/cuota-inscripcion', [ConfiguracionController::class, 'updateCuotaInscripcion']);
+    Route::put('/configuracion/sitio', [ConfiguracionSitioController::class, 'update']);
 
     Route::get('/personas', [PersonaController::class, 'index']);
     Route::post('/personas', [PersonaController::class, 'store']);

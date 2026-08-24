@@ -1,11 +1,12 @@
-import {useState} from 'react'
+import {useEffect, useState} from 'react'
 import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query'
-import {PlusIcon, TrashIcon, BellAlertIcon} from '@heroicons/react/24/outline'
+import {PlusIcon, TrashIcon, BellAlertIcon, PhotoIcon} from '@heroicons/react/24/outline'
 import client from '../api/client'
 import {Button, Card, CardHeader, Field, Input, Modal, PageLoader, Select} from '../components/Ui'
 import Badge from '../components/Badge'
 import {formatMoney} from '../utils/format'
 import {useToast, apiErrorMessage} from '../context/ToastContext'
+import {useSiteConfig} from '../context/SiteConfigContext'
 
 function NuevoTipoModal({onClose}) {
     const queryClient = useQueryClient()
@@ -73,8 +74,8 @@ function ValorCuotaMensual() {
             <CardHeader title="Valor de la cuota mensual" subtitle={`Tipo asociado: ${data?.nombre ?? 'sin configurar'}`} />
             <div className="flex flex-wrap items-end gap-4 p-5">
                 <div>
-                    <p className="text-xs font-medium uppercase text-slate-400">Valor vigente</p>
-                    <p className="text-2xl font-bold text-slate-900">{formatMoney(data?.monto)}</p>
+                    <p className="text-xs font-medium uppercase text-slate-400 dark:text-slate-500">Valor vigente</p>
+                    <p className="text-2xl font-bold text-slate-900 dark:text-slate-100">{formatMoney(data?.monto)}</p>
                 </div>
                 <div className="flex items-end gap-2">
                     <Field label="Nuevo valor">
@@ -85,7 +86,7 @@ function ValorCuotaMensual() {
                     </Button>
                 </div>
             </div>
-            <p className="border-t border-slate-100 px-5 py-3 text-xs text-slate-500">
+            <p className="border-t border-slate-100 px-5 py-3 text-xs text-slate-500 dark:border-slate-700 dark:text-slate-400">
                 Este valor se aplica automáticamente cada mes a todos los socios activos: ya no es necesario generar cuotas manualmente.
             </p>
         </Card>
@@ -119,8 +120,8 @@ function ValorCuotaInscripcion() {
             <CardHeader title="Valor de la cuota de inscripción" subtitle={`Tipo asociado: ${data?.nombre ?? 'sin configurar'}`} />
             <div className="flex flex-wrap items-end gap-4 p-5">
                 <div>
-                    <p className="text-xs font-medium uppercase text-slate-400">Valor vigente</p>
-                    <p className="text-2xl font-bold text-slate-900">{formatMoney(data?.monto)}</p>
+                    <p className="text-xs font-medium uppercase text-slate-400 dark:text-slate-500">Valor vigente</p>
+                    <p className="text-2xl font-bold text-slate-900 dark:text-slate-100">{formatMoney(data?.monto)}</p>
                 </div>
                 <div className="flex items-end gap-2">
                     <Field label="Nuevo valor">
@@ -131,8 +132,107 @@ function ValorCuotaInscripcion() {
                     </Button>
                 </div>
             </div>
-            <p className="border-t border-slate-100 px-5 py-3 text-xs text-slate-500">
+            <p className="border-t border-slate-100 px-5 py-3 text-xs text-slate-500 dark:border-slate-700 dark:text-slate-400">
                 Se cobra una sola vez, automáticamente, al crear un socio nuevo (a menos que se marque como excepción).
+            </p>
+        </Card>
+    )
+}
+
+function EntornoSitio() {
+    const {nombreGrupo, logo, color, recargar} = useSiteConfig()
+    const {notify} = useToast()
+    const [nombre, setNombre] = useState(nombreGrupo)
+    const [tono, setTono] = useState(color)
+    const [archivo, setArchivo] = useState(null)
+    const [tocado, setTocado] = useState(false)
+
+    // El contexto carga la config real de forma asíncrona (arranca con el
+    // valor por defecto). Mientras el admin no edite nada, mantenemos los
+    // campos sincronizados para no guardar por accidente el valor por defecto
+    // encima de una configuración real que aún no había llegado.
+    useEffect(() => {
+        if (!tocado) {
+            setNombre(nombreGrupo)
+            setTono(color)
+        }
+    }, [nombreGrupo, color, tocado])
+
+    const mutation = useMutation({
+        mutationFn: () => {
+            const form = new FormData()
+            form.append('_method', 'PUT')
+            form.append('nombreGrupo', nombre)
+            form.append('color', tono)
+            if (archivo) form.append('logo', archivo)
+            return client.post('/configuracion/sitio', form)
+        },
+        onSuccess: async () => {
+            notify('Entorno del sitio actualizado.')
+            setArchivo(null)
+            setTocado(false)
+            await recargar()
+        },
+        onError: (err) => notify(apiErrorMessage(err), 'error'),
+    })
+
+    return (
+        <Card>
+            <CardHeader
+                title="Entorno del sitio"
+                subtitle="Nombre, logo y tonalidad — así se replica esta app para cada cliente"
+            />
+            <div className="grid gap-5 p-5 sm:grid-cols-2">
+                <Field label="Nombre del grupo">
+                    <Input
+                        value={nombre}
+                        onChange={(e) => { setNombre(e.target.value); setTocado(true) }}
+                    />
+                </Field>
+
+                <Field label="Tonalidad del sitio">
+                    <div className="flex items-center gap-2">
+                        <input
+                            type="color"
+                            value={tono}
+                            onChange={(e) => { setTono(e.target.value); setTocado(true) }}
+                            className="h-9 w-14 cursor-pointer rounded-lg border border-slate-300 bg-white p-1 dark:border-slate-600 dark:bg-slate-900"
+                        />
+                        <Input
+                            value={tono}
+                            onChange={(e) => { setTono(e.target.value); setTocado(true) }}
+                            className="w-32 uppercase"
+                        />
+                    </div>
+                </Field>
+
+                <Field label="Logo">
+                    <div className="flex items-center gap-3">
+                        <img
+                            src={archivo ? URL.createObjectURL(archivo) : logo}
+                            alt="Logo actual"
+                            className="h-12 w-12 rounded-full border border-slate-200 object-cover dark:border-slate-600"
+                        />
+                        <label className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg px-3 py-2 text-sm font-medium text-slate-600 ring-1 ring-inset ring-slate-300 hover:bg-slate-50 dark:text-slate-300 dark:ring-slate-600 dark:hover:bg-slate-700">
+                            <PhotoIcon className="h-4 w-4" /> Cambiar
+                            <input
+                                type="file"
+                                accept="image/*"
+                                className="hidden"
+                                onChange={(e) => { setArchivo(e.target.files?.[0] ?? null); setTocado(true) }}
+                            />
+                        </label>
+                    </div>
+                </Field>
+
+                <div className="flex items-end justify-end sm:col-span-2">
+                    <Button loading={mutation.isPending} disabled={!tocado || !nombre} onClick={() => mutation.mutate()}>
+                        Guardar cambios
+                    </Button>
+                </div>
+            </div>
+            <p className="border-t border-slate-100 px-5 py-3 text-xs text-slate-500 dark:border-slate-700 dark:text-slate-400">
+                El color elegido define automáticamente todos los tonos que usa la app (botones, enlaces, degradados) — no hace falta tocar código para adaptar el sitio a otro cliente.
             </p>
         </Card>
     )
@@ -150,7 +250,7 @@ function RecordatoriosCuotas() {
         <Card>
             <CardHeader title="Recordatorios de cuotas vencidas" subtitle="Se envían automáticamente cada lunes a quienes tengan cuotas atrasadas" />
             <div className="flex items-center justify-between gap-4 p-5">
-                <p className="max-w-md text-sm text-slate-500">
+                <p className="max-w-md text-sm text-slate-500 dark:text-slate-400">
                     También puedes enviarlos ahora mismo (por ejemplo, para probar que los correos lleguen).
                 </p>
                 <Button variant="secondary" loading={mutation.isPending} onClick={() => mutation.mutate()}>
@@ -182,7 +282,9 @@ export default function Configuracion() {
 
     return (
         <div className="space-y-6">
-            <h1 className="text-xl font-bold text-slate-900">Configuración</h1>
+            <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">Configuración</h1>
+
+            <EntornoSitio />
 
             <ValorCuotaMensual />
 
@@ -199,13 +301,13 @@ export default function Configuracion() {
                 {isLoading ? (
                     <PageLoader />
                 ) : (
-                    <div className="divide-y divide-slate-100">
+                    <div className="divide-y divide-slate-100 dark:divide-slate-700">
                         {tipos?.map((t) => (
                             <div key={t.id} className="flex items-center justify-between gap-4 px-5 py-3">
                                 <div className="flex items-center gap-3">
                                     <div>
-                                        <p className="font-medium text-slate-800">{t.nombre}</p>
-                                        <p className="text-xs text-slate-400">{t.descripcion}</p>
+                                        <p className="font-medium text-slate-800 dark:text-slate-200">{t.nombre}</p>
+                                        <p className="text-xs text-slate-400 dark:text-slate-500">{t.descripcion}</p>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-2">
@@ -216,7 +318,7 @@ export default function Configuracion() {
                                     {!t.esMensual && !t.esCuotaInscripcion && (
                                         <button
                                             onClick={() => confirm('¿Eliminar este tipo?') && eliminar.mutate(t.id)}
-                                            className="rounded-lg p-2 text-slate-400 hover:bg-rose-50 hover:text-rose-600"
+                                            className="rounded-lg p-2 text-slate-400 hover:bg-rose-50 hover:text-rose-600 dark:text-slate-500 dark:hover:bg-rose-500/10 dark:hover:text-rose-400"
                                         >
                                             <TrashIcon className="h-4 w-4" />
                                         </button>

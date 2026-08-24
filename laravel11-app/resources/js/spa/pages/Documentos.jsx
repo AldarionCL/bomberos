@@ -74,7 +74,7 @@ function DocumentoModal({documento, onClose, catalogos}) {
                     <Textarea rows={2} value={form.descripcion} onChange={set('descripcion')} />
                 </Field>
                 <Field label={documento ? 'Reemplazar archivo (opcional)' : 'Archivo'}>
-                    <input type="file" onChange={(e) => setArchivo(e.target.files?.[0] ?? null)} className="block w-full text-sm text-slate-600" />
+                    <input type="file" onChange={(e) => setArchivo(e.target.files?.[0] ?? null)} className="block w-full text-sm text-slate-600 dark:text-slate-300" />
                 </Field>
 
                 {!documento && (
@@ -87,12 +87,12 @@ function DocumentoModal({documento, onClose, catalogos}) {
                                 ))}
                             </Select>
                         </Field>
-                        <label className="flex items-center gap-2 text-sm text-slate-600">
+                        <label className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
                             <input
                                 type="checkbox"
                                 checked={form.publicarNoticia}
                                 onChange={(e) => setForm((f) => ({...f, publicarNoticia: e.target.checked}))}
-                                className="rounded border-slate-300"
+                                className="rounded border-slate-300 dark:border-slate-600"
                             />
                             Generar una publicación en Noticias sobre este documento
                         </label>
@@ -147,7 +147,7 @@ export default function Documentos() {
     return (
         <div className="space-y-6">
             <div className="flex flex-wrap items-center justify-between gap-3">
-                <h1 className="text-xl font-bold text-slate-900">Documentos</h1>
+                <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">Documentos</h1>
                 {puedeGestionar && (
                     <Button onClick={() => setNuevoOpen(true)}>
                         <PlusIcon className="h-4 w-4" /> Nuevo documento
@@ -157,7 +157,7 @@ export default function Documentos() {
 
             <div className="flex flex-wrap gap-3">
                 <div className="relative max-w-sm flex-1">
-                    <MagnifyingGlassIcon className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                    <MagnifyingGlassIcon className="absolute left-3 top-2.5 h-4 w-4 text-slate-400 dark:text-slate-500" />
                     <Input className="pl-9" placeholder="Buscar por nombre..." value={busqueda} onChange={(e) => setBusqueda(e.target.value)} />
                 </div>
                 <Select value={idTipo} onChange={(e) => setIdTipo(e.target.value)} className="w-56">
@@ -174,14 +174,14 @@ export default function Documentos() {
                 ) : documentos.length === 0 ? (
                     <EmptyState title="No hay documentos" />
                 ) : (
-                    <div className="divide-y divide-slate-100">
+                    <div className="divide-y divide-slate-100 dark:divide-slate-700">
                         {documentos.map((d) => (
                             <div key={d.id} className="flex items-center justify-between gap-4 px-5 py-4">
                                 <div className="flex items-center gap-3">
                                     <FileIcon extension={d.extension} />
                                     <div>
-                                        <p className="font-medium text-slate-800">{d.nombre}</p>
-                                        <p className="text-xs text-slate-400">
+                                        <p className="font-medium text-slate-800 dark:text-slate-200">{d.nombre}</p>
+                                        <p className="text-xs text-slate-400 dark:text-slate-500">
                                             {d.tipo} · {formatDate(d.creadoEn)}
                                             {d.asociadoA && ` · ${d.asociadoA.nombre}`}
                                         </p>
@@ -198,21 +198,21 @@ export default function Documentos() {
                                             href={d.url}
                                             target="_blank"
                                             rel="noreferrer"
-                                            className="rounded-lg p-2 text-slate-500 hover:bg-blue-50 hover:text-brand-blue"
+                                            className="rounded-lg p-2 text-slate-500 hover:bg-brand-50 hover:text-brand-blue dark:text-slate-400 dark:hover:bg-brand-900/20"
                                             title="Descargar"
                                         >
                                             <ArrowDownTrayIcon className="h-4 w-4" />
                                         </a>
                                     )}
                                     {puedeGestionar && (
-                                        <button onClick={() => setEditando(d)} className="rounded-lg p-2 text-slate-500 hover:bg-slate-100" title="Editar">
+                                        <button onClick={() => setEditando(d)} className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-700" title="Editar">
                                             <PencilIcon className="h-4 w-4" />
                                         </button>
                                     )}
                                     {user?.esAdministrador && (
                                         <button
                                             onClick={() => confirm('¿Eliminar este documento?') && eliminar.mutate(d.id)}
-                                            className="rounded-lg p-2 text-slate-500 hover:bg-rose-50 hover:text-rose-600"
+                                            className="rounded-lg p-2 text-slate-500 hover:bg-rose-50 hover:text-rose-600 dark:text-slate-400 dark:hover:bg-rose-500/10 dark:hover:text-rose-400"
                                             title="Eliminar"
                                         >
                                             <TrashIcon className="h-4 w-4" />

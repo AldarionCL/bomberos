@@ -46,13 +46,13 @@ function AgregarDocumentoPrivado({idUsuario, tipos}) {
     })
 
     return (
-        <div className="grid gap-3 rounded-xl border border-dashed border-slate-300 p-4 sm:grid-cols-4">
+        <div className="grid gap-3 rounded-xl border border-dashed border-slate-300 p-4 dark:border-slate-600 sm:grid-cols-4">
             <Input placeholder="Nombre del documento" value={nombre} onChange={(e) => setNombre(e.target.value)} />
             <Select value={idTipo} onChange={(e) => setIdTipo(e.target.value)}>
                 <option value="">Tipo de documento...</option>
                 {tipos?.map((t) => <option key={t.id} value={t.id}>{t.Tipo}</option>)}
             </Select>
-            <input type="file" onChange={(e) => setArchivo(e.target.files?.[0] ?? null)} className="text-sm text-slate-600 sm:col-span-1" />
+            <input type="file" onChange={(e) => setArchivo(e.target.files?.[0] ?? null)} className="text-sm text-slate-600 dark:text-slate-300 sm:col-span-1" />
             <Button
                 variant="secondary"
                 disabled={!nombre || !idTipo || !archivo}
@@ -98,26 +98,26 @@ function DocumentosTab({idUsuario}) {
             {isLoading ? (
                 <PageLoader />
             ) : documentos.length === 0 ? (
-                <p className="py-6 text-center text-sm text-slate-400">Sin documentos asociados.</p>
+                <p className="py-6 text-center text-sm text-slate-400 dark:text-slate-500">Sin documentos asociados.</p>
             ) : (
-                <div className="divide-y divide-slate-100">
+                <div className="divide-y divide-slate-100 dark:divide-slate-700">
                     {documentos.map((d) => (
                         <div key={d.id} className="flex items-center justify-between gap-3 py-3">
                             <div className="flex items-center gap-3">
                                 <FileIcon extension={d.extension} />
                                 <div>
-                                    <p className="text-sm font-medium text-slate-700">{d.nombre}</p>
-                                    <p className="text-xs text-slate-400">{d.tipo}</p>
+                                    <p className="text-sm font-medium text-slate-700 dark:text-slate-200">{d.nombre}</p>
+                                    <p className="text-xs text-slate-400 dark:text-slate-500">{d.tipo}</p>
                                 </div>
                             </div>
                             <div className="flex items-center gap-2">
-                                <a href={d.url} target="_blank" rel="noreferrer" className="rounded-lg p-2 text-slate-500 hover:bg-blue-50 hover:text-brand-blue">
+                                <a href={d.url} target="_blank" rel="noreferrer" className="rounded-lg p-2 text-slate-500 hover:bg-brand-50 hover:text-brand-blue dark:text-slate-400 dark:hover:bg-brand-900/20">
                                     <ArrowDownTrayIcon className="h-4 w-4" />
                                 </a>
                                 {user?.esAdministrador && (
                                     <button
                                         onClick={() => confirm('¿Eliminar este documento?') && eliminar.mutate(d.id)}
-                                        className="rounded-lg p-2 text-slate-500 hover:bg-rose-50 hover:text-rose-600"
+                                        className="rounded-lg p-2 text-slate-500 hover:bg-rose-50 hover:text-rose-600 dark:text-slate-400 dark:hover:bg-rose-500/10 dark:hover:text-rose-400"
                                     >
                                         <TrashIcon className="h-4 w-4" />
                                     </button>
@@ -192,7 +192,7 @@ export default function SocioDetalle() {
 
     return (
         <div className="space-y-6">
-            <button onClick={() => navigate('/socios')} className="flex items-center gap-1 text-sm text-slate-500 hover:text-slate-700">
+            <button onClick={() => navigate('/socios')} className="flex items-center gap-1 text-sm text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200">
                 <ArrowLeftIcon className="h-4 w-4" /> Volver a socios
             </button>
 
@@ -201,7 +201,7 @@ export default function SocioDetalle() {
                     <img
                         src={foto ? URL.createObjectURL(foto) : (persona.avatar)}
                         alt={persona.name}
-                        className="h-28 w-28 rounded-full object-cover ring-4 ring-slate-100"
+                        className="h-28 w-28 rounded-full object-cover ring-4 ring-slate-100 dark:ring-slate-700"
                     />
                     {puedeGestionar && (
                         <label className="cursor-pointer text-xs font-semibold text-brand-blue hover:underline">
@@ -210,8 +210,8 @@ export default function SocioDetalle() {
                         </label>
                     )}
                     <div>
-                        <p className="font-semibold text-slate-800">{persona.name}</p>
-                        <p className="text-xs text-slate-400">{persona.persona?.cargo}</p>
+                        <p className="font-semibold text-slate-800 dark:text-slate-200">{persona.name}</p>
+                        <p className="text-xs text-slate-400 dark:text-slate-500">{persona.persona?.cargo}</p>
                     </div>
                 </Card>
 
@@ -235,14 +235,16 @@ export default function SocioDetalle() {
                     </Card>
 
                     <Card>
-                        <div className="flex gap-1 overflow-x-auto border-b border-slate-100 px-3 pt-3">
+                        <div className="flex gap-1 overflow-x-auto border-b border-slate-100 px-3 pt-3 dark:border-slate-700">
                             {TABS.map((t) => (
                                 <button
                                     key={t.key}
                                     onClick={() => setTab(t.key)}
                                     className={clsx(
                                         'whitespace-nowrap rounded-t-lg px-3.5 py-2 text-sm font-medium transition',
-                                        tab === t.key ? 'border-b-2 border-brand-blue text-brand-blue' : 'text-slate-500 hover:text-slate-700'
+                                        tab === t.key
+                                            ? 'border-b-2 border-brand-blue text-brand-blue'
+                                            : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'
                                     )}
                                 >
                                     {t.label}
@@ -261,7 +263,7 @@ export default function SocioDetalle() {
                         </div>
 
                         {tab !== 'documentos' && (
-                            <div className="flex justify-end border-t border-slate-100 px-5 py-3">
+                            <div className="flex justify-end border-t border-slate-100 px-5 py-3 dark:border-slate-700">
                                 <Button loading={mutation.isPending} onClick={() => mutation.mutate()}>
                                     Guardar cambios
                                 </Button>

@@ -47,7 +47,7 @@ function NuevaSolicitudModal({onClose, tipos, puedeSolicitarPorOtro}) {
                     </Field>
                 )}
                 {tipos?.[0]?.Descripcion && (
-                    <p className="rounded-lg bg-slate-50 p-3 text-xs text-slate-500">{tipos[0].Descripcion}</p>
+                    <p className="rounded-lg bg-slate-50 p-3 text-xs text-slate-500 dark:bg-slate-900 dark:text-slate-400">{tipos[0].Descripcion}</p>
                 )}
                 <div className="grid grid-cols-2 gap-3">
                     <Field label="Desde"><Input type="date" value={form.fechaDesde} onChange={set('fechaDesde')} /></Field>
@@ -96,7 +96,7 @@ export default function Licencias() {
     return (
         <div className="space-y-6">
             <div className="flex flex-wrap items-center justify-between gap-3">
-                <h1 className="text-xl font-bold text-slate-900">Licencias y permisos</h1>
+                <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">Licencias y permisos</h1>
                 <Button onClick={() => setModalAbierto(true)} disabled={!data?.tiposDisponibles?.length}>
                     <PlusIcon className="h-4 w-4" /> Nueva solicitud
                 </Button>
@@ -108,7 +108,7 @@ export default function Licencias() {
                 <>
                     {!data?.tiposDisponibles?.length && (
                         <Card>
-                            <div className="p-5 text-sm text-slate-500">
+                            <div className="p-5 text-sm text-slate-500 dark:text-slate-400">
                                 Todavía no hay un aprobador configurado para solicitudes de licencia. Contacta a un administrador.
                             </div>
                         </Card>
@@ -118,13 +118,13 @@ export default function Licencias() {
                         <div className="grid gap-4 sm:grid-cols-2">
                             {disponibilidad.map((d) => (
                                 <Card key={d.idTipo} className="p-5">
-                                    <p className="text-sm font-medium text-slate-500">
+                                    <p className="text-sm font-medium text-slate-500 dark:text-slate-400">
                                         {data.tiposDisponibles.find((t) => t.id === d.idTipo)?.Tipo}
                                     </p>
-                                    <p className="mt-1 text-2xl font-bold text-slate-900">
-                                        {d.diasDisponibles} <span className="text-sm font-normal text-slate-400">de {d.diasTope} días disponibles</span>
+                                    <p className="mt-1 text-2xl font-bold text-slate-900 dark:text-slate-100">
+                                        {d.diasDisponibles} <span className="text-sm font-normal text-slate-400 dark:text-slate-500">de {d.diasTope} días disponibles</span>
                                     </p>
-                                    <p className="text-xs text-slate-400">{d.diasUsados} días usados este año</p>
+                                    <p className="text-xs text-slate-400 dark:text-slate-500">{d.diasUsados} días usados este año</p>
                                 </Card>
                             ))}
                         </div>
@@ -134,15 +134,15 @@ export default function Licencias() {
                         {solicitudes.length === 0 ? (
                             <EmptyState icon={CalendarDaysIcon} title="No has hecho solicitudes de licencia" />
                         ) : (
-                            <div className="divide-y divide-slate-100">
+                            <div className="divide-y divide-slate-100 dark:divide-slate-700">
                                 {solicitudes.map((s) => (
                                     <div key={s.id} className="flex flex-wrap items-center justify-between gap-3 px-5 py-4">
                                         <div>
-                                            <p className="font-medium text-slate-800">
+                                            <p className="font-medium text-slate-800 dark:text-slate-200">
                                                 {formatDate(s.fechaDesde)} — {formatDate(s.fechaHasta)}
-                                                <span className="ml-2 text-xs text-slate-400">({s.diasHabiles} días hábiles)</span>
+                                                <span className="ml-2 text-xs text-slate-400 dark:text-slate-500">({s.diasHabiles} días hábiles)</span>
                                             </p>
-                                            <p className="text-xs text-slate-400">{s.tipo}{s.observaciones ? ` · ${s.observaciones}` : ''}</p>
+                                            <p className="text-xs text-slate-400 dark:text-slate-500">{s.tipo}{s.observaciones ? ` · ${s.observaciones}` : ''}</p>
                                         </div>
                                         <div className="flex items-center gap-3">
                                             <div className="flex gap-1">

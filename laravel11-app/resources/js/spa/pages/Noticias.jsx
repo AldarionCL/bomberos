@@ -65,17 +65,17 @@ function NoticiaModal({noticia, onClose, catalogos}) {
                     </Field>
                 </div>
                 <Field label="Imagen de portada">
-                    <input type="file" accept="image/*" onChange={(e) => setImagen(e.target.files?.[0] ?? null)} className="block w-full text-sm text-slate-600" />
+                    <input type="file" accept="image/*" onChange={(e) => setImagen(e.target.files?.[0] ?? null)} className="block w-full text-sm text-slate-600 dark:text-slate-300" />
                 </Field>
 
-                <div className="rounded-xl border border-slate-200 p-4">
-                    <p className="mb-3 text-sm font-semibold text-slate-700">Documento adjunto (opcional)</p>
+                <div className="rounded-xl border border-slate-200 p-4 dark:border-slate-700">
+                    <p className="mb-3 text-sm font-semibold text-slate-700 dark:text-slate-200">Documento adjunto (opcional)</p>
 
                     {noticia?.documento && (
-                        <div className="mb-3 flex items-center gap-3 rounded-lg bg-slate-50 p-3">
+                        <div className="mb-3 flex items-center gap-3 rounded-lg bg-slate-50 p-3 dark:bg-slate-900">
                             <FileIcon extension={noticia.documento.extension} />
                             <div className="min-w-0 flex-1">
-                                <p className="truncate text-sm font-medium text-slate-700">{noticia.documento.nombre}</p>
+                                <p className="truncate text-sm font-medium text-slate-700 dark:text-slate-200">{noticia.documento.nombre}</p>
                                 <a href={noticia.documento.url} target="_blank" rel="noreferrer" className="text-xs text-brand-blue hover:underline">
                                     Ver archivo actual
                                 </a>
@@ -100,7 +100,7 @@ function NoticiaModal({noticia, onClose, catalogos}) {
                         <input
                             type="file"
                             onChange={(e) => setDocumentoArchivo(e.target.files?.[0] ?? null)}
-                            className="mt-1 block w-full text-sm text-slate-600"
+                            className="mt-1 block w-full text-sm text-slate-600 dark:text-slate-300"
                         />
                     </Field>
                 </div>
@@ -145,7 +145,7 @@ export default function Noticias() {
     return (
         <div className="space-y-6">
             <div className="flex flex-wrap items-center justify-between gap-3">
-                <h1 className="text-xl font-bold text-slate-900">Noticias</h1>
+                <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">Noticias</h1>
                 <Button onClick={() => setModalAbierto(true)}>
                     <PlusIcon className="h-4 w-4" /> Nueva noticia
                 </Button>
@@ -157,14 +157,14 @@ export default function Noticias() {
                 ) : noticias.length === 0 ? (
                     <EmptyState icon={NewspaperIcon} title="No hay noticias publicadas" />
                 ) : (
-                    <div className="divide-y divide-slate-100">
+                    <div className="divide-y divide-slate-100 dark:divide-slate-700">
                         {noticias.map((n) => (
                             <div key={n.id} className="flex items-center justify-between gap-4 px-5 py-4">
                                 <div className="flex items-center gap-3">
                                     {n.imagen && <img src={n.imagen} alt="" className="h-12 w-12 rounded-lg object-cover" />}
                                     <div>
-                                        <p className="font-medium text-slate-800">{n.titulo}</p>
-                                        <p className="text-xs text-slate-400">
+                                        <p className="font-medium text-slate-800 dark:text-slate-200">{n.titulo}</p>
+                                        <p className="text-xs text-slate-400 dark:text-slate-500">
                                             {formatDate(n.fechaPublicacion)} · {n.autor}
                                             {n.documento && ' · con documento adjunto'}
                                         </p>
@@ -174,12 +174,12 @@ export default function Noticias() {
                                     <Badge tone={n.estado === 1 ? 'Aprobado' : n.estado === 2 ? 'Pendiente' : 'Cancelado'}>
                                         {ESTADOS[n.estado]}
                                     </Badge>
-                                    <button onClick={() => setEditando(n)} className="rounded-lg p-2 text-slate-500 hover:bg-slate-100">
+                                    <button onClick={() => setEditando(n)} className="rounded-lg p-2 text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-700">
                                         <PencilIcon className="h-4 w-4" />
                                     </button>
                                     <button
                                         onClick={() => confirm('¿Eliminar esta noticia?') && eliminar.mutate(n.id)}
-                                        className="rounded-lg p-2 text-slate-500 hover:bg-rose-50 hover:text-rose-600"
+                                        className="rounded-lg p-2 text-slate-500 hover:bg-rose-50 hover:text-rose-600 dark:text-slate-400 dark:hover:bg-rose-500/10 dark:hover:text-rose-400"
                                     >
                                         <TrashIcon className="h-4 w-4" />
                                     </button>

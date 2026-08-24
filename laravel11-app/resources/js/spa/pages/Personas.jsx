@@ -53,12 +53,12 @@ function NuevoSocioModal({onClose, catalogos}) {
                 </Field>
             </div>
 
-            <label className="mt-4 flex items-center gap-2 text-sm text-slate-600">
+            <label className="mt-4 flex items-center gap-2 text-sm text-slate-600 dark:text-slate-300">
                 <input
                     type="checkbox"
                     checked={cobrarInscripcion}
                     onChange={(e) => setCobrarInscripcion(e.target.checked)}
-                    className="rounded border-slate-300"
+                    className="rounded border-slate-300 dark:border-slate-600"
                 />
                 Cobrar cuota de inscripción al crear el socio
             </label>
@@ -92,7 +92,7 @@ export default function Personas() {
     return (
         <div className="space-y-6">
             <div className="flex flex-wrap items-center justify-between gap-3">
-                <h1 className="text-xl font-bold text-slate-900">Socios</h1>
+                <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">Socios</h1>
                 {user?.esAdministrador && (
                     <Button onClick={() => setNuevoOpen(true)}>
                         <PlusIcon className="h-4 w-4" /> Nuevo socio
@@ -101,7 +101,7 @@ export default function Personas() {
             </div>
 
             <div className="relative max-w-sm">
-                <MagnifyingGlassIcon className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+                <MagnifyingGlassIcon className="absolute left-3 top-2.5 h-4 w-4 text-slate-400 dark:text-slate-500" />
                 <Input className="pl-9" placeholder="Buscar por nombre o correo..." value={busqueda} onChange={(e) => setBusqueda(e.target.value)} />
             </div>
 
@@ -113,7 +113,7 @@ export default function Personas() {
                 ) : (
                     <div className="overflow-x-auto">
                         <table className="w-full text-left text-sm">
-                            <thead className="border-b border-slate-100 text-xs uppercase text-slate-500">
+                            <thead className="border-b border-slate-100 text-xs uppercase text-slate-500 dark:border-slate-700 dark:text-slate-400">
                                 <tr>
                                     <th className="px-5 py-3">Socio</th>
                                     <th className="px-5 py-3">Rut</th>
@@ -123,16 +123,16 @@ export default function Personas() {
                                     <th className="px-5 py-3 text-right">Acciones</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-slate-100">
+                            <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
                                 {personas.map((p) => (
-                                    <tr key={p.idUsuario} className="hover:bg-slate-50">
+                                    <tr key={p.idUsuario} className="hover:bg-slate-50 dark:hover:bg-slate-700/50">
                                         <td className="px-5 py-3">
-                                            <p className="font-medium text-slate-800">{p.name}</p>
-                                            <p className="text-xs text-slate-400">{p.email}</p>
+                                            <p className="font-medium text-slate-800 dark:text-slate-200">{p.name}</p>
+                                            <p className="text-xs text-slate-400 dark:text-slate-500">{p.email}</p>
                                         </td>
-                                        <td className="px-5 py-3 text-slate-600">{p.persona?.Rut}</td>
-                                        <td className="px-5 py-3 text-slate-600">{p.persona?.cargo}</td>
-                                        <td className="px-5 py-3 text-slate-500">{formatDate(p.persona?.FechaReclutamiento)}</td>
+                                        <td className="px-5 py-3 text-slate-600 dark:text-slate-300">{p.persona?.Rut}</td>
+                                        <td className="px-5 py-3 text-slate-600 dark:text-slate-300">{p.persona?.cargo}</td>
+                                        <td className="px-5 py-3 text-slate-500 dark:text-slate-400">{formatDate(p.persona?.FechaReclutamiento)}</td>
                                         <td className="px-5 py-3">
                                             <Badge tone={p.persona?.Activo ? 'Aprobado' : 'Cancelado'}>
                                                 {p.persona?.Activo ? 'Activo' : 'Inactivo'}
@@ -142,7 +142,7 @@ export default function Personas() {
                                             {p.persona && (
                                                 <Link
                                                     to={`/socios/${p.persona.id}`}
-                                                    className="inline-flex items-center rounded-lg px-2.5 py-1.5 text-xs font-semibold text-brand-blue ring-1 ring-inset ring-blue-200 hover:bg-blue-50"
+                                                    className="inline-flex items-center rounded-lg px-2.5 py-1.5 text-xs font-semibold text-brand-blue ring-1 ring-inset ring-brand-200 hover:bg-brand-50 dark:ring-brand-800 dark:hover:bg-brand-900/20"
                                                 >
                                                     {puedeGestionar ? 'Editar ficha' : 'Ver ficha'}
                                                 </Link>

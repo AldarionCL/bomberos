@@ -69,22 +69,22 @@ export default function Perfil() {
 
     return (
         <div className="max-w-4xl space-y-6">
-            <h1 className="text-xl font-bold text-slate-900">Mi perfil</h1>
+            <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">Mi perfil</h1>
 
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-[220px_1fr]">
                 <Card className="flex flex-col items-center gap-3 p-5 text-center">
                     <img
                         src={foto ? URL.createObjectURL(foto) : user?.avatar}
                         alt={user?.name}
-                        className="h-28 w-28 rounded-full object-cover ring-4 ring-slate-100"
+                        className="h-28 w-28 rounded-full object-cover ring-4 ring-slate-100 dark:ring-slate-700"
                     />
                     <label className="cursor-pointer text-xs font-semibold text-brand-blue hover:underline">
                         Cambiar foto
                         <input type="file" accept="image/*" className="hidden" onChange={(e) => setFoto(e.target.files?.[0] ?? null)} />
                     </label>
                     <div>
-                        <p className="font-semibold text-slate-800">{user?.name}</p>
-                        <p className="text-xs text-slate-400">{user?.cargo}</p>
+                        <p className="font-semibold text-slate-800 dark:text-slate-200">{user?.name}</p>
+                        <p className="text-xs text-slate-400 dark:text-slate-500">{user?.cargo}</p>
                     </div>
                 </Card>
 
@@ -108,14 +108,16 @@ export default function Perfil() {
                     </Card>
 
                     <Card>
-                        <div className="flex gap-1 overflow-x-auto border-b border-slate-100 px-3 pt-3">
+                        <div className="flex gap-1 overflow-x-auto border-b border-slate-100 px-3 pt-3 dark:border-slate-700">
                             {PERSONA_TABS_BASE.map((t) => (
                                 <button
                                     key={t.key}
                                     onClick={() => setTab(t.key)}
                                     className={clsx(
                                         'whitespace-nowrap rounded-t-lg px-3.5 py-2 text-sm font-medium transition',
-                                        tab === t.key ? 'border-b-2 border-brand-blue text-brand-blue' : 'text-slate-500 hover:text-slate-700'
+                                        tab === t.key
+                                            ? 'border-b-2 border-brand-blue text-brand-blue'
+                                            : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'
                                     )}
                                 >
                                     {t.label}
@@ -132,7 +134,7 @@ export default function Perfil() {
                             {tab === 'observaciones' && <ObservacionesField form={form} set={set} />}
                         </div>
 
-                        <div className="flex justify-end border-t border-slate-100 px-5 py-3">
+                        <div className="flex justify-end border-t border-slate-100 px-5 py-3 dark:border-slate-700">
                             <Button loading={mutation.isPending} onClick={() => mutation.mutate()}>
                                 Guardar cambios
                             </Button>

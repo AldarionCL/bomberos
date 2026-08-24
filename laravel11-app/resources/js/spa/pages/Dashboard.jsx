@@ -24,10 +24,7 @@ import StatCard from '../components/StatCard'
 import Badge from '../components/Badge'
 import {formatMoney, formatMonthLabel} from '../utils/format'
 import {useAuth} from '../context/AuthContext'
-
-const INK_SECONDARY = '#52514e'
-const INK_MUTED = '#898781'
-const GRID = '#e1e0d9'
+import {useTheme} from '../context/ThemeContext'
 
 const ESTADO_COLOR = {
     Pendiente: '#fab219',
@@ -40,8 +37,8 @@ const ESTADO_COLOR = {
 function TooltipMoney({active, payload, label}) {
     if (!active || !payload?.length) return null
     return (
-        <div className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs shadow-md">
-            <p className="mb-1 font-semibold text-slate-700">{formatMonthLabel(label)}</p>
+        <div className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs shadow-md dark:border-slate-600 dark:bg-slate-800">
+            <p className="mb-1 font-semibold text-slate-700 dark:text-slate-200">{formatMonthLabel(label)}</p>
             {payload.map((p) => (
                 <p key={p.dataKey} style={{color: p.color}} className="font-medium">
                     {p.name}: {formatMoney(p.value)}
@@ -53,7 +50,13 @@ function TooltipMoney({active, payload, label}) {
 
 export default function Dashboard() {
     const {user} = useAuth()
+    const {oscuro} = useTheme()
     const esTesoreria = user?.esAdministrador || user?.esTesorero
+
+    const inkSecondary = oscuro ? '#cbd5e1' : '#52514e'
+    const inkMuted = oscuro ? '#94a3b8' : '#898781'
+    const grid = oscuro ? '#334155' : '#e1e0d9'
+    const cursorFill = oscuro ? '#1e293b' : '#f1f5f9'
 
     const {data, isLoading} = useQuery({
         queryKey: ['dashboard'],
@@ -67,7 +70,7 @@ export default function Dashboard() {
 
     return (
         <div className="space-y-6">
-            <h1 className="text-xl font-bold text-slate-900">Panel de control</h1>
+            <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">Panel de control</h1>
 
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 <StatCard
@@ -99,7 +102,7 @@ export default function Dashboard() {
 
             {esTesoreria && org && (
                 <>
-                    <h2 className="pt-2 text-base font-bold text-slate-900">Organización</h2>
+                    <h2 className="pt-2 text-base font-bold text-slate-900 dark:text-slate-100">Organización</h2>
                     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                         <StatCard label="Total en caja" value={formatMoney(org.totalCaja)} icon={BanknotesIcon} tone="green" />
                         <StatCard label="Socios activos" value={org.sociosActivos} icon={UserGroupIcon} tone="blue" />
@@ -119,24 +122,24 @@ export default function Dashboard() {
                             <div className="h-72 px-2 py-4">
                                 <ResponsiveContainer width="100%" height="100%">
                                     <BarChart data={org.serieMensual} barCategoryGap="25%" barGap={2}>
-                                        <CartesianGrid vertical={false} stroke={GRID} />
+                                        <CartesianGrid vertical={false} stroke={grid} />
                                         <XAxis
                                             dataKey="mes"
                                             tickFormatter={(m) => formatMonthLabel(m).slice(0, 3)}
-                                            tick={{fill: INK_MUTED, fontSize: 11}}
-                                            axisLine={{stroke: GRID}}
+                                            tick={{fill: inkMuted, fontSize: 11}}
+                                            axisLine={{stroke: grid}}
                                             tickLine={false}
                                         />
                                         <YAxis
-                                            tick={{fill: INK_MUTED, fontSize: 11}}
+                                            tick={{fill: inkMuted, fontSize: 11}}
                                             axisLine={false}
                                             tickLine={false}
                                             width={40}
                                             tickFormatter={(v) => `${Math.round(v / 1000)}k`}
                                         />
-                                        <Tooltip content={<TooltipMoney />} cursor={{fill: '#f1f5f9'}} />
+                                        <Tooltip content={<TooltipMoney />} cursor={{fill: cursorFill}} />
                                         <Legend
-                                            wrapperStyle={{fontSize: 12, color: INK_SECONDARY}}
+                                            wrapperStyle={{fontSize: 12, color: inkSecondary}}
                                             iconType="circle"
                                         />
                                         <Bar dataKey="ingresos" name="Ingresos" fill="#2a78d6" radius={[4, 4, 0, 0]} maxBarSize={22} isAnimationActive={false} />
@@ -155,22 +158,22 @@ export default function Dashboard() {
                                         layout="vertical"
                                         margin={{left: 8, right: 24}}
                                     >
-                                        <CartesianGrid horizontal={false} stroke={GRID} />
+                                        <CartesianGrid horizontal={false} stroke={grid} />
                                         <XAxis type="number" hide />
                                         <YAxis
                                             type="category"
                                             dataKey="estado"
                                             width={130}
-                                            tick={{fill: INK_SECONDARY, fontSize: 12}}
+                                            tick={{fill: inkSecondary, fontSize: 12}}
                                             axisLine={false}
                                             tickLine={false}
                                         />
                                         <Tooltip
-                                            cursor={{fill: '#f1f5f9'}}
+                                            cursor={{fill: cursorFill}}
                                             formatter={(value) => [value, 'Cuotas']}
                                             labelFormatter={() => ''}
                                         />
-                                        <Bar dataKey="total" radius={[0, 4, 4, 0]} maxBarSize={22} isAnimationActive={false} label={{position: 'right', fill: INK_SECONDARY, fontSize: 12}}>
+                                        <Bar dataKey="total" radius={[0, 4, 4, 0]} maxBarSize={22} isAnimationActive={false} label={{position: 'right', fill: inkSecondary, fontSize: 12}}>
                                             {org.cuotasPorEstado.map((entry) => (
                                                 <Cell key={entry.estado} fill={ESTADO_COLOR[entry.estado] ?? '#898781'} />
                                             ))}
@@ -188,7 +191,7 @@ export default function Dashboard() {
                     <CardHeader title="Tu situación con el club" />
                     <div className="flex flex-wrap items-center gap-3 p-5">
                         <Badge tone={personal?.estadoCuotaVigente}>{personal?.estadoCuotaVigente}</Badge>
-                        <span className="text-sm text-slate-500">
+                        <span className="text-sm text-slate-500 dark:text-slate-400">
                             Periodo vigente: {personal?.periodoCuotaVigente ? formatMonthLabel(personal.periodoCuotaVigente.slice(0, 7)) : 'sin registro'}
                         </span>
                     </div>

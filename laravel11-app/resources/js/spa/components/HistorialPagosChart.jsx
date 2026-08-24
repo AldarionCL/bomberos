@@ -1,8 +1,6 @@
 import {Bar, BarChart, CartesianGrid, Cell, ResponsiveContainer, Tooltip, XAxis, YAxis} from 'recharts'
 import {formatMoney, formatMonthLabel} from '../utils/format'
-
-const INK_MUTED = '#898781'
-const GRID = '#e1e0d9'
+import {useTheme} from '../context/ThemeContext'
 
 const COLOR = {
     Aprobado: '#0ca30c',
@@ -26,15 +24,19 @@ function TooltipHistorial({active, payload, label}) {
     if (!active || !payload?.length) return null
     const p = payload[0].payload
     return (
-        <div className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs shadow-md">
-            <p className="mb-1 font-semibold text-slate-700">{formatMonthLabel(label)}</p>
+        <div className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-xs shadow-md dark:border-slate-600 dark:bg-slate-800">
+            <p className="mb-1 font-semibold text-slate-700 dark:text-slate-200">{formatMonthLabel(label)}</p>
             <p style={{color: COLOR[p.estado]}} className="font-medium">{p.estado}</p>
-            {p.monto > 0 && <p className="text-slate-500">{formatMoney(p.monto)}</p>}
+            {p.monto > 0 && <p className="text-slate-500 dark:text-slate-400">{formatMoney(p.monto)}</p>}
         </div>
     )
 }
 
 export default function HistorialPagosChart({cuotas}) {
+    const {oscuro} = useTheme()
+    const inkMuted = oscuro ? '#94a3b8' : '#898781'
+    const grid = oscuro ? '#334155' : '#e1e0d9'
+    const cursorFill = oscuro ? '#1e293b' : '#f1f5f9'
     const mensuales = cuotas.filter((c) => c.esMensual)
     const porMes = new Map(mensuales.map((c) => [c.periodo?.slice(0, 7), c]))
 
@@ -55,16 +57,16 @@ export default function HistorialPagosChart({cuotas}) {
         <div className="h-56 px-2 py-4">
             <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={datos} barCategoryGap="20%">
-                    <CartesianGrid vertical={false} stroke={GRID} />
+                    <CartesianGrid vertical={false} stroke={grid} />
                     <XAxis
                         dataKey="mes"
                         tickFormatter={(m) => formatMonthLabel(m).slice(0, 3)}
-                        tick={{fill: INK_MUTED, fontSize: 11}}
-                        axisLine={{stroke: GRID}}
+                        tick={{fill: inkMuted, fontSize: 11}}
+                        axisLine={{stroke: grid}}
                         tickLine={false}
                     />
                     <YAxis hide domain={[0, maxMonto * 1.1]} />
-                    <Tooltip content={<TooltipHistorial />} cursor={{fill: '#f1f5f9'}} />
+                    <Tooltip content={<TooltipHistorial />} cursor={{fill: cursorFill}} />
                     <Bar dataKey="monto" radius={[4, 4, 0, 0]} maxBarSize={28} isAnimationActive={false} minPointSize={3}>
                         {datos.map((d) => (
                             <Cell key={d.mes} fill={COLOR[d.estado] ?? '#898781'} />
@@ -72,7 +74,7 @@ export default function HistorialPagosChart({cuotas}) {
                     </Bar>
                 </BarChart>
             </ResponsiveContainer>
-            <div className="mt-1 flex flex-wrap justify-center gap-x-4 gap-y-1 text-xs text-slate-500">
+            <div className="mt-1 flex flex-wrap justify-center gap-x-4 gap-y-1 text-xs text-slate-500 dark:text-slate-400">
                 {Object.entries({Aprobado: 'Aprobado', Pendiente: 'Pendiente', Vencida: 'Vencida', 'Pendiente Aprobacion': 'En revisión'}).map(([k, label]) => (
                     <span key={k} className="flex items-center gap-1.5">
                         <span className="h-2.5 w-2.5 rounded-full" style={{backgroundColor: COLOR[k]}} />

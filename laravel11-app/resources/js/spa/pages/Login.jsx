@@ -3,6 +3,7 @@ import {Navigate, useLocation, useNavigate} from 'react-router-dom'
 import {useAuth} from '../context/AuthContext'
 import {Button, Field, Input} from '../components/Ui'
 import {apiErrorMessage} from '../context/ToastContext'
+import {useSiteConfig} from '../context/SiteConfigContext'
 
 export default function Login() {
     const {user, login} = useAuth()
@@ -12,6 +13,7 @@ export default function Login() {
     const [password, setPassword] = useState('')
     const [error, setError] = useState('')
     const [loading, setLoading] = useState(false)
+    const {nombreGrupo, logo} = useSiteConfig()
 
     if (user) {
         return <Navigate to={location.state?.from ?? '/'} replace />
@@ -32,15 +34,15 @@ export default function Login() {
     }
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-950 via-brand-blue to-blue-800 px-4">
-            <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-2xl">
+        <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-brand-950 via-brand-blue to-brand-800 px-4">
+            <div className="w-full max-w-md rounded-2xl bg-white p-8 shadow-2xl dark:bg-slate-800">
                 <div className="mb-6 flex flex-col items-center gap-3 text-center">
-                    <img src="/img/logo.png" alt="Logo" className="h-16 w-16 rounded-full object-cover shadow" />
+                    <img src={logo} alt="Logo" className="h-16 w-16 rounded-full object-cover shadow" />
                     <div>
-                        <h1 className="text-xl font-bold text-slate-900">
-                            {import.meta.env.VITE_APP_NAME || 'Club'}
+                        <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">
+                            {nombreGrupo}
                         </h1>
-                        <p className="text-sm text-slate-500">Ingresa con tu cuenta de socio</p>
+                        <p className="text-sm text-slate-500 dark:text-slate-400">Ingresa con tu cuenta de socio</p>
                     </div>
                 </div>
 
@@ -66,7 +68,7 @@ export default function Login() {
                     </Field>
 
                     {error && (
-                        <p className="rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-700">{error}</p>
+                        <p className="rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-700 dark:bg-rose-500/10 dark:text-rose-400">{error}</p>
                     )}
 
                     <Button type="submit" className="w-full justify-center" loading={loading}>

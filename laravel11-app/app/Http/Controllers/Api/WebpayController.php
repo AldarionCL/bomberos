@@ -38,29 +38,58 @@ class WebpayController extends Controller
         $data = $request->validate([
             'cuotaId' => ['nullable', 'integer'],
             'periodoKey' => ['nullable', 'string'],
+            'cuotaIds' => ['nullable', 'array'],
+            'cuotaIds.*' => ['integer'],
+            'periodoKeys' => ['nullable', 'array'],
+            'periodoKeys.*' => ['string'],
         ]);
 
         $user = $request->user();
 
+        $periodos = collect($data['periodoKeys'] ?? []);
         if (! empty($data['periodoKey'])) {
-            $persona = $user->persona;
-            abort_unless($persona, 422, 'Tu usuario no tiene un perfil de socio asociado.');
-            $cuota = $this->cuotaMensualService->obtenerOcrearCuota($persona, Carbon::createFromFormat('Y-m', $data['periodoKey']));
-        } else {
-            $cuota = Cuota::findOrFail($data['cuotaId']);
+            $periodos->push($data['periodoKey']);
         }
 
-        abort_unless($cuota->idUser === $user->id, 403);
-        abort_unless($cuota->Estado == 1 && $cuota->Pendiente > 0, 422, 'Esta cuota no admite pago en su estado actual.');
+        $idsDirectos = collect($data['cuotaIds'] ?? []);
+        if (! empty($data['cuotaId'])) {
+            $idsDirectos->push($data['cuotaId']);
+        }
 
-        $buyOrder = 'C'.$cuota->id.'-'.substr((string) time(), -8);
+        abort_if($periodos->isEmpty() && $idsDirectos->isEmpty(), 422, 'No se especificó ninguna cuota a pagar.');
+
+        $cuotasVirtuales = collect();
+        if ($periodos->isNotEmpty()) {
+            $persona = $user->persona;
+            abort_unless($persona, 422, 'Tu usuario no tiene un perfil de socio asociado.');
+            foreach ($periodos as $periodoKey) {
+                $cuotasVirtuales->push(
+                    $this->cuotaMensualService->obtenerOcrearCuota($persona, Carbon::createFromFormat('Y-m', $periodoKey))
+                );
+            }
+        }
+
+        $cuotas = Cuota::whereIn('id', $idsDirectos)->get()
+            ->concat($cuotasVirtuales)
+            ->unique('id')
+            ->values();
+
+        abort_unless($cuotas->every(fn (Cuota $c) => $c->idUser === $user->id), 403);
+        abort_unless(
+            $cuotas->every(fn (Cuota $c) => $c->Estado == 1 && $c->Pendiente > 0),
+            422,
+            'Alguna de las cuotas seleccionadas no admite pago en su estado actual.'
+        );
+
+        $total = (int) $cuotas->sum('Pendiente');
+        $buyOrder = 'C'.$cuotas->first()->id.'-'.substr((string) time(), -8);
         $returnUrl = route('webpay.retorno');
 
-        $respuesta = $this->transaction()->create($buyOrder, (string) $user->id, (int) $cuota->Pendiente, $returnUrl);
+        $respuesta = $this->transaction()->create($buyOrder, (string) $user->id, $total, $returnUrl);
 
-        // El token vive ~5-10 min en Transbank; guardamos la referencia a la cuota
-        // para poder retomarla cuando el navegador vuelva con el token confirmado.
-        Cache::put('webpay-token:'.$respuesta->getToken(), $cuota->id, now()->addMinutes(30));
+        // El token vive ~5-10 min en Transbank; guardamos la lista de cuotas
+        // para poder retomarlas cuando el navegador vuelva con el token confirmado.
+        Cache::put('webpay-token:'.$respuesta->getToken(), $cuotas->pluck('id')->all(), now()->addMinutes(30));
 
         return response()->json(['url' => $respuesta->getUrl(), 'token' => $respuesta->getToken()]);
     }
@@ -79,10 +108,10 @@ class WebpayController extends Controller
             return redirect(url('/v2/mis-cuotas?webpay=error'));
         }
 
-        $idCuota = Cache::pull('webpay-token:'.$tokenWs);
-        $cuota = $idCuota ? Cuota::find($idCuota) : null;
+        $idsCuotas = (array) Cache::pull('webpay-token:'.$tokenWs);
+        $cuotas = ! empty($idsCuotas) ? Cuota::whereIn('id', $idsCuotas)->get() : collect();
 
-        if (! $cuota) {
+        if ($cuotas->isEmpty()) {
             return redirect(url('/v2/mis-cuotas?webpay=error'));
         }
 
@@ -100,13 +129,15 @@ class WebpayController extends Controller
         ]);
         $documento->update(['Nombre' => str_pad((string) $documento->id, 6, '0', STR_PAD_LEFT)]);
 
-        $cuota->update([
-            'Pendiente' => 0,
-            'Recaudado' => $cuota->Monto,
-            'FechaPago' => now()->format('Y-m-d'),
-            'Estado' => 2,
-            'idDocumento' => $documento->id,
-        ]);
+        foreach ($cuotas as $cuota) {
+            $cuota->update([
+                'Pendiente' => 0,
+                'Recaudado' => $cuota->Monto,
+                'FechaPago' => now()->format('Y-m-d'),
+                'Estado' => 2,
+                'idDocumento' => $documento->id,
+            ]);
+        }
 
         return redirect(url('/v2/mis-cuotas?webpay=exito'));
     }

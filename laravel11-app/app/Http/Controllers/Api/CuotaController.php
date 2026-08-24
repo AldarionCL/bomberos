@@ -127,7 +127,7 @@ class CuotaController extends Controller
                 ->map(fn ($p) => $this->serializeVirtual($p, $this->cuotaMensualService->tipoMensual()))
             : collect();
 
-        $todas = $virtuales->concat($reales)->sortByDesc('periodo')->values();
+        $todas = $virtuales->concat($reales)->sortBy('periodo')->values();
 
         return response()->json([
             'cuotas' => $todas,
@@ -243,8 +243,10 @@ class CuotaController extends Controller
     public function pagarMultiples(Request $request)
     {
         $data = $request->validate([
-            'ids' => ['required', 'array', 'min:1'],
+            'ids' => ['nullable', 'array'],
             'ids.*' => ['integer', 'exists:cuotas,id'],
+            'periodos' => ['nullable', 'array'],
+            'periodos.*' => ['string'],
             'montoPagar' => ['required', 'numeric', 'min:1'],
             'nroDocumento' => ['nullable', 'string', 'max:255'],
             'fechaPago' => ['required', 'date'],
@@ -253,11 +255,32 @@ class CuotaController extends Controller
         ]);
 
         $user = $request->user();
-        $cuotas = Cuota::whereIn('id', $data['ids'])->where('Estado', 1)->where('Pendiente', '>', 0)->get();
+
+        // Las cuotas mensuales de meses todavía no vencidos-y-cobrados solo
+        // existen como periodos "virtuales" (no hay fila real en `cuotas`
+        // hasta que alguien las paga). Para poder incluirlas en un pago por
+        // lote hay que materializarlas primero, igual que en el pago individual.
+        $cuotasVirtuales = collect();
+        if (! empty($data['periodos'])) {
+            $persona = $user->persona;
+            abort_unless($persona, 422, 'El usuario no tiene un perfil de socio asociado.');
+            foreach ($data['periodos'] as $periodoKey) {
+                $cuotasVirtuales->push(
+                    $this->cuotaMensualService->obtenerOcrearCuota($persona, Carbon::createFromFormat('Y-m', $periodoKey))
+                );
+            }
+        }
+
+        $cuotasReales = Cuota::whereIn('id', $data['ids'] ?? [])->get();
+
+        $cuotas = $cuotasReales->concat($cuotasVirtuales)
+            ->filter(fn (Cuota $c) => $c->Estado == 1 && $c->Pendiente > 0)
+            ->sortBy('FechaPeriodo')
+            ->values();
         abort_if($cuotas->isEmpty(), 422, 'No hay cuotas pagables en la selección.');
 
-        $primerIdUser = $cuotas->first()->idUser;
-        abort_unless($primerIdUser === $user->id || $this->esTesoreria($request), 403);
+        $esTesoreria = $this->esTesoreria($request);
+        abort_unless($esTesoreria || $cuotas->every(fn (Cuota $c) => $c->idUser === $user->id), 403);
 
         $path = $request->file('documento')->store('comprobantesCuotas', 'public');
         $documento = Documentos::create([
@@ -270,7 +293,6 @@ class CuotaController extends Controller
         $documento->update(['Nombre' => str_pad((string) $documento->id, 6, '0', STR_PAD_LEFT)]);
 
         $saldoDisponible = (float) $data['montoPagar'];
-        $esTesoreria = $this->esTesoreria($request);
         $ultimaPagada = null;
 
         DB::transaction(function () use ($cuotas, &$saldoDisponible, $data, $documento, $esTesoreria, &$ultimaPagada) {
@@ -375,10 +397,15 @@ class CuotaController extends Controller
             'ids.*' => ['integer', 'exists:cuotas,id'],
         ]);
 
-        Cuota::whereIn('id', $data['ids'])->where('Estado', 5)
-            ->update(['Estado' => 2, 'AprobadoPor' => Auth::id()]);
+        // Recorremos y guardamos cada modelo por separado (en vez de un UPDATE
+        // masivo por query builder) para que el CuotaObserver dispare y genere
+        // el ingreso correspondiente en Caja, igual que al aprobar una por una.
+        $aprobadas = Cuota::whereIn('id', $data['ids'])->where('Estado', 5)->get();
+        foreach ($aprobadas as $cuota) {
+            $cuota->update(['Estado' => 2, 'AprobadoPor' => Auth::id()]);
+        }
 
-        return response()->json(['ok' => true]);
+        return response()->json(['ok' => true, 'aprobadas' => $aprobadas->count()]);
     }
 
     public function rechazar(Request $request, Cuota $cuota)

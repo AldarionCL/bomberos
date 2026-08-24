@@ -5,9 +5,9 @@ const ToastContext = createContext(null)
 let idSeq = 0
 
 const STYLES = {
-    success: 'border-emerald-200 bg-emerald-50 text-emerald-800',
-    error: 'border-rose-200 bg-rose-50 text-rose-800',
-    info: 'border-blue-200 bg-blue-50 text-blue-800',
+    success: 'border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-300',
+    error: 'border-rose-200 bg-rose-50 text-rose-800 dark:border-rose-500/30 dark:bg-rose-500/10 dark:text-rose-300',
+    info: 'border-blue-200 bg-blue-50 text-blue-800 dark:border-blue-500/30 dark:bg-blue-500/10 dark:text-blue-300',
 }
 
 export function ToastProvider({children}) {

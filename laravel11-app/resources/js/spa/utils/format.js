@@ -18,6 +18,21 @@ export function formatMonthLabel(value) {
     return date.toLocaleDateString('es-CL', {month: 'long', year: 'numeric'})
 }
 
+export function formatRelativo(value) {
+    if (!value) return '—'
+    const date = new Date(value)
+    if (Number.isNaN(date.getTime())) return '—'
+    const diffMs = Date.now() - date.getTime()
+    const minutos = Math.round(diffMs / 60000)
+    if (minutos < 1) return 'ahora'
+    if (minutos < 60) return `hace ${minutos} min`
+    const horas = Math.round(minutos / 60)
+    if (horas < 24) return `hace ${horas} h`
+    const dias = Math.round(horas / 24)
+    if (dias < 7) return `hace ${dias} d`
+    return formatDate(value)
+}
+
 export function relativeDays(value) {
     if (!value) return null
     const target = new Date(`${value}T00:00:00`)
